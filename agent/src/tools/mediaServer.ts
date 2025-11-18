@@ -427,6 +427,13 @@ export const mediaServer = {
     seed?: number;
     loopCount?: number; // 1-20, default 1 (15 = ~60s video)
   }) => {
+    const { exec } = require('child_process');
+    const { promisify } = require('util');
+    const execAsync = promisify(exec);
+    const fs = require('fs/promises');
+    const path = require('path');
+    const os = require('os');
+
     const url = `${getSvdUrl()}/generate`;
 
     // First download the image from media server
@@ -437,52 +444,52 @@ export const mediaServer = {
     }
     const imageBuffer = Buffer.from(await imageResponse.arrayBuffer());
 
-    // Create form data for SVD
-    const FormData = (await import('form-data')).default;
-    const formData = new FormData();
-    formData.append('image', imageBuffer, { filename: 'image.png', contentType: 'image/png' });
-    formData.append('frames', (options.frames || 25).toString());
-    formData.append('steps', (options.steps || 25).toString());
-    formData.append('fps', (options.fps || 6).toString());
-    formData.append('motion', (options.motion || 127).toString());
-    if (options.seed) formData.append('seed', options.seed.toString());
-    formData.append('loop_count', (options.loopCount || 1).toString());
+    // Save image to temp file for curl
+    const tempDir = os.tmpdir();
+    const tempImage = path.join(tempDir, `svd_input_${Date.now()}.png`);
 
-    const response = await fetch(url, {
-      method: 'POST',
-      body: formData as any,
-      headers: formData.getHeaders(),
-    });
+    try {
+      await fs.writeFile(tempImage, imageBuffer);
 
-    if (!response.ok) {
-      throw new Error(`SVD animation failed: ${response.status} ${await response.text()}`);
+      // Use curl to call SVD endpoint
+      const curlCmd = `curl -s -X POST "${url}" \
+        -F "image=@${tempImage}" \
+        -F "frames=${options.frames || 25}" \
+        -F "steps=${options.steps || 25}" \
+        -F "fps=${options.fps || 6}" \
+        -F "motion=${options.motion || 127}" \
+        ${options.seed ? `-F "seed=${options.seed}"` : ''} \
+        -F "loop_count=${options.loopCount || 1}"`;
+
+      const { stdout } = await execAsync(curlCmd, { maxBuffer: 100 * 1024 * 1024 }); // 100MB buffer for video
+      const result = JSON.parse(stdout);
+
+      // Decode base64 video and upload to media server
+      const videoBuffer = Buffer.from(result.video, 'base64');
+      const uploadResult = await mediaServer.uploadFile(videoBuffer, 'video');
+
+      return {
+        videoFileId: uploadResult.file_id,
+        videoUrl: `${getBaseUrl()}/api/v1/media/storage/${uploadResult.file_id}`,
+        duration: result.duration,
+        fps: result.fps,
+        frames: result.frames,
+        generationTime: result.time,
+      };
+    } finally {
+      try { await fs.unlink(tempImage); } catch {}
     }
-
-    const result = await response.json();
-
-    // Decode base64 video and upload to media server
-    const videoBuffer = Buffer.from(result.video, 'base64');
-    const uploadResult = await mediaServer.uploadFile(videoBuffer, 'video');
-
-    return {
-      videoFileId: uploadResult.file_id,
-      videoUrl: `${getBaseUrl()}/api/v1/media/storage/${uploadResult.file_id}`,
-      duration: result.duration,
-      fps: result.fps,
-      frames: result.frames,
-      generationTime: result.time,
-    };
   },
 
   /**
    * Generate TTS audio using Kokoro
    */
   generateTTS: async (text: string, voice?: string) => {
-    const url = `${getBaseUrl()}/api/v1/media/audio-tools/tts-kokoro`;
+    const url = `${getBaseUrl()}/api/v1/media/audio-tools/tts/kokoro`;
 
     const params = new URLSearchParams();
     params.append('text', text);
-    if (voice) params.append('voice', voice);
+    if (voice) params.append('kokoro_voice', voice);
 
     const response = await fetch(url, {
       method: 'POST',
@@ -621,51 +628,39 @@ export const mediaServer = {
       let videoResult: { videoFileId: string; videoUrl: string };
 
       if (narration) {
-        // Generate TTS audio
-        console.log(`  → Generating voiceover...`);
-        const ttsResult = await mediaServer.generateTTS(narration, options.voice || 'af_sarah');
-
-        // Combine animated video with audio and captions
+        // Use captioned video endpoint which handles TTS + captions together
         const baseVideoId = animatedVideoId || imageResult.imageFileId;
-        console.log(`  → Adding audio & captions...`);
+        console.log(`  → Adding voiceover & captions...`);
         const videoStartTime = Date.now();
 
-        // Use match-duration to sync video with audio, then add captions
-        const matchedVideo = await mediaServer.matchDuration(baseVideoId, ttsResult.audioFileId);
-
-        // Add captions to the matched video
-        const captionUrl = `${getBaseUrl()}/api/v1/media/video-tools/add-captions`;
+        // Use the TTS captioned video endpoint with the animated video as background
+        const captionUrl = `${getBaseUrl()}/api/v1/media/video-tools/generate/tts-captioned-video`;
         const captionParams = new URLSearchParams();
-        captionParams.append('video_id', matchedVideo.file_id);
+        captionParams.append('background_id', baseVideoId);
         captionParams.append('text', narration);
-        captionParams.append('position', 'bottom'); // Captions at bottom
+        captionParams.append('kokoro_voice', options.voice || 'af_sarah');
+        captionParams.append('caption_on', 'true');
+        captionParams.append('caption_position', 'bottom');
         captionParams.append('font_size', '48');
-        captionParams.append('margin_bottom', '80');
 
-        try {
-          const captionResponse = await fetch(captionUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: captionParams,
-          });
+        const captionResponse = await fetch(captionUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: captionParams,
+        });
 
-          if (captionResponse.ok) {
-            const captionResult = await captionResponse.json();
-            videoResult = {
-              videoFileId: captionResult.file_id,
-              videoUrl: `${getBaseUrl()}/api/v1/media/storage/${captionResult.file_id}`
-            };
-          } else {
-            // Fallback to matched video without captions
-            videoResult = {
-              videoFileId: matchedVideo.file_id,
-              videoUrl: matchedVideo.url
-            };
-          }
-        } catch {
+        if (captionResponse.ok) {
+          const captionResult = await captionResponse.json();
           videoResult = {
-            videoFileId: matchedVideo.file_id,
-            videoUrl: matchedVideo.url
+            videoFileId: captionResult.file_id,
+            videoUrl: `${getBaseUrl()}/api/v1/media/storage/${captionResult.file_id}`
+          };
+        } else {
+          // Fallback to animated video without captions
+          console.log(`  ⚠ Caption failed: ${captionResponse.status}, using animated video`);
+          videoResult = {
+            videoFileId: baseVideoId,
+            videoUrl: `${getBaseUrl()}/api/v1/media/storage/${baseVideoId}`
           };
         }
 
