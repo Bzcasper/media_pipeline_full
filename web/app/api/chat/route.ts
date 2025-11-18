@@ -120,11 +120,12 @@ export async function POST(req: Request) {
     const duration = Date.now() - startTime;
 
     // Structured error logging
-    logStructuredError("chat_request_failed", error, {
+    logStructuredError("chat_request_failed", error as Error, {
       requestId,
       duration,
-      errorType: error?.constructor?.name || "UnknownError",
-      hasStack: !!error.stack,
+      errorType:
+        error instanceof Error ? error.constructor.name : "UnknownError",
+      hasStack: error instanceof Error ? !!error.stack : false,
       timestamp: new Date().toISOString(),
     });
 
@@ -197,7 +198,6 @@ async function handleStreamingExecution(
       stopWhen: stopConditions.length > 1 ? stopConditions : stopConditions[0],
       tools,
       // Enhanced settings
-      maxTokens: 2000,
       temperature: 0.7,
     });
 
@@ -213,7 +213,7 @@ async function handleStreamingExecution(
   } catch (error) {
     const duration = Date.now() - startTime;
 
-    logStructuredError("streaming_execution_failed", error, {
+    logStructuredError("streaming_execution_failed", error as Error, {
       executionId,
       requestId,
       duration,
@@ -348,5 +348,3 @@ function logStructuredError(errorType: string, error: any, context: any): void {
     console.error(JSON.stringify(logEntry));
   }
 }
-
-export default POST;

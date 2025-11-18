@@ -14,6 +14,10 @@ export default function HistoryPage() {
 
   useEffect(() => {
     fetchJobs();
+
+    // Poll for updates every 10 seconds for jobs that are still processing
+    const interval = setInterval(fetchJobs, 10000);
+    return () => clearInterval(interval);
   }, []);
 
   const fetchJobs = async () => {
@@ -57,17 +61,23 @@ export default function HistoryPage() {
             </div>
 
             {/* Filters */}
-            <div className="flex gap-2 mb-6">
-              {['all', 'processing', 'completed', 'failed'].map((f) => (
-                <Button
-                  key={f}
-                  variant={filter === f ? 'default' : 'outline'}
-                  onClick={() => setFilter(f)}
-                  className="capitalize"
-                >
-                  {f}
-                </Button>
-              ))}
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex gap-2">
+                {['all', 'processing', 'completed', 'failed'].map((f) => (
+                  <Button
+                    key={f}
+                    variant={filter === f ? 'default' : 'outline'}
+                    onClick={() => setFilter(f)}
+                    className="capitalize"
+                  >
+                    {f}
+                  </Button>
+                ))}
+              </div>
+              <Button variant="outline" onClick={fetchJobs} disabled={loading}>
+                {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                Refresh
+              </Button>
             </div>
 
             {/* Jobs Grid */}

@@ -1,0 +1,870 @@
+
+> media-pipeline-web@1.0.0 dev
+> next dev
+
+  ▲ Next.js 14.2.33
+  - Local:        http://localhost:3000
+  - Experiments (use with caution):
+    · typedRoutes
+    · esmExternals
+
+ ✓ Starting...
+ ✓ Ready in 1361ms
+ ○ Compiling /api/status/[jobId] ...
+ ✓ Compiled /api/status/[jobId] in 958ms (505 modules)
+ ⨯ ../agent/src/utils/env.ts (51:13) @ validateEnv
+ ⨯ Error: Environment validation failed:
+MEDIA_SERVER_URL: Required
+MEDIA_SERVER_API_KEY: Required
+    at validateEnv (webpack-internal:///(rsc)/../agent/src/utils/env.ts:45:19)
+    at eval (webpack-internal:///(rsc)/../agent/src/utils/env.ts:51:13)
+    at (rsc)/../agent/src/utils/env.ts (/home/bc/media_pipeline_full/web/.next/server/app/api/status/[jobId]/route.js:442:1)
+    at __webpack_require__ (/home/bc/media_pipeline_full/web/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/../agent/src/skills/transcription.ts:10:68)
+    at (rsc)/../agent/src/skills/transcription.ts (/home/bc/media_pipeline_full/web/.next/server/app/api/status/[jobId]/route.js:362:1)
+    at __webpack_require__ (/home/bc/media_pipeline_full/web/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/../agent/src/skills/index.ts:22:72)
+    at (rsc)/../agent/src/skills/index.ts (/home/bc/media_pipeline_full/web/.next/server/app/api/status/[jobId]/route.js:342:1)
+    at __webpack_require__ (/home/bc/media_pipeline_full/web/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/../agent/src/orchestrator.ts:8:65)
+    at (rsc)/../agent/src/orchestrator.ts (/home/bc/media_pipeline_full/web/.next/server/app/api/status/[jobId]/route.js:312:1)
+    at __webpack_require__ (/home/bc/media_pipeline_full/web/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/../agent/src/index.ts:31:71)
+    at (rsc)/../agent/src/index.ts (/home/bc/media_pipeline_full/web/.next/server/app/api/status/[jobId]/route.js:292:1)
+    at __webpack_require__ (/home/bc/media_pipeline_full/web/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./app/api/status/[jobId]/route.ts:6:72)
+    at (rsc)/./app/api/status/[jobId]/route.ts (/home/bc/media_pipeline_full/web/.next/server/app/api/status/[jobId]/route.js:522:1)
+    at __webpack_require__ (/home/bc/media_pipeline_full/web/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/../node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/build/webpack/loaders/next-app-loader.js?name=app%2Fapi%2Fstatus%2F%5BjobId%5D%2Froute&page=%2Fapi%2Fstatus%2F%5BjobId%5D%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fstatus%2F%5BjobId%5D%2Froute.ts&appDir=%2Fhome%2Fbc%2Fmedia_pipeline_full%2Fweb%2Fapp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=%2Fhome%2Fbc%2Fmedia_pipeline_full%2Fweb&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=&preferredRegion=&middlewareConfig=e30%3D!:15:120)
+    at (rsc)/../node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/build/webpack/loaders/next-app-loader.js?name=app%2Fapi%2Fstatus%2F%5BjobId%5D%2Froute&page=%2Fapi%2Fstatus%2F%5BjobId%5D%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fstatus%2F%5BjobId%5D%2Froute.ts&appDir=%2Fhome%2Fbc%2Fmedia_pipeline_full%2Fweb%2Fapp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=%2Fhome%2Fbc%2Fmedia_pipeline_full%2Fweb&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=&preferredRegion=&middlewareConfig=e30%3D! (/home/bc/media_pipeline_full/web/.next/server/app/api/status/[jobId]/route.js:272:1)
+    at __webpack_require__ (/home/bc/media_pipeline_full/web/.next/server/webpack-runtime.js:33:43)
+    at __webpack_exec__ (/home/bc/media_pipeline_full/web/.next/server/app/api/status/[jobId]/route.js:532:39)
+    at /home/bc/media_pipeline_full/web/.next/server/app/api/status/[jobId]/route.js:533:3290
+    at __webpack_require__.X (/home/bc/media_pipeline_full/web/.next/server/webpack-runtime.js:151:21)
+    at /home/bc/media_pipeline_full/web/.next/server/app/api/status/[jobId]/route.js:533:47
+    at Object.<anonymous> (/home/bc/media_pipeline_full/web/.next/server/app/api/status/[jobId]/route.js:536:3)
+    at Module._compile (node:internal/modules/cjs/loader:1760:14)
+    at Object..js (node:internal/modules/cjs/loader:1892:10)
+    at Module.load (node:internal/modules/cjs/loader:1480:32)
+    at Module._load (node:internal/modules/cjs/loader:1299:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1503:12)
+    at mod.require (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:152:16)
+    at requirePage (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/require.js:109:84)
+    at /home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/load-components.js:103:84
+    at async loadComponentsImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/load-components.js:103:26)
+    at async DevServer.findPageComponentsImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/next-server.js:714:36)
+    at async DevServer.findPageComponents (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/dev/next-dev-server.js:577:20)
+    at async DevServer.renderPageComponent (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1910:24)
+    at async DevServer.renderToResponseImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1962:32)
+    at async DevServer.pipeImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:922:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/next-server.js:272:17)
+    at async DevServer.handleRequestImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:818:17)
+    at async /home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/router-server.js:179:21) {
+  page: '/api/status/test-job'
+}
+[0m [90m 49 |[39m         (err) [33m=>[39m [32m`${err.path.join(".")}: ${err.message}`[39m[0m
+[0m [90m 50 |[39m       )[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m 51 |[39m       [36mthrow[39m [36mnew[39m [33mError[39m([0m
+[0m [90m    |[39m             [31m[1m^[22m[39m[0m
+[0m [90m 52 |[39m         [32m`Environment validation failed:\n${missingVars.join("\n")}`[39m[0m
+[0m [90m 53 |[39m       )[33m;[39m[0m
+[0m [90m 54 |[39m     }[0m
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 618ms (935 modules)
+ GET /api/status/test-job 500 in 1910ms
+ ⨯ ../agent/src/utils/env.ts (51:13) @ validateEnv
+ ⨯ Error: Environment validation failed:
+MEDIA_SERVER_URL: Required
+MEDIA_SERVER_API_KEY: Required
+    at validateEnv (webpack-internal:///(rsc)/../agent/src/utils/env.ts:45:19)
+    at eval (webpack-internal:///(rsc)/../agent/src/utils/env.ts:51:13)
+    at (rsc)/../agent/src/utils/env.ts (/home/bc/media_pipeline_full/web/.next/server/app/api/status/[jobId]/route.js:442:1)
+    at __webpack_require__ (/home/bc/media_pipeline_full/web/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/../agent/src/skills/transcription.ts:10:68)
+    at (rsc)/../agent/src/skills/transcription.ts (/home/bc/media_pipeline_full/web/.next/server/app/api/status/[jobId]/route.js:362:1)
+    at __webpack_require__ (/home/bc/media_pipeline_full/web/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/../agent/src/skills/index.ts:22:72)
+    at (rsc)/../agent/src/skills/index.ts (/home/bc/media_pipeline_full/web/.next/server/app/api/status/[jobId]/route.js:342:1)
+    at __webpack_require__ (/home/bc/media_pipeline_full/web/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/../agent/src/orchestrator.ts:8:65)
+    at (rsc)/../agent/src/orchestrator.ts (/home/bc/media_pipeline_full/web/.next/server/app/api/status/[jobId]/route.js:312:1)
+    at __webpack_require__ (/home/bc/media_pipeline_full/web/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/../agent/src/index.ts:31:71)
+    at (rsc)/../agent/src/index.ts (/home/bc/media_pipeline_full/web/.next/server/app/api/status/[jobId]/route.js:292:1)
+    at __webpack_require__ (/home/bc/media_pipeline_full/web/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./app/api/status/[jobId]/route.ts:6:72)
+    at (rsc)/./app/api/status/[jobId]/route.ts (/home/bc/media_pipeline_full/web/.next/server/app/api/status/[jobId]/route.js:522:1)
+    at __webpack_require__ (/home/bc/media_pipeline_full/web/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/../node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/build/webpack/loaders/next-app-loader.js?name=app%2Fapi%2Fstatus%2F%5BjobId%5D%2Froute&page=%2Fapi%2Fstatus%2F%5BjobId%5D%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fstatus%2F%5BjobId%5D%2Froute.ts&appDir=%2Fhome%2Fbc%2Fmedia_pipeline_full%2Fweb%2Fapp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=%2Fhome%2Fbc%2Fmedia_pipeline_full%2Fweb&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=&preferredRegion=&middlewareConfig=e30%3D!:15:120)
+    at (rsc)/../node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/build/webpack/loaders/next-app-loader.js?name=app%2Fapi%2Fstatus%2F%5BjobId%5D%2Froute&page=%2Fapi%2Fstatus%2F%5BjobId%5D%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fstatus%2F%5BjobId%5D%2Froute.ts&appDir=%2Fhome%2Fbc%2Fmedia_pipeline_full%2Fweb%2Fapp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=%2Fhome%2Fbc%2Fmedia_pipeline_full%2Fweb&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=&preferredRegion=&middlewareConfig=e30%3D! (/home/bc/media_pipeline_full/web/.next/server/app/api/status/[jobId]/route.js:272:1)
+    at __webpack_require__ (/home/bc/media_pipeline_full/web/.next/server/webpack-runtime.js:33:43)
+    at __webpack_exec__ (/home/bc/media_pipeline_full/web/.next/server/app/api/status/[jobId]/route.js:532:39)
+    at /home/bc/media_pipeline_full/web/.next/server/app/api/status/[jobId]/route.js:533:3290
+    at __webpack_require__.X (/home/bc/media_pipeline_full/web/.next/server/webpack-runtime.js:151:21)
+    at /home/bc/media_pipeline_full/web/.next/server/app/api/status/[jobId]/route.js:533:47
+    at Object.<anonymous> (/home/bc/media_pipeline_full/web/.next/server/app/api/status/[jobId]/route.js:536:3)
+    at Module._compile (node:internal/modules/cjs/loader:1760:14)
+    at Object..js (node:internal/modules/cjs/loader:1892:10)
+    at Module.load (node:internal/modules/cjs/loader:1480:32)
+    at Module._load (node:internal/modules/cjs/loader:1299:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1503:12)
+    at mod.require (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:152:16)
+    at requirePage (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/require.js:109:84)
+    at /home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/load-components.js:103:84
+    at async loadComponentsImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/load-components.js:103:26)
+    at async DevServer.findPageComponentsImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/next-server.js:714:36)
+    at async DevServer.findPageComponents (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/dev/next-dev-server.js:577:20)
+    at async DevServer.renderPageComponent (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1910:24)
+    at async DevServer.renderToResponseImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1962:32)
+    at async DevServer.pipeImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:922:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/next-server.js:272:17)
+    at async DevServer.handleRequestImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:818:17)
+    at async /home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/router-server.js:179:21) {
+  page: '/api/status/test-job'
+}
+[0m [90m 49 |[39m         (err) [33m=>[39m [32m`${err.path.join(".")}: ${err.message}`[39m[0m
+[0m [90m 50 |[39m       )[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m 51 |[39m       [36mthrow[39m [36mnew[39m [33mError[39m([0m
+[0m [90m    |[39m             [31m[1m^[22m[39m[0m
+[0m [90m 52 |[39m         [32m`Environment validation failed:\n${missingVars.join("\n")}`[39m[0m
+[0m [90m 53 |[39m       )[33m;[39m[0m
+[0m [90m 54 |[39m     }[0m
+ GET /api/status/test-job 500 in 58ms
+ ✓ Compiled in 177ms (545 modules)
+ ⨯ ../agent/src/utils/env.ts (51:13) @ validateEnv
+ ⨯ Error: Environment validation failed:
+MEDIA_SERVER_URL: Required
+    at validateEnv (webpack-internal:///(rsc)/../agent/src/utils/env.ts:45:19)
+    at eval (webpack-internal:///(rsc)/../agent/src/utils/env.ts:51:13)
+    at (rsc)/../agent/src/utils/env.ts (/home/bc/media_pipeline_full/web/.next/server/app/api/status/[jobId]/route.js:442:1)
+    at __webpack_require__ (/home/bc/media_pipeline_full/web/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/../agent/src/skills/transcription.ts:10:68)
+    at (rsc)/../agent/src/skills/transcription.ts (/home/bc/media_pipeline_full/web/.next/server/app/api/status/[jobId]/route.js:362:1)
+    at __webpack_require__ (/home/bc/media_pipeline_full/web/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/../agent/src/skills/index.ts:22:72)
+    at (rsc)/../agent/src/skills/index.ts (/home/bc/media_pipeline_full/web/.next/server/app/api/status/[jobId]/route.js:342:1)
+    at __webpack_require__ (/home/bc/media_pipeline_full/web/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/../agent/src/orchestrator.ts:8:65)
+    at (rsc)/../agent/src/orchestrator.ts (/home/bc/media_pipeline_full/web/.next/server/app/api/status/[jobId]/route.js:312:1)
+    at __webpack_require__ (/home/bc/media_pipeline_full/web/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/../agent/src/index.ts:31:71)
+    at (rsc)/../agent/src/index.ts (/home/bc/media_pipeline_full/web/.next/server/app/api/status/[jobId]/route.js:292:1)
+    at __webpack_require__ (/home/bc/media_pipeline_full/web/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./app/api/status/[jobId]/route.ts:6:72)
+    at (rsc)/./app/api/status/[jobId]/route.ts (/home/bc/media_pipeline_full/web/.next/server/app/api/status/[jobId]/route.js:522:1)
+    at __webpack_require__ (/home/bc/media_pipeline_full/web/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/../node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/build/webpack/loaders/next-app-loader.js?name=app%2Fapi%2Fstatus%2F%5BjobId%5D%2Froute&page=%2Fapi%2Fstatus%2F%5BjobId%5D%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fstatus%2F%5BjobId%5D%2Froute.ts&appDir=%2Fhome%2Fbc%2Fmedia_pipeline_full%2Fweb%2Fapp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=%2Fhome%2Fbc%2Fmedia_pipeline_full%2Fweb&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=&preferredRegion=&middlewareConfig=e30%3D!:15:120)
+    at (rsc)/../node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/build/webpack/loaders/next-app-loader.js?name=app%2Fapi%2Fstatus%2F%5BjobId%5D%2Froute&page=%2Fapi%2Fstatus%2F%5BjobId%5D%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fstatus%2F%5BjobId%5D%2Froute.ts&appDir=%2Fhome%2Fbc%2Fmedia_pipeline_full%2Fweb%2Fapp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=%2Fhome%2Fbc%2Fmedia_pipeline_full%2Fweb&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=&preferredRegion=&middlewareConfig=e30%3D! (/home/bc/media_pipeline_full/web/.next/server/app/api/status/[jobId]/route.js:272:1)
+    at __webpack_require__ (/home/bc/media_pipeline_full/web/.next/server/webpack-runtime.js:33:43)
+    at __webpack_exec__ (/home/bc/media_pipeline_full/web/.next/server/app/api/status/[jobId]/route.js:532:39)
+    at /home/bc/media_pipeline_full/web/.next/server/app/api/status/[jobId]/route.js:533:3290
+    at __webpack_require__.X (/home/bc/media_pipeline_full/web/.next/server/webpack-runtime.js:151:21)
+    at /home/bc/media_pipeline_full/web/.next/server/app/api/status/[jobId]/route.js:533:47
+    at Object.<anonymous> (/home/bc/media_pipeline_full/web/.next/server/app/api/status/[jobId]/route.js:536:3)
+    at Module._compile (node:internal/modules/cjs/loader:1760:14)
+    at Object..js (node:internal/modules/cjs/loader:1892:10)
+    at Module.load (node:internal/modules/cjs/loader:1480:32)
+    at Module._load (node:internal/modules/cjs/loader:1299:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1503:12)
+    at mod.require (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/require-hook.js:65:28)
+    at require (node:internal/modules/helpers:152:16)
+    at requirePage (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/require.js:109:84)
+    at /home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/load-components.js:103:84
+    at async loadComponentsImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/load-components.js:103:26)
+    at async DevServer.findPageComponentsImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/next-server.js:714:36)
+    at async DevServer.findPageComponents (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/dev/next-dev-server.js:577:20)
+    at async DevServer.renderPageComponent (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1910:24)
+    at async DevServer.renderToResponseImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1962:32)
+    at async DevServer.pipeImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:922:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/next-server.js:272:17)
+    at async DevServer.handleRequestImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:818:17)
+    at async /home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/router-server.js:179:21) {
+  page: '/api/status/test-job'
+}
+[0m [90m 49 |[39m         (err) [33m=>[39m [32m`${err.path.join(".")}: ${err.message}`[39m[0m
+[0m [90m 50 |[39m       )[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m 51 |[39m       [36mthrow[39m [36mnew[39m [33mError[39m([0m
+[0m [90m    |[39m             [31m[1m^[22m[39m[0m
+[0m [90m 52 |[39m         [32m`Environment validation failed:\n${missingVars.join("\n")}`[39m[0m
+[0m [90m 53 |[39m       )[33m;[39m[0m
+[0m [90m 54 |[39m     }[0m
+ GET /api/status/test-job 500 in 53ms
+ ✓ Compiled in 131ms (545 modules)
+Failed to fetch job test-job: Error: Failed to load job state for test-job: Error: ENOENT: no such file or directory, open 'jobs/test-job.json'
+    at JobStateManager.load (webpack-internal:///(rsc)/../agent/src/utils/jobState.ts:290:19)
+    at async GET (webpack-internal:///(rsc)/./app/api/status/[jobId]/route.ts:11:26)
+    at async /home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:57228
+    at async eT.execute (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:46851)
+    at async eT.handle (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:58760)
+    at async doRender (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1366:42)
+    at async cacheEntry.responseCache.get.routeKind (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1576:40)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1496:28)
+    at async DevServer.renderPageComponent (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1924:24)
+    at async DevServer.renderToResponseImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1962:32)
+    at async DevServer.pipeImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:922:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/next-server.js:272:17)
+    at async DevServer.handleRequestImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:818:17)
+    at async /home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/router-server.js:179:21)
+    at async handleRequest (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/router-server.js:359:24)
+    at async requestHandlerImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/router-server.js:383:13)
+    at async Server.requestListener (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/start-server.js:141:13)
+ GET /api/status/test-job 404 in 446ms
+Failed to fetch job test-job: Error: Failed to load job state for test-job: Error: ENOENT: no such file or directory, open 'jobs/test-job.json'
+    at JobStateManager.load (webpack-internal:///(rsc)/../agent/src/utils/jobState.ts:290:19)
+    at async GET (webpack-internal:///(rsc)/./app/api/status/[jobId]/route.ts:11:26)
+    at async /home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:57228
+    at async eT.execute (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:46851)
+    at async eT.handle (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:58760)
+    at async doRender (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1366:42)
+    at async cacheEntry.responseCache.get.routeKind (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1576:40)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1496:28)
+    at async DevServer.renderPageComponent (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1924:24)
+    at async DevServer.renderToResponseImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1962:32)
+    at async DevServer.pipeImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:922:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/next-server.js:272:17)
+    at async DevServer.handleRequestImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:818:17)
+    at async /home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/dev/next-dev-server.js:339:20
+    at async Span.traceAsyncFn (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/trace/trace.js:154:20)
+    at async DevServer.handleRequest (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/dev/next-dev-server.js:336:24)
+    at async invokeRender (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/router-server.js:179:21)
+    at async handleRequest (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/router-server.js:359:24)
+    at async requestHandlerImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/router-server.js:383:13)
+    at async Server.requestListener (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/start-server.js:141:13)
+ GET /api/status/test-job 404 in 19ms
+ ✓ Compiled /api/jobs in 137ms (547 modules)
+ GET /api/jobs 200 in 208ms
+ ✓ Compiled /api/upload in 199ms (460 modules)
+[UPLOAD] Upload request started {
+  jobId: 'job_1763497199124_6dbyv2y',
+  clientIP: '::1',
+  fileName: 'test_audio.mp3',
+  fileSize: 34,
+  fileType: 'application/octet-stream',
+  title: 'Test Song',
+  artist: 'Test Artist',
+  album: '',
+  duration: 4
+}
+[UPLOAD] Upload route error {
+  jobId: 'job_1763497199124_6dbyv2y',
+  errorType: 'validation',
+  errorMessage: 'HTTP 422: {"detail":[{"type":"missing","loc":["body","media_type"],"msg":"Field required","input":null}]}',
+  stack: 'MediaServerError: HTTP 422: {"detail":[{"type":"missing","loc":["body","media_type"],"msg":"Field required","input":null}]}\n' +
+    '    at MediaServerClient.request (webpack-internal:///(rsc)/../packages/media-sdk/src/client.js:487:23)\n' +
+    '    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n' +
+    '    at async Object.uploadFile (webpack-internal:///(rsc)/../agent/src/tools/mediaServer.ts:17:16)\n' +
+    '    at async POST (webpack-internal:///(rsc)/./app/api/upload/route.ts:127:30)\n' +
+    '    at async /home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:57228\n' +
+    '    at async eT.execute (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:46851)\n' +
+    '    at async eT.handle (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:58760)\n' +
+    '    at async doRender (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1366:42)\n' +
+    '    at async cacheEntry.responseCache.get.routeKind (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1588:28)\n' +
+    '    at async DevServer.renderToResponseWithComponentsImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1496:28)\n' +
+    '    at async DevServer.renderPageComponent (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1924:24)\n' +
+    '    at async DevServer.renderToResponseImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1962:32)\n' +
+    '    at async DevServer.pipeImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:922:25)\n' +
+    '    at async NextNodeServer.handleCatchallRenderRequest (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/next-server.js:272:17)\n' +
+    '    at async DevServer.handleRequestImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:818:17)\n' +
+    '    at async /home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/dev/next-dev-server.js:339:20\n' +
+    '    at async Span.traceAsyncFn (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/trace/trace.js:154:20)\n' +
+    '    at async DevServer.handleRequest (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/dev/next-dev-server.js:336:24)\n' +
+    '    at async invokeRender (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/router-server.js:179:21)\n' +
+    '    at async handleRequest (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/router-server.js:359:24)\n' +
+    '    at async requestHandlerImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/router-server.js:383:13)\n' +
+    '    at async Server.requestListener (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/start-server.js:141:13)',
+  duration: 897,
+  clientIP: '::1'
+}
+ POST /api/upload 400 in 1225ms
+ ✓ Compiled in 313ms (460 modules)
+[UPLOAD] Upload request started {
+  jobId: 'job_1763497237835_gzrmi2o',
+  clientIP: '::1',
+  fileName: 'test_audio.mp3',
+  fileSize: 34,
+  fileType: 'application/octet-stream',
+  title: 'Test Song',
+  artist: 'Test Artist',
+  album: '',
+  duration: 0
+}
+[UPLOAD] Upload route error {
+  jobId: 'job_1763497237835_gzrmi2o',
+  errorType: 'internal',
+  errorMessage: `MediaServerError: HTTP 422: {"detail":[{"type":"value_error","loc":["body","file"],"msg":"Value error, Expected UploadFile, received: <class 'str'>","input":"This is a test audio file content\\r\\n","ctx":{"error":{}}}]}`,
+  stack: `Error: MediaServerError: HTTP 422: {"detail":[{"type":"value_error","loc":["body","file"],"msg":"Value error, Expected UploadFile, received: <class 'str'>","input":"This is a test audio file content\\r\\n","ctx":{"error":{}}}]}\n` +
+    '    at Object.uploadFile (webpack-internal:///(rsc)/../agent/src/tools/mediaServer.ts:29:19)\n' +
+    '    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n' +
+    '    at async POST (webpack-internal:///(rsc)/./app/api/upload/route.ts:127:30)\n' +
+    '    at async /home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:57228\n' +
+    '    at async eT.execute (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:46851)\n' +
+    '    at async eT.handle (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:58760)\n' +
+    '    at async doRender (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1366:42)\n' +
+    '    at async cacheEntry.responseCache.get.routeKind (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1588:28)\n' +
+    '    at async DevServer.renderToResponseWithComponentsImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1496:28)\n' +
+    '    at async DevServer.renderPageComponent (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1924:24)\n' +
+    '    at async DevServer.renderToResponseImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1962:32)\n' +
+    '    at async DevServer.pipeImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:922:25)\n' +
+    '    at async NextNodeServer.handleCatchallRenderRequest (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/next-server.js:272:17)\n' +
+    '    at async DevServer.handleRequestImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:818:17)\n' +
+    '    at async /home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/dev/next-dev-server.js:339:20\n' +
+    '    at async Span.traceAsyncFn (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/trace/trace.js:154:20)\n' +
+    '    at async DevServer.handleRequest (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/dev/next-dev-server.js:336:24)\n' +
+    '    at async invokeRender (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/router-server.js:179:21)\n' +
+    '    at async handleRequest (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/router-server.js:359:24)\n' +
+    '    at async requestHandlerImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/router-server.js:383:13)\n' +
+    '    at async Server.requestListener (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/start-server.js:141:13)',
+  duration: 616,
+  clientIP: '::1'
+}
+ POST /api/upload 500 in 652ms
+ ✓ Compiled in 375ms (513 modules)
+[UPLOAD] Upload request started {
+  jobId: 'job_1763497247332_ymjztti',
+  clientIP: '::1',
+  fileName: 'test_audio.mp3',
+  fileSize: 34,
+  fileType: 'application/octet-stream',
+  title: 'Test Song',
+  artist: 'Test Artist',
+  album: '',
+  duration: 2
+}
+[UPLOAD] Upload route error {
+  jobId: 'job_1763497247332_ymjztti',
+  errorType: 'internal',
+  errorMessage: 'MediaServerError: HTTP 400: {"detail":"There was an error parsing the body"}',
+  stack: 'Error: MediaServerError: HTTP 400: {"detail":"There was an error parsing the body"}\n' +
+    '    at Object.uploadFile (webpack-internal:///(rsc)/../agent/src/tools/mediaServer.ts:34:19)\n' +
+    '    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n' +
+    '    at async POST (webpack-internal:///(rsc)/./app/api/upload/route.ts:127:30)\n' +
+    '    at async /home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:57228\n' +
+    '    at async eT.execute (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:46851)\n' +
+    '    at async eT.handle (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:58760)\n' +
+    '    at async doRender (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1366:42)\n' +
+    '    at async cacheEntry.responseCache.get.routeKind (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1588:28)\n' +
+    '    at async DevServer.renderToResponseWithComponentsImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1496:28)\n' +
+    '    at async DevServer.renderPageComponent (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1924:24)\n' +
+    '    at async DevServer.renderToResponseImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1962:32)\n' +
+    '    at async DevServer.pipeImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:922:25)\n' +
+    '    at async NextNodeServer.handleCatchallRenderRequest (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/next-server.js:272:17)\n' +
+    '    at async DevServer.handleRequestImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:818:17)\n' +
+    '    at async /home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/dev/next-dev-server.js:339:20\n' +
+    '    at async Span.traceAsyncFn (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/trace/trace.js:154:20)\n' +
+    '    at async DevServer.handleRequest (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/dev/next-dev-server.js:336:24)\n' +
+    '    at async invokeRender (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/router-server.js:179:21)\n' +
+    '    at async handleRequest (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/router-server.js:359:24)\n' +
+    '    at async requestHandlerImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/router-server.js:383:13)\n' +
+    '    at async Server.requestListener (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/start-server.js:141:13)',
+  duration: 251,
+  clientIP: '::1'
+}
+ POST /api/upload 500 in 312ms
+ ✓ Compiled in 104ms (460 modules)
+[UPLOAD] Upload request started {
+  jobId: 'job_1763497276551_9wupl5u',
+  clientIP: '::1',
+  fileName: 'test_audio.mp3',
+  fileSize: 34,
+  fileType: 'application/octet-stream',
+  title: 'Test Song',
+  artist: 'Test Artist',
+  album: '',
+  duration: 1
+}
+[UPLOAD] Upload route error {
+  jobId: 'job_1763497276551_9wupl5u',
+  errorType: 'validation',
+  errorMessage: 'HTTP 422: {"detail":[{"type":"missing","loc":["body","media_type"],"msg":"Field required","input":null}]}',
+  stack: 'MediaServerError: HTTP 422: {"detail":[{"type":"missing","loc":["body","media_type"],"msg":"Field required","input":null}]}\n' +
+    '    at MediaServerClient.request (webpack-internal:///(rsc)/../packages/media-sdk/src/client.js:487:23)\n' +
+    '    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n' +
+    '    at async Object.uploadFile (webpack-internal:///(rsc)/../agent/src/tools/mediaServer.ts:17:16)\n' +
+    '    at async POST (webpack-internal:///(rsc)/./app/api/upload/route.ts:127:30)\n' +
+    '    at async /home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:57228\n' +
+    '    at async eT.execute (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:46851)\n' +
+    '    at async eT.handle (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:58760)\n' +
+    '    at async doRender (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1366:42)\n' +
+    '    at async cacheEntry.responseCache.get.routeKind (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1588:28)\n' +
+    '    at async DevServer.renderToResponseWithComponentsImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1496:28)\n' +
+    '    at async DevServer.renderPageComponent (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1924:24)\n' +
+    '    at async DevServer.renderToResponseImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1962:32)\n' +
+    '    at async DevServer.pipeImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:922:25)\n' +
+    '    at async NextNodeServer.handleCatchallRenderRequest (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/next-server.js:272:17)\n' +
+    '    at async DevServer.handleRequestImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:818:17)\n' +
+    '    at async /home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/dev/next-dev-server.js:339:20\n' +
+    '    at async Span.traceAsyncFn (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/trace/trace.js:154:20)\n' +
+    '    at async DevServer.handleRequest (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/dev/next-dev-server.js:336:24)\n' +
+    '    at async invokeRender (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/router-server.js:179:21)\n' +
+    '    at async handleRequest (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/router-server.js:359:24)\n' +
+    '    at async requestHandlerImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/router-server.js:383:13)\n' +
+    '    at async Server.requestListener (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/start-server.js:141:13)',
+  duration: 685,
+  clientIP: '::1'
+}
+ POST /api/upload 400 in 713ms
+[UPLOAD] Upload request started {
+  jobId: 'job_1763497289850_r3wmbe0',
+  clientIP: '::1',
+  fileName: 'test_audio.mp3',
+  fileSize: 34,
+  fileType: 'application/octet-stream',
+  title: 'Test Song',
+  artist: 'Test Artist',
+  album: '',
+  duration: 0
+}
+[UPLOAD] Upload route error {
+  jobId: 'job_1763497289850_r3wmbe0',
+  errorType: 'validation',
+  errorMessage: 'HTTP 422: {"detail":[{"type":"missing","loc":["body","media_type"],"msg":"Field required","input":null}]}',
+  stack: 'MediaServerError: HTTP 422: {"detail":[{"type":"missing","loc":["body","media_type"],"msg":"Field required","input":null}]}\n' +
+    '    at MediaServerClient.request (webpack-internal:///(rsc)/../packages/media-sdk/src/client.js:487:23)\n' +
+    '    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n' +
+    '    at async Object.uploadFile (webpack-internal:///(rsc)/../agent/src/tools/mediaServer.ts:17:16)\n' +
+    '    at async POST (webpack-internal:///(rsc)/./app/api/upload/route.ts:127:30)\n' +
+    '    at async /home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:57228\n' +
+    '    at async eT.execute (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:46851)\n' +
+    '    at async eT.handle (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:58760)\n' +
+    '    at async doRender (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1366:42)\n' +
+    '    at async cacheEntry.responseCache.get.routeKind (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1588:28)\n' +
+    '    at async DevServer.renderToResponseWithComponentsImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1496:28)\n' +
+    '    at async DevServer.renderPageComponent (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1924:24)\n' +
+    '    at async DevServer.renderToResponseImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1962:32)\n' +
+    '    at async DevServer.pipeImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:922:25)\n' +
+    '    at async NextNodeServer.handleCatchallRenderRequest (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/next-server.js:272:17)\n' +
+    '    at async DevServer.handleRequestImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:818:17)\n' +
+    '    at async /home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/dev/next-dev-server.js:339:20\n' +
+    '    at async Span.traceAsyncFn (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/trace/trace.js:154:20)\n' +
+    '    at async DevServer.handleRequest (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/dev/next-dev-server.js:336:24)\n' +
+    '    at async invokeRender (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/router-server.js:179:21)\n' +
+    '    at async handleRequest (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/router-server.js:359:24)\n' +
+    '    at async requestHandlerImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/router-server.js:383:13)\n' +
+    '    at async Server.requestListener (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/start-server.js:141:13)',
+  duration: 627,
+  clientIP: '::1'
+}
+ POST /api/upload 400 in 631ms
+[UPLOAD] Upload request started {
+  jobId: 'job_1763497310244_ojivaxp',
+  clientIP: '::1',
+  fileName: 'test_audio.mp3',
+  fileSize: 34,
+  fileType: 'application/octet-stream',
+  title: 'Test Song',
+  artist: 'Test Artist',
+  album: '',
+  duration: 1
+}
+[UPLOAD] Upload route error {
+  jobId: 'job_1763497310244_ojivaxp',
+  errorType: 'validation',
+  errorMessage: 'HTTP 422: {"detail":[{"type":"missing","loc":["body","media_type"],"msg":"Field required","input":null}]}',
+  stack: 'MediaServerError: HTTP 422: {"detail":[{"type":"missing","loc":["body","media_type"],"msg":"Field required","input":null}]}\n' +
+    '    at MediaServerClient.request (webpack-internal:///(rsc)/../packages/media-sdk/src/client.js:487:23)\n' +
+    '    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n' +
+    '    at async Object.uploadFile (webpack-internal:///(rsc)/../agent/src/tools/mediaServer.ts:17:16)\n' +
+    '    at async POST (webpack-internal:///(rsc)/./app/api/upload/route.ts:127:30)\n' +
+    '    at async /home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:57228\n' +
+    '    at async eT.execute (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:46851)\n' +
+    '    at async eT.handle (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:58760)\n' +
+    '    at async doRender (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1366:42)\n' +
+    '    at async cacheEntry.responseCache.get.routeKind (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1588:28)\n' +
+    '    at async DevServer.renderToResponseWithComponentsImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1496:28)\n' +
+    '    at async DevServer.renderPageComponent (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1924:24)\n' +
+    '    at async DevServer.renderToResponseImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1962:32)\n' +
+    '    at async DevServer.pipeImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:922:25)\n' +
+    '    at async NextNodeServer.handleCatchallRenderRequest (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/next-server.js:272:17)\n' +
+    '    at async DevServer.handleRequestImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:818:17)\n' +
+    '    at async /home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/dev/next-dev-server.js:339:20\n' +
+    '    at async Span.traceAsyncFn (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/trace/trace.js:154:20)\n' +
+    '    at async DevServer.handleRequest (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/dev/next-dev-server.js:336:24)\n' +
+    '    at async invokeRender (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/router-server.js:179:21)\n' +
+    '    at async handleRequest (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/router-server.js:359:24)\n' +
+    '    at async requestHandlerImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/router-server.js:383:13)\n' +
+    '    at async Server.requestListener (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/start-server.js:141:13)',
+  duration: 703,
+  clientIP: '::1'
+}
+ POST /api/upload 400 in 710ms
+ ✓ Compiled in 168ms (513 modules)
+[UPLOAD] Upload request started {
+  jobId: 'job_1763497320983_jf2hvvy',
+  clientIP: '::1',
+  fileName: 'test_audio.mp3',
+  fileSize: 34,
+  fileType: 'application/octet-stream',
+  title: 'Test Song',
+  artist: 'Test Artist',
+  album: '',
+  duration: 1
+}
+[UPLOAD] Upload route error {
+  jobId: 'job_1763497320983_jf2hvvy',
+  errorType: 'internal',
+  errorMessage: 'MediaServerError: HTTP 400: {"detail":"There was an error parsing the body"}',
+  stack: 'Error: MediaServerError: HTTP 400: {"detail":"There was an error parsing the body"}\n' +
+    '    at Object.uploadFile (webpack-internal:///(rsc)/../agent/src/tools/mediaServer.ts:34:19)\n' +
+    '    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n' +
+    '    at async POST (webpack-internal:///(rsc)/./app/api/upload/route.ts:127:30)\n' +
+    '    at async /home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:57228\n' +
+    '    at async eT.execute (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:46851)\n' +
+    '    at async eT.handle (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:58760)\n' +
+    '    at async doRender (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1366:42)\n' +
+    '    at async cacheEntry.responseCache.get.routeKind (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1588:28)\n' +
+    '    at async DevServer.renderToResponseWithComponentsImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1496:28)\n' +
+    '    at async DevServer.renderPageComponent (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1924:24)\n' +
+    '    at async DevServer.renderToResponseImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1962:32)\n' +
+    '    at async DevServer.pipeImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:922:25)\n' +
+    '    at async NextNodeServer.handleCatchallRenderRequest (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/next-server.js:272:17)\n' +
+    '    at async DevServer.handleRequestImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:818:17)\n' +
+    '    at async /home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/dev/next-dev-server.js:339:20\n' +
+    '    at async Span.traceAsyncFn (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/trace/trace.js:154:20)\n' +
+    '    at async DevServer.handleRequest (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/dev/next-dev-server.js:336:24)\n' +
+    '    at async invokeRender (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/router-server.js:179:21)\n' +
+    '    at async handleRequest (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/router-server.js:359:24)\n' +
+    '    at async requestHandlerImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/router-server.js:383:13)\n' +
+    '    at async Server.requestListener (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/start-server.js:141:13)',
+  duration: 581,
+  clientIP: '::1'
+}
+ POST /api/upload 500 in 616ms
+[UPLOAD] Upload request started {
+  jobId: 'job_1763497355702_wpd22jc',
+  clientIP: '::1',
+  fileName: 'test_audio.mp3',
+  fileSize: 10240,
+  fileType: 'application/octet-stream',
+  title: 'Test Song',
+  artist: 'Test Artist',
+  album: '',
+  duration: 1
+}
+[UPLOAD] Upload route error {
+  jobId: 'job_1763497355702_wpd22jc',
+  errorType: 'internal',
+  errorMessage: 'MediaServerError: HTTP 400: {"detail":"There was an error parsing the body"}',
+  stack: 'Error: MediaServerError: HTTP 400: {"detail":"There was an error parsing the body"}\n' +
+    '    at Object.uploadFile (webpack-internal:///(rsc)/../agent/src/tools/mediaServer.ts:34:19)\n' +
+    '    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n' +
+    '    at async POST (webpack-internal:///(rsc)/./app/api/upload/route.ts:127:30)\n' +
+    '    at async /home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:57228\n' +
+    '    at async eT.execute (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:46851)\n' +
+    '    at async eT.handle (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:58760)\n' +
+    '    at async doRender (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1366:42)\n' +
+    '    at async cacheEntry.responseCache.get.routeKind (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1588:28)\n' +
+    '    at async DevServer.renderToResponseWithComponentsImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1496:28)\n' +
+    '    at async DevServer.renderPageComponent (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1924:24)\n' +
+    '    at async DevServer.renderToResponseImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1962:32)\n' +
+    '    at async DevServer.pipeImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:922:25)\n' +
+    '    at async NextNodeServer.handleCatchallRenderRequest (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/next-server.js:272:17)\n' +
+    '    at async DevServer.handleRequestImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:818:17)\n' +
+    '    at async /home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/dev/next-dev-server.js:339:20\n' +
+    '    at async Span.traceAsyncFn (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/trace/trace.js:154:20)\n' +
+    '    at async DevServer.handleRequest (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/dev/next-dev-server.js:336:24)\n' +
+    '    at async invokeRender (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/router-server.js:179:21)\n' +
+    '    at async handleRequest (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/router-server.js:359:24)\n' +
+    '    at async requestHandlerImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/router-server.js:383:13)\n' +
+    '    at async Server.requestListener (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/start-server.js:141:13)',
+  duration: 666,
+  clientIP: '::1'
+}
+ POST /api/upload 500 in 672ms
+ ✓ Compiled in 99ms (513 modules)
+[UPLOAD] Upload request started {
+  jobId: 'job_1763497365591_yzf52ex',
+  clientIP: '::1',
+  fileName: 'test_audio.mp3',
+  fileSize: 10240,
+  fileType: 'application/octet-stream',
+  title: 'Test Song',
+  artist: 'Test Artist',
+  album: '',
+  duration: 1
+}
+[UPLOAD] Upload route error {
+  jobId: 'job_1763497365591_yzf52ex',
+  errorType: 'validation',
+  errorMessage: 'MediaServerError: HTTP 422: {"detail":[{"type":"missing","loc":["body","media_type"],"msg":"Field required","input":null}]}',
+  stack: 'Error: MediaServerError: HTTP 422: {"detail":[{"type":"missing","loc":["body","media_type"],"msg":"Field required","input":null}]}\n' +
+    '    at Object.uploadFile (webpack-internal:///(rsc)/../agent/src/tools/mediaServer.ts:33:19)\n' +
+    '    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n' +
+    '    at async POST (webpack-internal:///(rsc)/./app/api/upload/route.ts:127:30)\n' +
+    '    at async /home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:57228\n' +
+    '    at async eT.execute (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:46851)\n' +
+    '    at async eT.handle (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:58760)\n' +
+    '    at async doRender (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1366:42)\n' +
+    '    at async cacheEntry.responseCache.get.routeKind (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1588:28)\n' +
+    '    at async DevServer.renderToResponseWithComponentsImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1496:28)\n' +
+    '    at async DevServer.renderPageComponent (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1924:24)\n' +
+    '    at async DevServer.renderToResponseImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1962:32)\n' +
+    '    at async DevServer.pipeImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:922:25)\n' +
+    '    at async NextNodeServer.handleCatchallRenderRequest (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/next-server.js:272:17)\n' +
+    '    at async DevServer.handleRequestImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:818:17)\n' +
+    '    at async /home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/dev/next-dev-server.js:339:20\n' +
+    '    at async Span.traceAsyncFn (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/trace/trace.js:154:20)\n' +
+    '    at async DevServer.handleRequest (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/dev/next-dev-server.js:336:24)\n' +
+    '    at async invokeRender (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/router-server.js:179:21)\n' +
+    '    at async handleRequest (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/router-server.js:359:24)\n' +
+    '    at async requestHandlerImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/router-server.js:383:13)\n' +
+    '    at async Server.requestListener (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/start-server.js:141:13)',
+  duration: 611,
+  clientIP: '::1'
+}
+ POST /api/upload 400 in 644ms
+ ✓ Compiled in 91ms (460 modules)
+[UPLOAD] Upload request started {
+  jobId: 'job_1763497378123_jzdsayt',
+  clientIP: '::1',
+  fileName: 'test_audio.mp3',
+  fileSize: 10240,
+  fileType: 'application/octet-stream',
+  title: 'Test Song',
+  artist: 'Test Artist',
+  album: '',
+  duration: 1
+}
+[UPLOAD] Upload route error {
+  jobId: 'job_1763497378123_jzdsayt',
+  errorType: 'internal',
+  errorMessage: '_observability__WEBPACK_IMPORTED_MODULE_2__.ObservabilityOrchestrator.getInstance is not a function',
+  stack: 'TypeError: _observability__WEBPACK_IMPORTED_MODULE_2__.ObservabilityOrchestrator.getInstance is not a function\n' +
+    '    at new JobStateManager (webpack-internal:///(rsc)/../agent/src/utils/jobState.ts:23:100)\n' +
+    '    at new PipelineOrchestrator (webpack-internal:///(rsc)/../agent/src/orchestrator.ts:18:25)\n' +
+    '    at POST (webpack-internal:///(rsc)/./app/api/upload/route.ts:138:30)\n' +
+    '    at async /home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:57228\n' +
+    '    at async eT.execute (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:46851)\n' +
+    '    at async eT.handle (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:58760)\n' +
+    '    at async doRender (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1366:42)\n' +
+    '    at async cacheEntry.responseCache.get.routeKind (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1588:28)\n' +
+    '    at async DevServer.renderToResponseWithComponentsImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1496:28)\n' +
+    '    at async DevServer.renderPageComponent (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1924:24)\n' +
+    '    at async DevServer.renderToResponseImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:1962:32)\n' +
+    '    at async DevServer.pipeImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:922:25)\n' +
+    '    at async NextNodeServer.handleCatchallRenderRequest (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/next-server.js:272:17)\n' +
+    '    at async DevServer.handleRequestImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/base-server.js:818:17)\n' +
+    '    at async /home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/dev/next-dev-server.js:339:20\n' +
+    '    at async Span.traceAsyncFn (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/trace/trace.js:154:20)\n' +
+    '    at async DevServer.handleRequest (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/dev/next-dev-server.js:336:24)\n' +
+    '    at async invokeRender (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/router-server.js:179:21)\n' +
+    '    at async handleRequest (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/router-server.js:359:24)\n' +
+    '    at async requestHandlerImpl (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/router-server.js:383:13)\n' +
+    '    at async Server.requestListener (/home/bc/media_pipeline_full/node_modules/.pnpm/next@14.2.33_@opentelemetry+api@1.9.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/next/dist/server/lib/start-server.js:141:13)',
+  duration: 705,
+  clientIP: '::1'
+}
+ POST /api/upload 500 in 737ms
+ ✓ Compiled in 313ms (460 modules)
+ ✓ Compiled in 84ms (460 modules)
+ ✓ Compiled in 84ms (460 modules)
+ ✓ Compiled in 85ms (460 modules)
+ ✓ Compiled in 75ms (460 modules)
+ ✓ Compiled in 49ms (48 modules)
+ ⨯ ../agent/src/utils/jobState.ts
+Error: 
+  [31mx[0m Expected ';', '}' or <eof>
+     ,-[[36;1;4m/home/bc/media_pipeline_full/agent/src/utils/jobState.ts[0m:105:1]
+ [2m105[0m |     
+ [2m106[0m |         // Record observability metrics
+ [2m107[0m |         // observability.recordMetric("job_status_transition", 1, "count", {
+ [2m108[0m | [31;1m,[0m[31;1m-[0m[31;1m>[0m       jobId: this.state.jobId,
+ [2m109[0m | [31;1m|[0m[31;1m-[0m[31;1m>[0m       from: previousStatus,
+     : [31;1m`[0m[31;1m---[0m[33;1m          ^[0m
+     : [31;1m`[0m[31;1m---[0m[31;1m-[0m [31;1mThis is the expression part of an expression statement[0m
+ [2m110[0m |           to: status,
+ [2m111[0m |           timestamp: this.state.updatedAt,
+ [2m112[0m |         });
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+../agent/src/utils/jobState.ts
+../agent/src/utils/index.ts
+../agent/src/orchestrator.ts
+./app/api/upload/route.ts
+ ○ Compiling /_not-found ...
+ ⨯ ../agent/src/utils/jobState.ts
+Error: 
+  [31mx[0m Expected ';', '}' or <eof>
+     ,-[[36;1;4m/home/bc/media_pipeline_full/agent/src/utils/jobState.ts[0m:105:1]
+ [2m105[0m |     
+ [2m106[0m |         // Record observability metrics
+ [2m107[0m |         // observability.recordMetric("job_status_transition", 1, "count", {
+ [2m108[0m | [31;1m,[0m[31;1m-[0m[31;1m>[0m       jobId: this.state.jobId,
+ [2m109[0m | [31;1m|[0m[31;1m-[0m[31;1m>[0m       from: previousStatus,
+     : [31;1m`[0m[31;1m---[0m[33;1m          ^[0m
+     : [31;1m`[0m[31;1m---[0m[31;1m-[0m [31;1mThis is the expression part of an expression statement[0m
+ [2m110[0m |           to: status,
+ [2m111[0m |           timestamp: this.state.updatedAt,
+ [2m112[0m |         });
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+../agent/src/utils/jobState.ts
+../agent/src/utils/index.ts
+../agent/src/orchestrator.ts
+./app/api/upload/route.ts
+ ✓ Compiled /_not-found in 116ms (423 modules)
+ ○ Compiling /_error ...
+ ⨯ ../agent/src/utils/jobState.ts
+Error: 
+  [31mx[0m Expected ';', '}' or <eof>
+     ,-[[36;1;4m/home/bc/media_pipeline_full/agent/src/utils/jobState.ts[0m:105:1]
+ [2m105[0m |     
+ [2m106[0m |         // Record observability metrics
+ [2m107[0m |         // observability.recordMetric("job_status_transition", 1, "count", {
+ [2m108[0m | [31;1m,[0m[31;1m-[0m[31;1m>[0m       jobId: this.state.jobId,
+ [2m109[0m | [31;1m|[0m[31;1m-[0m[31;1m>[0m       from: previousStatus,
+     : [31;1m`[0m[31;1m---[0m[33;1m          ^[0m
+     : [31;1m`[0m[31;1m---[0m[31;1m-[0m [31;1mThis is the expression part of an expression statement[0m
+ [2m110[0m |           to: status,
+ [2m111[0m |           timestamp: this.state.updatedAt,
+ [2m112[0m |         });
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+../agent/src/utils/jobState.ts
+../agent/src/utils/index.ts
+../agent/src/orchestrator.ts
+./app/api/upload/route.ts
+ POST /api/upload 500 in 8602ms
+ ⨯ ../agent/src/utils/jobState.ts
+Error: 
+  [31mx[0m Expected ';', '}' or <eof>
+     ,-[[36;1;4m/home/bc/media_pipeline_full/agent/src/utils/jobState.ts[0m:130:1]
+ [2m130[0m |     
+ [2m131[0m |         // Record progress metrics
+ [2m132[0m |         // observability.recordMetric("job_progress_updated", 1, "count", {
+ [2m133[0m | [31;1m,[0m[31;1m-[0m[31;1m>[0m       jobId: this.state.jobId,
+ [2m134[0m | [31;1m|[0m[31;1m-[0m[31;1m>[0m       from: previousProgress,
+     : [31;1m`[0m[31;1m---[0m[33;1m          ^[0m
+     : [31;1m`[0m[31;1m---[0m[31;1m-[0m [31;1mThis is the expression part of an expression statement[0m
+ [2m135[0m |           to: clampedProgress,
+ [2m136[0m |           delta: clampedProgress - previousProgress,
+ [2m137[0m |         });
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+../agent/src/utils/jobState.ts
+../agent/src/utils/index.ts
+../agent/src/orchestrator.ts
+./app/api/upload/route.ts
+ ⨯ ../agent/src/utils/jobState.ts
+Error: 
+  [31mx[0m Expected ';', '}' or <eof>
+     ,-[[36;1;4m/home/bc/media_pipeline_full/agent/src/utils/jobState.ts[0m:129:1]
+ [2m129[0m |     
+ [2m130[0m |         // Record progress metrics
+ [2m131[0m |         // observability.recordMetric("job_progress_updated", 1, "count", {
+ [2m132[0m | [31;1m,[0m[31;1m-[0m[31;1m>[0m       jobId: this.state.jobId,
+ [2m133[0m | [31;1m|[0m[31;1m-[0m[31;1m>[0m       from: previousProgress,
+     : [31;1m`[0m[31;1m---[0m[33;1m          ^[0m
+     : [31;1m`[0m[31;1m---[0m[31;1m-[0m [31;1mThis is the expression part of an expression statement[0m
+ [2m134[0m |           to: clampedProgress,
+ [2m135[0m |           delta: clampedProgress - previousProgress,
+ [2m136[0m |         });
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+../agent/src/utils/jobState.ts
+../agent/src/utils/index.ts
+../agent/src/orchestrator.ts
+./app/api/upload/route.ts
+ ✓ Compiled /_error in 315ms (1230 modules)
+[UPLOAD] Upload request started {
+  jobId: 'job_1763497590358_isuu3sr',
+  clientIP: '::1',
+  fileName: 'test_audio.mp3',
+  fileSize: 10240,
+  fileType: 'application/octet-stream',
+  title: 'Test Song',
+  artist: 'Test Artist',
+  album: '',
+  duration: 1
+}
+[UPLOAD] Pipeline started successfully {
+  jobId: 'job_1763497590358_isuu3sr',
+  pipelineJobId: 'e529af7d-c877-4db4-9d03-0ed03b4b8d26',
+  duration: 829
+}
+ POST /api/upload 201 in 955ms
+[UPLOAD] Pipeline failed for job e529af7d-c877-4db4-9d03-0ed03b4b8d26: Error: Transcription failed: Both Riva and Whisper methods failed
+    at TranscriptionSkill.run (webpack-internal:///(rsc)/../agent/src/skills/transcription.ts:70:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async TranscriptionSkill.runWithRetry (webpack-internal:///(rsc)/../agent/src/skills/transcription.ts:163:24)
+    at async PipelineOrchestrator.run (webpack-internal:///(rsc)/../agent/src/orchestrator.ts:43:41)
+ ✓ Compiled /api/status/[jobId] in 463ms (546 modules)
+ GET /api/status/e529af7d-c877-4db4-9d03-0ed03b4b8d26 200 in 593ms
+ ✓ Compiled in 179ms (421 modules)
+ ✓ Compiled in 106ms (421 modules)
+ ✓ Compiled in 115ms (421 modules)
+ ✓ Compiled in 87ms (421 modules)
+ ✓ Compiled in 107ms (421 modules)
+ ✓ Compiled in 88ms (421 modules)
+[UPLOAD] Upload request started {
+  jobId: 'job_1763497697005_hsesu7h',
+  clientIP: '::1',
+  fileName: 'test_audio.mp3',
+  fileSize: 10240,
+  fileType: 'application/octet-stream',
+  title: 'Test Song 2',
+  artist: 'Test Artist',
+  album: '',
+  duration: 12
+}
+[UPLOAD] Pipeline started successfully {
+  jobId: 'job_1763497697005_hsesu7h',
+  pipelineJobId: '1f022ffe-bbcd-411b-82e9-2cb0951ae1d3',
+  duration: 675
+}
+ POST /api/upload 201 in 705ms
+[UPLOAD] Pipeline failed for job 1f022ffe-bbcd-411b-82e9-2cb0951ae1d3: Error: Transcription failed: Both Riva and Whisper methods failed
+    at TranscriptionSkill.run (webpack-internal:///(rsc)/../agent/src/skills/transcription.ts:70:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async TranscriptionSkill.runWithRetry (webpack-internal:///(rsc)/../agent/src/skills/transcription.ts:163:24)
+    at async PipelineOrchestrator.run (webpack-internal:///(rsc)/../agent/src/orchestrator.ts:43:41)
+ GET /api/status/1f022ffe-bbcd-411b-82e9-2cb0951ae1d3 200 in 46ms
+ ✓ Compiled /api/jobs in 252ms (548 modules)
+ GET /api/jobs 200 in 448ms
+ ✓ Compiled in 275ms (455 modules)
+ ✓ Compiled in 98ms (455 modules)
+ ✓ Compiled in 104ms (421 modules)
+ ✓ Compiled in 98ms (421 modules)
+ ✓ Compiled in 166ms (421 modules)
+ ✓ Compiled in 110ms (421 modules)
+ ✓ Compiled in 69ms (421 modules)
+ ✓ Compiled in 131ms (421 modules)

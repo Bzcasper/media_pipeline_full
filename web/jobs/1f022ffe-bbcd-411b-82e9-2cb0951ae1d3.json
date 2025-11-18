@@ -1,0 +1,21 @@
+{
+  "jobId": "1f022ffe-bbcd-411b-82e9-2cb0951ae1d3",
+  "status": "failed",
+  "progress": 5,
+  "currentStep": "initializing",
+  "steps": [
+    {
+      "name": "transcription",
+      "status": "in_progress",
+      "startTime": "2025-11-18T20:28:17.673Z"
+    }
+  ],
+  "logs": [],
+  "outputs": {},
+  "errors": [
+    "Transcription failed: Both Riva and Whisper methods failed"
+  ],
+  "createdAt": "2025-11-18T20:28:17.666Z",
+  "updatedAt": "2025-11-18T20:28:19.955Z",
+  "retryCount": 0
+}

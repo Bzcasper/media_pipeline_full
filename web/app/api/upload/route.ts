@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { mediaServer } from "@trapgod/agent/tools/mediaServer";
+import { PipelineOrchestrator } from "@trapgod/agent/orchestrator";
 
 // Enhanced validation schema
 const uploadSchema = z.object({
@@ -157,18 +159,12 @@ export async function POST(request: NextRequest) {
       duration: Date.now() - startTime,
     });
 
-    // Simulate media server upload (placeholder implementation)
+    // Upload to media server
     const buffer = Buffer.from(await validatedData.file.arrayBuffer());
-
-    // Mock upload result for demo - replace with actual media server
-    const uploadResult = {
-      file_id: `${jobId}_uploaded`,
-      url: `https://media.example.com/${jobId}.${validatedData.file.name
-        .split(".")
-        .pop()}`,
-      size: validatedData.file.size,
-      uploaded_at: new Date().toISOString(),
-    };
+    const uploadResult = await withTimeout(
+      mediaServer.uploadFile(buffer, "audio"),
+      30000 // 30s timeout for upload
+    ) as { file_id: string; url?: string; size?: number };
 
     // Validate upload result
     if (!uploadResult.file_id) {
@@ -179,11 +175,23 @@ export async function POST(request: NextRequest) {
       throw new Error("Failed to upload audio file to media server");
     }
 
-    // Mock pipeline orchestrator (placeholder implementation)
-    const pipelineResult = await withTimeout(
-      startMockPipeline(uploadResult.file_id, validatedData),
-      30000 // 30s timeout for pipeline start
-    );
+    // Start pipeline orchestrator
+    const orchestrator = new PipelineOrchestrator();
+    const pipelineJobId = orchestrator.getJobId();
+
+    // Run pipeline asynchronously
+    orchestrator
+      .run({
+        audioFileId: uploadResult.file_id,
+        title: validatedData.title,
+        artist: validatedData.artist || undefined,
+        album: validatedData.album || undefined,
+      })
+      .catch((error: any) => {
+        logger.error(`Pipeline failed for job ${pipelineJobId}:`, error);
+      });
+
+    const pipelineResult = { jobId: pipelineJobId, status: "started" };
 
     logger.info("Pipeline started successfully", {
       jobId,
@@ -297,16 +305,4 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Mock pipeline starter (replace with actual implementation)
-async function startMockPipeline(
-  audioFileId: string,
-  data: { title: string; artist?: string; album?: string }
-): Promise<{ jobId: string; status: string }> {
-  // Simulate pipeline delay
-  await new Promise((resolve) => setTimeout(resolve, 100));
 
-  return {
-    jobId: `pipeline_${Date.now()}`,
-    status: "started",
-  };
-}

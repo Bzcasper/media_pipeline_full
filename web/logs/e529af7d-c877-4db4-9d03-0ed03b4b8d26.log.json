@@ -1,0 +1,184 @@
+[
+  {
+    "timestamp": "2025-11-18T20:26:31.185Z",
+    "level": "info",
+    "message": "Starting pipeline orchestration",
+    "data": {
+      "jobId": "e529af7d-c877-4db4-9d03-0ed03b4b8d26",
+      "input": {
+        "audioFileId": "audio_7420398f-04c7-43ff-9187-69e3f5e00459",
+        "title": "Test Song",
+        "artist": "Test Artist"
+      }
+    },
+    "jobId": "e529af7d-c877-4db4-9d03-0ed03b4b8d26",
+    "source": "logger"
+  },
+  {
+    "timestamp": "2025-11-18T20:26:31.189Z",
+    "level": "info",
+    "message": "=== Step 1: Transcription ===",
+    "jobId": "e529af7d-c877-4db4-9d03-0ed03b4b8d26",
+    "source": "logger"
+  },
+  {
+    "timestamp": "2025-11-18T20:26:31.190Z",
+    "level": "info",
+    "message": "Transcription attempt 1/2",
+    "jobId": "e529af7d-c877-4db4-9d03-0ed03b4b8d26",
+    "source": "logger"
+  },
+  {
+    "timestamp": "2025-11-18T20:26:31.190Z",
+    "level": "info",
+    "message": "Starting transcription",
+    "data": {
+      "input": {
+        "audioFileId": "audio_7420398f-04c7-43ff-9187-69e3f5e00459"
+      }
+    },
+    "jobId": "e529af7d-c877-4db4-9d03-0ed03b4b8d26",
+    "source": "logger"
+  },
+  {
+    "timestamp": "2025-11-18T20:26:31.190Z",
+    "level": "info",
+    "message": "Attempting transcription with Riva ASR",
+    "jobId": "e529af7d-c877-4db4-9d03-0ed03b4b8d26",
+    "source": "logger"
+  },
+  {
+    "timestamp": "2025-11-18T20:26:31.190Z",
+    "level": "info",
+    "message": "Downloading audio file from media server",
+    "jobId": "e529af7d-c877-4db4-9d03-0ed03b4b8d26",
+    "source": "logger"
+  },
+  {
+    "timestamp": "2025-11-18T20:26:32.106Z",
+    "level": "warn",
+    "message": "Riva transcription failed, falling back to Whisper",
+    "data": {
+      "error": "HTTP 422: {\"detail\":[{\"type\":\"missing\",\"loc\":[\"body\",\"audio_file\"],\"msg\":\"Field required\",\"input\":null}]}"
+    },
+    "jobId": "e529af7d-c877-4db4-9d03-0ed03b4b8d26",
+    "source": "logger"
+  },
+  {
+    "timestamp": "2025-11-18T20:26:32.106Z",
+    "level": "info",
+    "message": "Attempting transcription with Whisper (Modal)",
+    "jobId": "e529af7d-c877-4db4-9d03-0ed03b4b8d26",
+    "source": "logger"
+  },
+  {
+    "timestamp": "2025-11-18T20:26:32.107Z",
+    "level": "error",
+    "message": "Both Riva and Whisper transcription failed",
+    "data": {
+      "rivaError": "HTTP 422: {\"detail\":[{\"type\":\"missing\",\"loc\":[\"body\",\"audio_file\"],\"msg\":\"Field required\",\"input\":null}]}",
+      "whisperError": "MODAL_JOB_URL environment variable is not set"
+    },
+    "jobId": "e529af7d-c877-4db4-9d03-0ed03b4b8d26",
+    "source": "logger"
+  },
+  {
+    "timestamp": "2025-11-18T20:26:32.107Z",
+    "level": "warn",
+    "message": "Transcription attempt 1 failed",
+    "data": {
+      "error": "Transcription failed: Both Riva and Whisper methods failed"
+    },
+    "jobId": "e529af7d-c877-4db4-9d03-0ed03b4b8d26",
+    "source": "logger"
+  },
+  {
+    "timestamp": "2025-11-18T20:26:32.107Z",
+    "level": "info",
+    "message": "Retrying in 1000ms...",
+    "jobId": "e529af7d-c877-4db4-9d03-0ed03b4b8d26",
+    "source": "logger"
+  },
+  {
+    "timestamp": "2025-11-18T20:26:33.107Z",
+    "level": "info",
+    "message": "Transcription attempt 2/2",
+    "jobId": "e529af7d-c877-4db4-9d03-0ed03b4b8d26",
+    "source": "logger"
+  },
+  {
+    "timestamp": "2025-11-18T20:26:33.108Z",
+    "level": "info",
+    "message": "Starting transcription",
+    "data": {
+      "input": {
+        "audioFileId": "audio_7420398f-04c7-43ff-9187-69e3f5e00459"
+      }
+    },
+    "jobId": "e529af7d-c877-4db4-9d03-0ed03b4b8d26",
+    "source": "logger"
+  },
+  {
+    "timestamp": "2025-11-18T20:26:33.108Z",
+    "level": "info",
+    "message": "Attempting transcription with Riva ASR",
+    "jobId": "e529af7d-c877-4db4-9d03-0ed03b4b8d26",
+    "source": "logger"
+  },
+  {
+    "timestamp": "2025-11-18T20:26:33.108Z",
+    "level": "info",
+    "message": "Downloading audio file from media server",
+    "jobId": "e529af7d-c877-4db4-9d03-0ed03b4b8d26",
+    "source": "logger"
+  },
+  {
+    "timestamp": "2025-11-18T20:26:33.547Z",
+    "level": "warn",
+    "message": "Riva transcription failed, falling back to Whisper",
+    "data": {
+      "error": "HTTP 422: {\"detail\":[{\"type\":\"missing\",\"loc\":[\"body\",\"audio_file\"],\"msg\":\"Field required\",\"input\":null}]}"
+    },
+    "jobId": "e529af7d-c877-4db4-9d03-0ed03b4b8d26",
+    "source": "logger"
+  },
+  {
+    "timestamp": "2025-11-18T20:26:33.547Z",
+    "level": "info",
+    "message": "Attempting transcription with Whisper (Modal)",
+    "jobId": "e529af7d-c877-4db4-9d03-0ed03b4b8d26",
+    "source": "logger"
+  },
+  {
+    "timestamp": "2025-11-18T20:26:33.547Z",
+    "level": "error",
+    "message": "Both Riva and Whisper transcription failed",
+    "data": {
+      "rivaError": "HTTP 422: {\"detail\":[{\"type\":\"missing\",\"loc\":[\"body\",\"audio_file\"],\"msg\":\"Field required\",\"input\":null}]}",
+      "whisperError": "MODAL_JOB_URL environment variable is not set"
+    },
+    "jobId": "e529af7d-c877-4db4-9d03-0ed03b4b8d26",
+    "source": "logger"
+  },
+  {
+    "timestamp": "2025-11-18T20:26:33.547Z",
+    "level": "warn",
+    "message": "Transcription attempt 2 failed",
+    "data": {
+      "error": "Transcription failed: Both Riva and Whisper methods failed"
+    },
+    "jobId": "e529af7d-c877-4db4-9d03-0ed03b4b8d26",
+    "source": "logger"
+  },
+  {
+    "timestamp": "2025-11-18T20:26:33.547Z",
+    "level": "error",
+    "message": "Pipeline failed",
+    "data": {
+      "error": "Transcription failed: Both Riva and Whisper methods failed",
+      "stack": "Error: Transcription failed: Both Riva and Whisper methods failed\n    at TranscriptionSkill.run (webpack-internal:///(rsc)/../agent/src/skills/transcription.ts:70:23)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async TranscriptionSkill.runWithRetry (webpack-internal:///(rsc)/../agent/src/skills/transcription.ts:163:24)\n    at async PipelineOrchestrator.run (webpack-internal:///(rsc)/../agent/src/orchestrator.ts:43:41)"
+    },
+    "jobId": "e529af7d-c877-4db4-9d03-0ed03b4b8d26",
+    "source": "logger"
+  }
+]

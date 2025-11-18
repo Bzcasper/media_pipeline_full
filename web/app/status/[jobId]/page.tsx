@@ -40,9 +40,34 @@ export default function StatusPage() {
 
   useEffect(() => {
     fetchJobStatus();
-    const interval = setInterval(fetchJobStatus, 3000);
+
+    // Only poll if job is not completed or failed
+    if (job && (job.status === 'completed' || job.status === 'failed')) {
+      return;
+    }
+
+    // Adaptive polling: faster for active processing, slower for waiting
+    const isActive = job && ['processing', 'transcribing', 'generating_metadata', 'generating_visuals', 'creating_video'].includes(job.status);
+    const pollInterval = isActive ? 2000 : 5000; // 2s for active, 5s for waiting
+
+    const interval = setInterval(fetchJobStatus, pollInterval);
     return () => clearInterval(interval);
-  }, [jobId]);
+  }, [jobId, job?.status]);
+
+  // Show completion notification
+  useEffect(() => {
+    if (job && job.status === 'completed') {
+      // Visual feedback for completion
+      if (typeof window !== 'undefined') {
+        // Simple notification
+        alert('🎉 Job completed successfully!');
+      }
+    } else if (job && job.status === 'failed') {
+      if (typeof window !== 'undefined') {
+        alert('❌ Job failed. Check logs for details.');
+      }
+    }
+  }, [job?.status]);
 
   const fetchJobStatus = async () => {
     try {

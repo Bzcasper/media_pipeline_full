@@ -1,558 +1,338 @@
-/**
- * Media Server SDK Client
- * Comprehensive TypeScript client for GPU Media Server API
- */
+// src/client.ts
+import type * as types from './types';
+import { toFormData } from './core';
 
-import FormData from 'form-data';
-import * as types from './types';
-
-export interface MediaServerConfig {
-  baseUrl: string;
-  timeout?: number;
-  headers?: Record<string, string>;
+export interface MediaClientOptions {
+  baseURL: string;
+  fetch?: typeof fetch;
 }
 
-export class MediaServerClient {
-  private baseUrl: string;
-  private timeout: number;
-  private headers: Record<string, string>;
+export class MediaClient {
+  private baseURL: string;
+  private fetch: typeof fetch;
 
-  constructor(config?: Partial<MediaServerConfig>) {
-    this.baseUrl = config?.baseUrl || process.env.MEDIA_SERVER_URL || '';
-    this.timeout = config?.timeout || 300000; // 5 minutes default
-    this.headers = config?.headers || {};
+  constructor(options: MediaClientOptions) {
+    this.baseURL = options.baseURL;
+    this.fetch = options.fetch || globalThis.fetch;
   }
 
-  /**
-   * Generic request handler with error handling
-   */
-  private async request<T>(
-    endpoint: string,
-    options: RequestInit = {}
-  ): Promise<T> {
-    const url = `${this.baseUrl}${endpoint}`;
+  private async request(path: string, options: RequestInit = {}): Promise<any> {
+    const url = `${this.baseURL}${path}`;
 
-    try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), this.timeout);
-
-      const response = await fetch(url, {
-        ...options,
-        headers: {
-          ...this.headers,
-          ...options.headers,
-        },
-        signal: controller.signal,
-      });
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new types.MediaServerError(
-          `HTTP ${response.status}: ${errorText}`,
-          response.status,
-          errorText
-        );
-      }
-
-      // Check if response is JSON
-      const contentType = response.headers.get('content-type');
-      if (contentType?.includes('application/json')) {
-        return (await response.json()) as T;
-      }
-
-      // Return as any for binary/file responses
-      return response as any;
-    } catch (error) {
-      if (error instanceof types.MediaServerError) {
-        throw error;
-      }
-      throw new types.MediaServerError(
-        `Request failed: ${error instanceof Error ? error.message : 'Unknown error'}`
-      );
-    }
-  }
-
-  /**
-   * Helper to create FormData from params
-   */
-  private createFormData(params: Record<string, any>): FormData {
-    const formData = new FormData();
-
-    for (const [key, value] of Object.entries(params)) {
-      if (value !== undefined && value !== null) {
-        if (value instanceof Buffer || value instanceof Blob) {
-          formData.append(key, value, 'file');
-        } else if (typeof value === 'object' && value.name) {
-          // File object
-          formData.append(key, value);
-        } else {
-          formData.append(key, String(value));
-        }
-      }
+    // Let the browser or form-data library set the Content-Type header for multipart requests.
+    if (options.body instanceof FormData && options.headers) {
+        delete (options.headers as Record<string, string>)['Content-Type'];
     }
 
-    return formData;
-  }
+    const response = await this.fetch(url, options);
 
-  /**
-   * Helper to create URLSearchParams
-   */
-  private createURLParams(params: Record<string, any>): URLSearchParams {
-    const urlParams = new URLSearchParams();
-
-    for (const [key, value] of Object.entries(params)) {
-      if (value !== undefined && value !== null) {
-        urlParams.append(key, String(value));
-      }
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: response.statusText }));
+      throw new Error(`HTTP error! status: ${response.status}, details: ${JSON.stringify(errorData)}`);
     }
-
-    return urlParams;
+    return response.json();
   }
 
-  // ==================== STORAGE ====================
+  // AUDIO TOOLS
 
-  storage = {
-    /**
-     * Upload a file to the media server
-     */
-    upload: async (params: types.UploadFileParams): Promise<types.MediaServerResponse> => {
-      const formData = this.createFormData(params as any);
-      return this.request('/api/v1/media/storage', {
-        method: 'POST',
-        body: formData as any,
-      });
-    },
-
-    /**
-     * Download a file by its ID
-     */
-    download: async (fileId: string): Promise<Response> => {
-      return this.request(`/api/v1/media/storage/${fileId}`, {
-        method: 'GET',
-      });
-    },
-
-    /**
-     * Delete a file by its ID
-     */
-    delete: async (fileId: string): Promise<types.MediaServerResponse> => {
-      return this.request(`/api/v1/media/storage/${fileId}`, {
-        method: 'DELETE',
-      });
-    },
-
-    /**
-     * Check file status
-     */
-    status: async (fileId: string): Promise<types.FileStatus> => {
-      return this.request(`/api/v1/media/storage/${fileId}/status`, {
-        method: 'GET',
-      });
-    },
-  };
-
-  // ==================== AUDIO TOOLS ====================
-
-  audio = {
-    /**
-     * Transcribe audio file to text using Riva ASR
-     */
-    transcribe: async (params: types.TranscribeParams): Promise<types.TranscriptionResult> => {
-      const formData = this.createFormData(params as any);
-      return this.request('/api/v1/media/audio-tools/transcribe', {
-        method: 'POST',
-        body: formData as any,
-      });
-    },
-
-    /**
-     * Get audio file information
-     */
-    info: async (fileId: string): Promise<any> => {
-      return this.request(`/api/v1/media/audio-tools/info/${fileId}`, {
-        method: 'GET',
-      });
-    },
-
-    /**
-     * Merge multiple audio files
-     */
-    merge: async (params: types.MergeAudiosParams): Promise<types.MediaServerResponse> => {
-      const urlParams = this.createURLParams(params as any);
-      return this.request('/api/v1/media/audio-tools/merge', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: urlParams,
-      });
-    },
-
-    /**
-     * Extend audio to specified duration
-     */
-    extend: async (params: types.ExtendAudioParams): Promise<types.MediaServerResponse> => {
-      const urlParams = this.createURLParams(params as any);
-      return this.request('/api/v1/media/audio-tools/extend-audio', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: urlParams,
-      });
-    },
-
-    /**
-     * Align script to audio and return word timings
-     */
-    alignScript: async (params: types.AlignScriptParams): Promise<types.AlignScriptResult> => {
-      const urlParams = this.createURLParams(params as any);
-      return this.request('/api/v1/media/audio-tools/align-script', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: urlParams,
-      });
-    },
-
-    /**
-     * TTS Services
-     */
-    tts: {
-      /**
-       * Get available Kokoro TTS voices
-       */
-      getKokoroVoices: async (): Promise<string[]> => {
-        return this.request('/api/v1/media/audio-tools/tts/kokoro/voices', {
-          method: 'GET',
-        });
-      },
-
-      /**
-       * Generate audio using Kokoro TTS
-       */
-      kokoro: async (params: types.KokoroTTSParams): Promise<types.MediaServerResponse> => {
-        const urlParams = this.createURLParams(params as any);
-        return this.request('/api/v1/media/audio-tools/tts/kokoro', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: urlParams,
-        });
-      },
-
-      /**
-       * Get available Chatterbox TTS languages
-       */
-      getChatterboxLanguages: async (): Promise<string[]> => {
-        return this.request('/api/v1/media/audio-tools/tts/chatterbox/languages', {
-          method: 'GET',
-        });
-      },
-
-      /**
-       * Generate audio using Chatterbox TTS (voice cloning)
-       */
-      chatterbox: async (params: types.ChatterboxTTSParams): Promise<types.MediaServerResponse> => {
-        const formData = this.createFormData(params as any);
-        return this.request('/api/v1/media/audio-tools/tts/chatterbox', {
-          method: 'POST',
-          body: formData as any,
-        });
-      },
-    },
-  };
-
-  // ==================== VIDEO TOOLS ====================
-
-  video = {
-    /**
-     * Merge multiple videos
-     */
-    merge: async (params: types.MergeVideosParams): Promise<types.MediaServerResponse> => {
-      const urlParams = this.createURLParams(params as any);
-      return this.request('/api/v1/media/video-tools/merge', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: urlParams,
-      });
-    },
-
-    /**
-     * Transcode video to different format/quality
-     */
-    transcode: async (params: types.TranscodeVideoParams): Promise<types.MediaServerResponse> => {
-      const urlParams = this.createURLParams(params as any);
-      return this.request('/api/v1/media/video-tools/transcode', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: urlParams,
-      });
-    },
-
-    /**
-     * Get video file information
-     */
-    info: async (fileId: string): Promise<any> => {
-      return this.request(`/api/v1/media/video-tools/info/${fileId}`, {
-        method: 'GET',
-      });
-    },
-
-    /**
-     * Extract single frame from video
-     */
-    extractFrame: async (videoId: string, timestamp?: number): Promise<types.MediaServerResponse> => {
-      const url = `/api/v1/media/video-tools/extract-frame/${videoId}${
-        timestamp !== undefined ? `?timestamp=${timestamp}` : ''
-      }`;
-      return this.request(url, { method: 'GET' });
-    },
-
-    /**
-     * Extract multiple frames from video URL
-     */
-    extractFrames: async (params: types.ExtractFramesParams): Promise<types.MediaServerResponse> => {
-      const urlParams = this.createURLParams(params as any);
-      return this.request('/api/v1/media/video-tools/extract-frames', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: urlParams,
-      });
-    },
-
-    /**
-     * Match video duration to target or audio
-     */
-    matchDuration: async (params: types.MatchDurationParams): Promise<types.MediaServerResponse> => {
-      const urlParams = this.createURLParams(params as any);
-      return this.request('/api/v1/media/video-tools/match-duration', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: urlParams,
-      });
-    },
-
-    /**
-     * Add overlay to video
-     */
-    addOverlay: async (params: types.AddOverlayParams): Promise<types.MediaServerResponse> => {
-      const urlParams = this.createURLParams(params as any);
-      return this.request('/api/v1/media/video-tools/add-overlay', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: urlParams,
-      });
-    },
-
-    /**
-     * Generate GIF preview from video
-     */
-    generateGif: async (videoId: string, startTime?: number, duration?: number): Promise<types.MediaServerResponse> => {
-      const urlParams = this.createURLParams({
-        video_id: videoId,
-        start_time: startTime,
-        duration,
-      });
-      return this.request('/api/v1/media/video-tools/gif-preview', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: urlParams,
-      });
-    },
-
-    /**
-     * Generate captioned video with TTS
-     */
-    generateCaptionedVideo: async (
-      params: types.GenerateCaptionedVideoParams
-    ): Promise<types.MediaServerResponse> => {
-      const urlParams = this.createURLParams(params as any);
-      return this.request('/api/v1/media/video-tools/generate/tts-captioned-video', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: urlParams,
-      });
-    },
-
-    /**
-     * Create looping video
-     */
-    createLoopingVideo: async (videoId: string): Promise<types.MediaServerResponse> => {
-      const urlParams = this.createURLParams({ video_id: videoId });
-      return this.request('/api/v1/media/video-tools/create-looping-video', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: urlParams,
-      });
-    },
-
-    /**
-     * Generate long-form ambient video
-     */
-    generateLongFormAmbient: async (params: any): Promise<types.MediaServerResponse> => {
-      const urlParams = this.createURLParams(params);
-      return this.request('/api/v1/media/video-tools/long-form-ambient', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: urlParams,
-      });
-    },
-  };
-
-  // ==================== MUSIC TOOLS ====================
-
-  music = {
-    /**
-     * Normalize audio track
-     */
-    normalizeTrack: async (params: types.NormalizeTrackParams): Promise<types.MediaServerResponse> => {
-      const urlParams = this.createURLParams(params as any);
-      return this.request('/api/v1/media/music-tools/normalize-track', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: urlParams,
-      });
-    },
-
-    /**
-     * Analyze track for BPM, key, etc.
-     */
-    analyzeTrack: async (params: types.AnalyzeTrackParams): Promise<any> => {
-      const urlParams = this.createURLParams(params as any);
-      return this.request('/api/v1/media/music-tools/analyze-track', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: urlParams,
-      });
-    },
-
-    /**
-     * Create music video
-     */
-    createMusicVideo: async (params: types.CreateMusicVideoParams): Promise<types.MediaServerResponse> => {
-      const urlParams = this.createURLParams(params as any);
-      return this.request('/api/v1/media/music-tools/create-music-video', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: urlParams,
-      });
-    },
-
-    /**
-     * Create music thumbnail
-     */
-    createThumbnail: async (params: types.CreateMusicThumbnailParams): Promise<types.MediaServerResponse> => {
-      const urlParams = this.createURLParams(params as any);
-      return this.request('/api/v1/media/music-tools/create-thumbnail', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: urlParams,
-      });
-    },
-
-    /**
-     * Create playlist from audio IDs
-     */
-    createPlaylist: async (audioIds: string, includeAnalysis?: boolean): Promise<types.MediaServerResponse> => {
-      const urlParams = this.createURLParams({
-        audio_ids: audioIds,
-        analysis_data: includeAnalysis,
-      });
-      return this.request('/api/v1/media/music-tools/create-playlist', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: urlParams,
-      });
-    },
-
-    /**
-     * Create mix from multiple tracks
-     */
-    createMix: async (audioIds: string, durationMinutes?: number): Promise<types.MediaServerResponse> => {
-      const urlParams = this.createURLParams({
-        audio_ids: audioIds,
-        duration_minutes: durationMinutes,
-      });
-      return this.request('/api/v1/media/music-tools/create-mix', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: urlParams,
-      });
-    },
-  };
-
-  // ==================== UTILITIES ====================
-
-  utils = {
-    /**
-     * Get available fonts
-     */
-    getFonts: async (): Promise<string[]> => {
-      return this.request('/api/v1/media/fonts', {
-        method: 'GET',
-      });
-    },
-
-    /**
-     * Render HTML to image
-     */
-    renderHTML: async (params: types.RenderHTMLParams): Promise<types.MediaServerResponse> => {
-      const urlParams = this.createURLParams(params as any);
-      return this.request('/api/v1/utils/render-html', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: urlParams,
-      });
-    },
-
-    /**
-     * Stitch images together
-     */
-    stitchImages: async (params: types.StitchImagesParams): Promise<types.MediaServerResponse> => {
-      const urlParams = this.createURLParams(params as any);
-      return this.request('/api/v1/utils/stitch-images', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: urlParams,
-      });
-    },
-
-    /**
-     * Get YouTube transcript
-     */
-    getYouTubeTranscript: async (videoId: string): Promise<any> => {
-      return this.request(`/api/v1/utils/youtube-transcript?video_id=${videoId}`, {
-        method: 'GET',
-      });
-    },
-
-    /**
-     * Make image imperfect (remove AI artifacts)
-     */
-    makeImageImperfect: async (imageId: string, options?: {
-      enhance_color?: number;
-      enhance_contrast?: number;
-      noise_strength?: number;
-    }): Promise<types.MediaServerResponse> => {
-      const urlParams = this.createURLParams({
-        image_id: imageId,
-        ...options,
-      });
-      return this.request('/api/v1/utils/make-image-imperfect', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: urlParams,
-      });
-    },
-  };
-
-  // ==================== HEALTH CHECK ====================
-
-  /**
-   * Health check endpoint
-   */
-  health = async (): Promise<any> => {
-    return this.request('/health', {
-      method: 'GET',
+  async transcribeAudio(body: types.BodyTranscribeAudio): Promise<any> {
+    const form = toFormData(body);
+    return this.request('/api/v1/media/audio-tools/transcribe', {
+      method: 'POST',
+      body: form,
     });
-  };
-}
+  }
 
-export default MediaServerClient;
+  async getKokoroVoices(): Promise<any> {
+    return this.request('/api/v1/media/audio-tools/tts/kokoro/voices');
+  }
+
+  async generateKokoroTts(body: types.BodyGenerateKokoroTts): Promise<any> {
+    const form = toFormData(body);
+    return this.request('/api/v1/media/audio-tools/tts/kokoro', {
+      method: 'POST',
+      body: form,
+    });
+  }
+  
+  async getChatterboxLanguages(): Promise<any> {
+    return this.request('/api/v1/media/audio-tools/tts/chatterbox/languages');
+  }
+
+  async generateChatterboxTts(body: types.BodyGenerateChatterboxTts): Promise<any> {
+    const form = toFormData(body);
+    return this.request('/api/v1/media/audio-tools/tts/chatterbox', {
+        method: 'POST',
+        body: form,
+    });
+  }
+
+  async mergeAudios(body: types.BodyMergeAudios): Promise<any> {
+    const form = toFormData(body);
+    return this.request('/api/v1/media/audio-tools/merge', {
+      method: 'POST',
+      body: form,
+    });
+  }
+
+  async trimAudioPauses(body: types.BodyCleanAudioPauses): Promise<any> {
+    const form = toFormData(body);
+    return this.request('/api/v1/media/audio-tools/trim-pauses', {
+        method: 'POST',
+        body: form,
+    });
+  }
+
+  async getAudioInfo(file_id: string): Promise<any> {
+    return this.request(`/api/v1/media/audio-tools/info/${file_id}`);
+  }
+
+  async extendAudio(body: types.BodyExtendAudio): Promise<any> {
+      const form = toFormData(body);
+      return this.request('/api/v1/media/audio-tools/extend-audio', {
+          method: 'POST',
+          body: form,
+      });
+  }
+  
+  async alignScript(body: types.BodyAlignScript): Promise<any> {
+      const form = toFormData(body);
+      return this.request('/api/v1/media/audio-tools/align-script', {
+          method: 'POST',
+          body: form,
+      });
+  }
+
+  // STORAGE
+
+  async uploadFile(body: types.BodyUploadFile): Promise<any> {
+    // Direct implementation for Node.js compatibility
+    const FormData = require('form-data');
+    const form = new FormData();
+
+    if (body.file) {
+      form.append('file', body.file, { filename: 'upload', contentType: 'application/octet-stream' });
+    }
+    if (body.media_type) {
+      form.append('media_type', body.media_type);
+    }
+
+    const url = `${this.baseURL}/api/v1/media/storage`;
+    const response = await this.fetch(url, {
+      method: 'POST',
+      body: form,
+      headers: form.getHeaders ? form.getHeaders() : undefined,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: response.statusText }));
+      throw new Error(`HTTP error! status: ${response.status}, details: ${JSON.stringify(errorData)}`);
+    }
+    return response.json();
+  }
+
+  async downloadFile(file_id: string): Promise<any> {
+    return this.request(`/api/v1/media/storage/${file_id}`);
+  }
+
+  async deleteFile(file_id: string): Promise<any> {
+    return this.request(`/api/v1/media/storage/${file_id}`, { method: 'DELETE' });
+  }
+
+  async getFileStatus(file_id: string): Promise<any> {
+    return this.request(`/api/v1/media/storage/${file_id}/status`);
+  }
+
+  // VIDEO TOOLS
+
+  async mergeVideos(body: types.BodyMergeVideos): Promise<any> {
+      const form = toFormData(body);
+      return this.request('/api/v1/media/video-tools/merge', {
+          method: 'POST',
+          body: form,
+      });
+  }
+
+  async transcodeVideo(body: types.BodyTranscodeVideo): Promise<any> {
+      const form = toFormData(body);
+      return this.request('/api/v1/media/video-tools/transcode', {
+          method: 'POST',
+          body: form,
+      });
+  }
+  
+  async generateGifPreview(body: types.BodyGenerateGifPreview): Promise<any> {
+      const form = toFormData(body);
+      return this.request('/api/v1/media/video-tools/gif-preview', {
+          method: 'POST',
+          body: form,
+      });
+  }
+  
+  async matchDuration(body: types.BodyMatchDuration): Promise<any> {
+      const form = toFormData(body);
+      return this.request('/api/v1/media/video-tools/match-duration', {
+          method: 'POST',
+          body: form,
+      });
+  }
+  
+  async listFonts(): Promise<any> {
+      return this.request('/api/v1/media/fonts');
+  }
+
+  async generateCaptionedVideo(body: types.BodyGenerateCaptionVideo): Promise<any> {
+      const form = toFormData(body);
+      return this.request('/api/v1/media/video-tools/generate/tts-captioned-video', {
+          method: 'POST',
+          body: form,
+      });
+  }
+
+  async addColorkeyOverlay(body: types.BodyAddColorkeyOverlay): Promise<any> {
+      const form = toFormData(body);
+      return this.request('/api/v1/media/video-tools/add-colorkey-overlay', {
+          method: 'POST',
+          body: form,
+      });
+  }
+
+  async addOverlay(body: types.BodyAddOverlay): Promise<any> {
+      const form = toFormData(body);
+      return this.request('/api/v1/media/video-tools/add-overlay', {
+          method: 'POST',
+          body: form,
+      });
+  }
+
+  async extractFrame(video_id: string, timestamp?: number): Promise<any> {
+    const params = new URLSearchParams();
+    if(timestamp) params.append('timestamp', timestamp.toString());
+    return this.request(`/api/v1/media/video-tools/extract-frame/${video_id}?${params.toString()}`);
+  }
+
+  async extractFrameFromUrl(body: types.BodyExtractFrameFromUrl): Promise<any> {
+      const form = toFormData(body);
+      return this.request('/api/v1/media/video-tools/extract-frames', {
+          method: 'POST',
+          body: form,
+      });
+  }
+  
+  async getVideoInfo(file_id: string): Promise<any> {
+      return this.request(`/api/v1/media/video-tools/info/${file_id}`);
+  }
+
+  async generateLongFormAmbientVideo(body: types.BodyGenerateLongFormAmbientVideo): Promise<any> {
+      const form = toFormData(body);
+      return this.request('/api/v1/media/video-tools/long-form-ambient', {
+          method: 'POST',
+          body: form,
+      });
+  }
+
+  async generateRevengeStoryVideo(body: types.RevengeStoryVideoRequest): Promise<any> {
+    const form = toFormData(body);
+    return this.request('/api/v1/media/video-tools/revenge-story', {
+        method: 'POST',
+        body: form,
+    });
+  }
+
+  async createLoopingVideo(body: types.BodyCreateLoopingVideo): Promise<any> {
+      const form = toFormData(body);
+      return this.request('/api/v1/media/video-tools/create-looping-video', {
+          method: 'POST',
+          body: form,
+      });
+  }
+
+  // MUSIC TOOLS
+
+  async normalizeTrack(body: types.BodyNormalizeTrack): Promise<any> {
+      const form = toFormData(body);
+      return this.request('/api/v1/media/music-tools/normalize-track', {
+          method: 'POST',
+          body: form,
+      });
+  }
+
+  async createPlaylist(body: types.BodyCreatePlaylist): Promise<any> {
+      const form = toFormData(body);
+      return this.request('/api/v1/media/music-tools/create-playlist', {
+          method: 'POST',
+          body: form,
+      });
+  }
+
+  async analyzeTrack(body: types.BodyAnalyzeTrack): Promise<any> {
+      const form = toFormData(body);
+      return this.request('/api/v1/media/music-tools/analyze-track', {
+          method: 'POST',
+          body: form,
+      });
+  }
+  
+  async createMix(body: types.BodyCreateMix): Promise<any> {
+      const form = toFormData(body);
+      return this.request('/api/v1/media/music-tools/create-mix', {
+          method: 'POST',
+          body: form,
+      });
+  }
+
+  async createMusicVideo(body: types.BodyCreateMusicVideo): Promise<any> {
+      const form = toFormData(body);
+      return this.request('/api/v1/media/music-tools/create-music-video', {
+          method: 'POST',
+          body: form,
+      });
+  }
+
+  async createMusicThumbnail(body: types.BodyCreateMusicThumbnail): Promise<any> {
+      const form = toFormData(body);
+      return this.request('/api/v1/media/music-tools/create-thumbnail', {
+          method: 'POST',
+          body: form,
+      });
+  }
+
+  // UTILS
+  
+  async getYoutubeTranscript(video_id: string): Promise<any> {
+    const params = new URLSearchParams({ video_id });
+    return this.request(`/api/v1/utils/youtube-transcript?${params.toString()}`);
+  }
+
+  async stitchImages(body: types.BodyStitchImages): Promise<any> {
+      const form = toFormData(body);
+      return this.request('/api/v1/utils/stitch-images', {
+          method: 'POST',
+          body: form,
+      });
+  }
+
+  async makeImageImperfect(body: types.BodyImageUnaize): Promise<any> {
+      const form = toFormData(body);
+      return this.request('/api/v1/utils/make-image-imperfect', {
+          method: 'POST',
+          body: form,
+      });
+  }
+
+  async convertPcmToWav(body: types.BodyConvertPcmToWav): Promise<any> {
+      const form = toFormData(body);
+      return this.request('/api/v1/utils/convert/pcm/wav', {
+          method: 'POST',
+          body: form,
+      });
+  }
+  
+  async renderHtml(body: types.BodyRenderHtml): Promise<any> {
+      const form = toFormData(body);
+      return this.request('/api/v1/utils/render-html', {
+          method: 'POST',
+          body: form,
+      });
+  }
+}

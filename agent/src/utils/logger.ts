@@ -5,7 +5,6 @@
 
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import { ObservabilityOrchestrator } from './observability';
 
 export type LogLevel = 'info' | 'warn' | 'error' | 'debug' | 'success';
 
@@ -20,19 +19,19 @@ export interface LogEntry {
 
 export class Logger {
   private jobId: string;
-  private logs: LogEntry[] = [];
+  private logFile: string;
   private logDir: string;
-  private observability: ObservabilityOrchestrator;
+  private logs: LogEntry[] = [];
 
-  constructor(jobId: string, logDir: string = 'jobs') {
+  constructor(jobId: string, logDir: string = 'logs') {
     this.jobId = jobId;
     this.logDir = logDir;
-    this.observability = ObservabilityOrchestrator.getInstance();
+    this.logFile = path.join(logDir, `${jobId}.log`);
   }
 
   /**
-   * Enhanced logging with observability integration
-   */
+    * Enhanced logging with observability integration
+    */
   log(level: LogLevel, message: string, data?: any): void {
     const entry: LogEntry = {
       timestamp: new Date().toISOString(),
@@ -45,12 +44,18 @@ export class Logger {
 
     this.logs.push(entry);
 
-    // Enhanced observability integration
-    this.observability.recordLog(level, message, {
-      jobId: this.jobId,
-      data,
-      source: 'logger'
-    });
+    // Enhanced observability integration (lazy import to avoid circular dependency)
+    try {
+      const { ObservabilityOrchestrator } = require('./observability');
+      const observability = ObservabilityOrchestrator.getInstance();
+      observability.recordLog(level, message, {
+        jobId: this.jobId,
+        data,
+        source: 'logger'
+      });
+    } catch (error) {
+      // Silently fail if observability is not available
+    }
 
     // Structured logging instead of console
     this.writeStructuredLog(entry);
@@ -101,24 +106,37 @@ export class Logger {
   }
 
   /**
-   * Enhanced persistence with error handling
-   */
+    * Enhanced persistence with error handling
+    */
   async saveLogs(): Promise<void> {
     try {
       await fs.mkdir(this.logDir, { recursive: true });
       const logFile = path.join(this.logDir, `${this.jobId}.log.json`);
       await fs.writeFile(logFile, JSON.stringify(this.logs, null, 2));
-      
-      // Record observability metric
-      this.observability.recordMetric('logs_persisted', 1, 'count', {
-        jobId: this.jobId,
-        logCount: this.logs.length
-      });
+
+      // Record observability metric (lazy import)
+      try {
+        const { ObservabilityOrchestrator } = require('./observability');
+        const observability = ObservabilityOrchestrator.getInstance();
+        observability.recordMetric('logs_persisted', 1, 'count', {
+          jobId: this.jobId,
+          logCount: this.logs.length
+        });
+      } catch (error) {
+        // Silently fail if observability is not available
+      }
     } catch (error) {
-      this.observability.recordError('log_persistence_failed', error, {
-        jobId: this.jobId,
-        logDir: this.logDir
-      });
+      // Record error (lazy import)
+      try {
+        const { ObservabilityOrchestrator } = require('./observability');
+        const observability = ObservabilityOrchestrator.getInstance();
+        observability.recordError('log_persistence_failed', error, {
+          jobId: this.jobId,
+          logDir: this.logDir
+        });
+      } catch (obsError) {
+        // Silently fail if observability is not available
+      }
     }
   }
 

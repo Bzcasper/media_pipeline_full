@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { YouTubeVideoOrchestrator } from "../../../agent/src/youtube-orchestrator";
+import { YouTubeVideoOrchestrator } from "@trapgod/agent/youtube-orchestrator";
 
 export async function POST(request: NextRequest) {
   try {

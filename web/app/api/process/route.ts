@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
 
     // Create orchestrator and start pipeline
     const orchestrator = new PipelineOrchestrator();
-    const jobId = orchestrator.getState().jobId;
+    const jobId = orchestrator.getJobId();
 
     // Run pipeline asynchronously
     orchestrator
@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
         artist: artist?.trim() || undefined,
         album: album?.trim() || undefined,
       })
-      .catch((error) => {
+      .catch((error: any) => {
         console.error(`Pipeline failed for job ${jobId}:`, error);
       });
 

@@ -7,7 +7,7 @@ import {
   formatToolResult,
   isToolCall,
   getToolName,
-} from "../../agent/nextjs-ai-integration";
+} from "@trapgod/agent/nextjs-ai-integration";
 
 // ========== ENHANCED CHAT INTERFACE ==========
 

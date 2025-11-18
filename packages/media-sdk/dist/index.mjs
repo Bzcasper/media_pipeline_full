@@ -1,6 +1,4 @@
-'use strict';
-
-var buffer = require('buffer');
+import { Blob } from 'buffer';
 
 var __require = /* @__PURE__ */ ((x) => typeof require !== "undefined" ? require : typeof Proxy !== "undefined" ? new Proxy(x, {
   get: (a, b) => (typeof require !== "undefined" ? require : a)[b]
@@ -17,7 +15,7 @@ try {
   FormDataImpl = __require("form-data");
 }
 function isUploadable(value) {
-  return Buffer.isBuffer(value) || value instanceof buffer.Blob || value instanceof File || value instanceof Uint8Array || value instanceof ArrayBuffer;
+  return Buffer.isBuffer(value) || value instanceof Blob || value instanceof File || value instanceof Uint8Array || value instanceof ArrayBuffer;
 }
 function toFormData(obj) {
   const form = new FormDataImpl();
@@ -305,8 +303,6 @@ var MediaClient = class {
   }
 };
 
-exports.MediaClient = MediaClient;
-exports.isUploadable = isUploadable;
-exports.toFormData = toFormData;
-//# sourceMappingURL=index.js.map
-//# sourceMappingURL=index.js.map
+export { MediaClient, isUploadable, toFormData };
+//# sourceMappingURL=index.mjs.map
+//# sourceMappingURL=index.mjs.map

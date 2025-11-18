@@ -1,19 +1,28 @@
 {
   "name": "@trapgod/media-sdk",
-  "version": "1.0.0",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "version": "2.0.0",
+  "description": "TypeScript SDK for the Media Server API",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "prepublishOnly": "npm run build",
     "clean": "rm -rf dist"
   },
-  "dependencies": {
-    "form-data": "^4.0.0",
-    "zod": "^3.22.4"
-  },
   "devDependencies": {
-    "@types/node": "^20.10.0",
+    "@types/node": "^20.11.5",
+    "tsup": "^8.0.1",
     "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "form-data": "^4.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

@@ -10,7 +10,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@ai-sdk/react": "^6.0.0",
+    "@ai-sdk/react": "^2.0.94",
     "@ai-sdk/anthropic": "^2.0.45",
     "@ai-sdk/openai": "^2.0.68",
     "@monaco-editor/react": "^4.6.0",
@@ -26,7 +26,8 @@
     "@trapgod/agent": "workspace:*",
     "@trapgod/media-sdk": "workspace:*",
     "@uploadthing/react": "^7.3.3",
-    "ai": "^6.0.0",
+    "ai": "^5.0.94",
+    "@prisma/client": "^5.7.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "lucide-react": "^0.344.0",
@@ -47,6 +48,7 @@
     "@types/uuid": "^9.0.7",
     "autoprefixer": "^10.4.17",
     "eslint": "^8.56.0",
+    "prisma": "^5.7.1",
     "eslint-config-next": "^14.2.0",
     "postcss": "^8.4.33",
     "tailwindcss": "^3.4.1",

@@ -44,6 +44,10 @@ export class PipelineOrchestrator {
     this.logger = new Logger(id);
   }
 
+  getJobId(): string {
+    return this.jobState.getJobId();
+  }
+
   /**
    * Run the complete pipeline
    */

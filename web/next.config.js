@@ -26,6 +26,14 @@ const nextConfig = {
     config,
     { isServer, dev, pages, buildId, defaultLoaders, webpack }
   ) => {
+    // Add path aliases for webpack resolution
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      "@": require("path").join(__dirname, "."),
+      "@trapgod/media-sdk": require("path").join(__dirname, "../packages/media-sdk/src"),
+      "@trapgod/agent": require("path").join(__dirname, "../agent/src"),
+    };
+
     // Optimize for production
     if (!dev && !isServer) {
       config.optimization.splitChunks.cacheGroups.commons = {

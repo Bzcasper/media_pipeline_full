@@ -7,8 +7,7 @@ import { z } from "zod";
 
 const envSchema = z.object({
   // Media Server Configuration
-  MEDIA_SERVER_URL: z.string().url(),
-  MEDIA_SERVER_API_KEY: z.string().min(1),
+  MEDIA_SERVER_URL: z.string().url().optional(),
 
   // Modal Labs Configuration
   MODAL_JOB_URL: z.string().url().optional(),
