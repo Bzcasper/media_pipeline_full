@@ -2,6 +2,35 @@
 type Uploadable = Buffer | Blob | File | ArrayBuffer | Uint8Array;
 
 const getBaseUrl = () => process.env.MEDIA_SERVER_URL || "https://2281a5a294754c19f8c9e2df0be013fb-bobby-casper-4235.aiagentsaz.com";
+const getQwenImageUrl = () => process.env.QWEN_IMAGE_URL || "https://ai-tool-pool--nunchaku-qwen-image-fastapi-fastapi-app.modal.run";
+const getChatUrl = () => process.env.CHAT_API_URL || "https://chatmock-79551411518.us-central1.run.app";
+
+// Helper to poll for job completion
+const pollForCompletion = async (
+  checkFn: () => Promise<{ status: string; result?: any; error?: string }>,
+  options?: { maxAttempts?: number; intervalMs?: number; onPoll?: (attempt: number) => void }
+): Promise<any> => {
+  const maxAttempts = options?.maxAttempts || 120; // 10 minutes at 5s intervals
+  const intervalMs = options?.intervalMs || 5000;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    const response = await checkFn();
+    options?.onPoll?.(attempt);
+
+    if (response.status === 'completed' || response.status === 'success') {
+      return response.result || response;
+    }
+
+    if (response.status === 'failed' || response.status === 'error') {
+      throw new Error(response.error || 'Job failed');
+    }
+
+    // Still processing, wait before next poll
+    await new Promise(resolve => setTimeout(resolve, intervalMs));
+  }
+
+  throw new Error(`Polling timeout after ${maxAttempts} attempts`);
+};
 
 export const mediaServer = {
   /**
@@ -254,6 +283,38 @@ export const mediaServer = {
     return response.json();
   },
 
+  /**
+   * Check job status (for async operations)
+   */
+  getJobStatus: async (jobId: string) => {
+    const url = `${getBaseUrl()}/api/v1/jobs/${jobId}`;
+
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error(`Get job status failed: ${response.status} ${await response.text()}`);
+    }
+
+    return response.json();
+  },
+
+  /**
+   * Wait for a job to complete with polling
+   */
+  waitForJob: async (jobId: string, options?: { maxAttempts?: number; intervalMs?: number }) => {
+    return pollForCompletion(
+      async () => mediaServer.getJobStatus(jobId),
+      {
+        ...options,
+        onPoll: (attempt) => {
+          if (attempt % 6 === 0) { // Log every 30 seconds
+            console.log(`⏳ Still waiting for job ${jobId}... (${attempt * 5}s)`);
+          }
+        }
+      }
+    );
+  },
+
   // Client for compatibility with existing code
   client: {
     utils: {
@@ -304,6 +365,240 @@ export const mediaServer = {
         };
       },
     }
+  },
+
+  /**
+   * Generate AI image using Qwen model (Modal endpoint)
+   */
+  generateAIImage: async (options: {
+    prompt: string;
+    negativePrompt?: string;
+    width?: number;
+    height?: number;
+    cfgScale?: number;
+    seed?: number;
+  }) => {
+    const url = `${getQwenImageUrl()}/generate`;
+    const bearerToken = process.env.QWEN_BEARER_TOKEN || process.env.BEARER_TOKEN;
+
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (bearerToken) {
+      headers['Authorization'] = `Bearer ${bearerToken}`;
+    }
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        prompt: options.prompt,
+        negative_prompt: options.negativePrompt || "",
+        width: options.width || 1024,
+        height: options.height || 1024,
+        true_cfg_scale: options.cfgScale || 1.0,
+        seed: options.seed,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`AI image generation failed: ${response.status} ${await response.text()}`);
+    }
+
+    // Returns raw PNG bytes, upload to media server
+    const imageBuffer = Buffer.from(await response.arrayBuffer());
+    const uploadResult = await mediaServer.uploadFile(imageBuffer, 'image');
+
+    return {
+      imageFileId: uploadResult.file_id,
+      imageUrl: `${getBaseUrl()}/api/v1/media/storage/${uploadResult.file_id}`
+    };
+  },
+
+  /**
+   * Generate storyline video from multiple AI-generated images
+   * Creates images in sequence, animates each, and merges into final video
+   */
+  generateStorylineVideo: async (options: {
+    prompts: string[];
+    negativePrompt?: string;
+    width?: number;
+    height?: number;
+    imageDuration?: number; // seconds per image
+    audioId?: string; // optional background audio
+  }) => {
+    const results: { imageId: string; videoId: string }[] = [];
+
+    console.log(`Generating ${options.prompts.length} images for storyline...`);
+
+    // Generate images in sequence
+    for (let i = 0; i < options.prompts.length; i++) {
+      const prompt = options.prompts[i];
+      console.log(`[${i + 1}/${options.prompts.length}] Generating: ${prompt.substring(0, 50)}...`);
+
+      // Generate AI image
+      const imageResult = await mediaServer.generateAIImage({
+        prompt,
+        negativePrompt: options.negativePrompt,
+        width: options.width || 1024,
+        height: options.height || 1024,
+        seed: Date.now() + i, // Different seed for each
+      });
+
+      // Convert to video using ken burns effect
+      const videoResult = await mediaServer.imageToVideo(
+        imageResult.imageFileId,
+        options.imageDuration || 5
+      );
+
+      results.push({
+        imageId: imageResult.imageFileId,
+        videoId: videoResult.videoFileId,
+      });
+    }
+
+    // Merge all videos
+    const videoIds = results.map(r => r.videoId).join(',');
+    const mergeUrl = `${getBaseUrl()}/api/v1/media/video-tools/merge`;
+
+    const params = new URLSearchParams();
+    params.append('video_ids', videoIds);
+    if (options.audioId) {
+      params.append('background_music_id', options.audioId);
+      params.append('background_music_volume', '0.3');
+    }
+
+    const mergeResponse = await fetch(mergeUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params,
+    });
+
+    if (!mergeResponse.ok) {
+      throw new Error(`Video merge failed: ${mergeResponse.status} ${await mergeResponse.text()}`);
+    }
+
+    const mergeResult = await mergeResponse.json();
+
+    return {
+      finalVideoId: mergeResult.file_id,
+      finalVideoUrl: `${getBaseUrl()}/api/v1/media/storage/${mergeResult.file_id}`,
+      scenes: results,
+    };
+  },
+
+  /**
+   * OpenAI-compatible chat completion
+   */
+  chatCompletion: async (options: {
+    messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }>;
+    model?: string;
+    temperature?: number;
+    maxTokens?: number;
+  }) => {
+    const url = `${getChatUrl()}/v1/chat/completions`;
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: options.model || 'gpt-4',
+        messages: options.messages,
+        temperature: options.temperature ?? 0.7,
+        max_tokens: options.maxTokens || 2048,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Chat completion failed: ${response.status} ${await response.text()}`);
+    }
+
+    const result = await response.json();
+    return {
+      content: result.choices?.[0]?.message?.content || '',
+      usage: result.usage,
+      model: result.model,
+    };
+  },
+
+  /**
+   * Generate storyline prompts using AI chat
+   */
+  generateStorylinePrompts: async (options: {
+    topic: string;
+    numScenes?: number;
+    style?: string;
+  }) => {
+    const numScenes = options.numScenes || 5;
+    const style = options.style || 'cinematic, highly detailed, dramatic lighting';
+
+    const systemPrompt = `You are an expert visual storyteller. Generate ${numScenes} detailed image prompts that tell a compelling visual story. Each prompt should be a single scene description suitable for AI image generation.
+
+Return ONLY a JSON array of strings, each being a detailed prompt. No explanation, just the JSON array.
+
+Example format:
+["Scene 1 description with visual details...", "Scene 2 description...", ...]`;
+
+    const userPrompt = `Create ${numScenes} sequential image prompts for a story about: ${options.topic}
+
+Style requirements: ${style}
+
+Make each scene visually distinct and progressively build the narrative. Include specific visual details like lighting, colors, composition, and mood.`;
+
+    const result = await mediaServer.chatCompletion({
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt },
+      ],
+      temperature: 0.8,
+    });
+
+    try {
+      // Parse the JSON array from the response
+      const prompts = JSON.parse(result.content);
+      return Array.isArray(prompts) ? prompts : [result.content];
+    } catch {
+      // If parsing fails, split by newlines or return as single prompt
+      return result.content.split('\n').filter((p: string) => p.trim().length > 0);
+    }
+  },
+
+  /**
+   * Full AI-powered storyline video generation
+   * Uses AI to generate prompts, then creates images and assembles video
+   */
+  generateAIStorylineVideo: async (options: {
+    topic: string;
+    numScenes?: number;
+    style?: string;
+    imageDuration?: number;
+    audioId?: string;
+    width?: number;
+    height?: number;
+  }) => {
+    console.log('🎬 Generating AI storyline video...');
+    console.log(`Topic: ${options.topic}`);
+
+    // Step 1: Generate prompts using AI
+    console.log('📝 Generating scene prompts with AI...');
+    const prompts = await mediaServer.generateStorylinePrompts({
+      topic: options.topic,
+      numScenes: options.numScenes || 5,
+      style: options.style,
+    });
+    console.log(`Generated ${prompts.length} scene prompts`);
+
+    // Step 2: Generate storyline video from prompts
+    const result = await mediaServer.generateStorylineVideo({
+      prompts,
+      width: options.width || 1024,
+      height: options.height || 1024,
+      imageDuration: options.imageDuration || 5,
+      audioId: options.audioId,
+    });
+
+    return {
+      ...result,
+      prompts,
+    };
   },
 };
 

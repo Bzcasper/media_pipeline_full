@@ -11217,6 +11217,8 @@ var import_zod2 = require("zod");
 
 // src/tools/mediaServer.ts
 var getBaseUrl = () => process.env.MEDIA_SERVER_URL || "https://2281a5a294754c19f8c9e2df0be013fb-bobby-casper-4235.aiagentsaz.com";
+var getQwenImageUrl = () => process.env.QWEN_IMAGE_URL || "https://ai-tool-pool--nunchaku-qwen-image-fastapi-fastapi-app.modal.run";
+var getChatUrl = () => process.env.CHAT_API_URL || "https://chatmock-79551411518.us-central1.run.app";
 var mediaServer = {
   /**
    * Upload a file to the media server
@@ -11456,6 +11458,170 @@ var mediaServer = {
         };
       }
     }
+  },
+  /**
+   * Generate AI image using Qwen model (Modal endpoint)
+   */
+  generateAIImage: async (options) => {
+    const url = `${getQwenImageUrl()}/generate`;
+    const bearerToken = process.env.QWEN_BEARER_TOKEN || process.env.BEARER_TOKEN;
+    const headers = { "Content-Type": "application/json" };
+    if (bearerToken) {
+      headers["Authorization"] = `Bearer ${bearerToken}`;
+    }
+    const response = await fetch(url, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        prompt: options.prompt,
+        negative_prompt: options.negativePrompt || "",
+        width: options.width || 1024,
+        height: options.height || 1024,
+        true_cfg_scale: options.cfgScale || 1,
+        seed: options.seed
+      })
+    });
+    if (!response.ok) {
+      throw new Error(`AI image generation failed: ${response.status} ${await response.text()}`);
+    }
+    const imageBuffer = Buffer.from(await response.arrayBuffer());
+    const uploadResult = await mediaServer.uploadFile(imageBuffer, "image");
+    return {
+      imageFileId: uploadResult.file_id,
+      imageUrl: `${getBaseUrl()}/api/v1/media/storage/${uploadResult.file_id}`
+    };
+  },
+  /**
+   * Generate storyline video from multiple AI-generated images
+   * Creates images in sequence, animates each, and merges into final video
+   */
+  generateStorylineVideo: async (options) => {
+    const results = [];
+    console.log(`Generating ${options.prompts.length} images for storyline...`);
+    for (let i = 0; i < options.prompts.length; i++) {
+      const prompt = options.prompts[i];
+      console.log(`[${i + 1}/${options.prompts.length}] Generating: ${prompt.substring(0, 50)}...`);
+      const imageResult = await mediaServer.generateAIImage({
+        prompt,
+        negativePrompt: options.negativePrompt,
+        width: options.width || 1024,
+        height: options.height || 1024,
+        seed: Date.now() + i
+        // Different seed for each
+      });
+      const videoResult = await mediaServer.imageToVideo(
+        imageResult.imageFileId,
+        options.imageDuration || 5
+      );
+      results.push({
+        imageId: imageResult.imageFileId,
+        videoId: videoResult.videoFileId
+      });
+    }
+    const videoIds = results.map((r) => r.videoId).join(",");
+    const mergeUrl = `${getBaseUrl()}/api/v1/media/video-tools/merge`;
+    const params = new URLSearchParams();
+    params.append("video_ids", videoIds);
+    if (options.audioId) {
+      params.append("background_music_id", options.audioId);
+      params.append("background_music_volume", "0.3");
+    }
+    const mergeResponse = await fetch(mergeUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: params
+    });
+    if (!mergeResponse.ok) {
+      throw new Error(`Video merge failed: ${mergeResponse.status} ${await mergeResponse.text()}`);
+    }
+    const mergeResult = await mergeResponse.json();
+    return {
+      finalVideoId: mergeResult.file_id,
+      finalVideoUrl: `${getBaseUrl()}/api/v1/media/storage/${mergeResult.file_id}`,
+      scenes: results
+    };
+  },
+  /**
+   * OpenAI-compatible chat completion
+   */
+  chatCompletion: async (options) => {
+    const url = `${getChatUrl()}/v1/chat/completions`;
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: options.model || "gpt-4",
+        messages: options.messages,
+        temperature: options.temperature ?? 0.7,
+        max_tokens: options.maxTokens || 2048
+      })
+    });
+    if (!response.ok) {
+      throw new Error(`Chat completion failed: ${response.status} ${await response.text()}`);
+    }
+    const result = await response.json();
+    return {
+      content: result.choices?.[0]?.message?.content || "",
+      usage: result.usage,
+      model: result.model
+    };
+  },
+  /**
+   * Generate storyline prompts using AI chat
+   */
+  generateStorylinePrompts: async (options) => {
+    const numScenes = options.numScenes || 5;
+    const style = options.style || "cinematic, highly detailed, dramatic lighting";
+    const systemPrompt = `You are an expert visual storyteller. Generate ${numScenes} detailed image prompts that tell a compelling visual story. Each prompt should be a single scene description suitable for AI image generation.
+
+Return ONLY a JSON array of strings, each being a detailed prompt. No explanation, just the JSON array.
+
+Example format:
+["Scene 1 description with visual details...", "Scene 2 description...", ...]`;
+    const userPrompt = `Create ${numScenes} sequential image prompts for a story about: ${options.topic}
+
+Style requirements: ${style}
+
+Make each scene visually distinct and progressively build the narrative. Include specific visual details like lighting, colors, composition, and mood.`;
+    const result = await mediaServer.chatCompletion({
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt }
+      ],
+      temperature: 0.8
+    });
+    try {
+      const prompts = JSON.parse(result.content);
+      return Array.isArray(prompts) ? prompts : [result.content];
+    } catch {
+      return result.content.split("\n").filter((p) => p.trim().length > 0);
+    }
+  },
+  /**
+   * Full AI-powered storyline video generation
+   * Uses AI to generate prompts, then creates images and assembles video
+   */
+  generateAIStorylineVideo: async (options) => {
+    console.log("\u{1F3AC} Generating AI storyline video...");
+    console.log(`Topic: ${options.topic}`);
+    console.log("\u{1F4DD} Generating scene prompts with AI...");
+    const prompts = await mediaServer.generateStorylinePrompts({
+      topic: options.topic,
+      numScenes: options.numScenes || 5,
+      style: options.style
+    });
+    console.log(`Generated ${prompts.length} scene prompts`);
+    const result = await mediaServer.generateStorylineVideo({
+      prompts,
+      width: options.width || 1024,
+      height: options.height || 1024,
+      imageDuration: options.imageDuration || 5,
+      audioId: options.audioId
+    });
+    return {
+      ...result,
+      prompts
+    };
   }
 };
 
