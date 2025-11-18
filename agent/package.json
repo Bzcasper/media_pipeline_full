@@ -4,7 +4,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "NODE_OPTIONS='--max-old-space-size=8192' tsc --skipLibCheck",
+    "build": "esbuild src/index.ts --bundle --platform=node --outfile=dist/index.js --format=cjs --external:@google-cloud/storage --external:weaviate-ts-client --external:ai --external:@ai-sdk/anthropic --external:@ai-sdk/openai --external:zod --external:uuid",
     "dev": "tsc --watch --skipLibCheck",
     "clean": "rm -rf dist"
   },
@@ -21,6 +21,7 @@
   },
   "devDependencies": {
     "@types/node": "^20.10.0",
+    "esbuild": "^0.27.0",
     "typescript": "^5.3.3"
   }
 }

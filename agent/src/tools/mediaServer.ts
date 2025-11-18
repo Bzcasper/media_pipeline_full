@@ -11,36 +11,38 @@ export const mediaServer = {
     file: Uploadable,
     mediaType: "audio" | "video" | "image" | "tmp" = "tmp"
   ) => {
-    const url = `${getBaseUrl()}/api/v1/media/storage`;
+    const { exec } = require('child_process');
+    const { promisify } = require('util');
+    const execAsync = promisify(exec);
+    const fs = require('fs/promises');
+    const path = require('path');
+    const os = require('os');
 
     // Convert to Buffer if needed
     let buffer: Buffer;
     if (Buffer.isBuffer(file)) {
       buffer = file;
-    } else if (file instanceof ArrayBuffer || file instanceof Uint8Array) {
+    } else if (file instanceof Uint8Array) {
       buffer = Buffer.from(file);
+    } else if (file instanceof ArrayBuffer) {
+      buffer = Buffer.from(new Uint8Array(file));
     } else {
-      // Handle Blob/File types (browser environment)
       const arrayBuffer = await (file as Blob).arrayBuffer();
-      buffer = Buffer.from(arrayBuffer);
+      buffer = Buffer.from(new Uint8Array(arrayBuffer));
     }
 
-    const FormData = (await import('form-data')).default;
-    const formData = new FormData();
-    formData.append('file', buffer, { filename: `upload.${mediaType}` });
-    formData.append('media_type', mediaType);
+    const tempDir = os.tmpdir();
+    const ext = mediaType === 'image' ? 'png' : mediaType === 'audio' ? 'wav' : mediaType === 'video' ? 'mp4' : 'bin';
+    const tempFile = path.join(tempDir, `upload_${Date.now()}_${Math.random().toString(36).substring(2)}.${ext}`);
 
-    const response = await fetch(url, {
-      method: 'POST',
-      body: formData as any,
-      headers: formData.getHeaders(),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Upload failed: ${response.status} ${await response.text()}`);
+    try {
+      await fs.writeFile(tempFile, buffer);
+      const url = getBaseUrl();
+      const { stdout } = await execAsync(`curl -s -X POST "${url}/api/v1/media/storage" -F "file=@${tempFile}" -F "media_type=${mediaType}"`);
+      return JSON.parse(stdout.trim());
+    } finally {
+      try { await fs.unlink(tempFile); } catch {}
     }
-
-    return response.json();
   },
 
   /**
@@ -79,11 +81,13 @@ export const mediaServer = {
     let buffer: Buffer;
     if (Buffer.isBuffer(audioFile)) {
       buffer = audioFile;
-    } else if (audioFile instanceof ArrayBuffer || audioFile instanceof Uint8Array) {
+    } else if (audioFile instanceof Uint8Array) {
       buffer = Buffer.from(audioFile);
+    } else if (audioFile instanceof ArrayBuffer) {
+      buffer = Buffer.from(new Uint8Array(audioFile));
     } else {
       const arrayBuffer = await (audioFile as Blob).arrayBuffer();
-      buffer = Buffer.from(arrayBuffer);
+      buffer = Buffer.from(new Uint8Array(arrayBuffer));
     }
 
     const FormData = (await import('form-data')).default;
@@ -134,10 +138,13 @@ export const mediaServer = {
       throw new Error(`Image generation failed: ${response.status} ${await response.text()}`);
     }
 
-    const result = await response.json();
+    // The render-html endpoint returns raw PNG bytes, so we need to upload it
+    const imageBuffer = Buffer.from(await response.arrayBuffer());
+    const uploadResult = await mediaServer.uploadFile(imageBuffer, 'image');
+
     return {
-      imageFileId: result.file_id,
-      imageUrl: result.url || `${getBaseUrl()}/api/v1/media/storage/${result.file_id}`
+      imageFileId: uploadResult.file_id,
+      imageUrl: `${getBaseUrl()}/api/v1/media/storage/${uploadResult.file_id}`
     };
   },
 
