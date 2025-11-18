@@ -414,31 +414,104 @@ export const mediaServer = {
   },
 
   /**
+   * Generate TTS audio using Kokoro
+   */
+  generateTTS: async (text: string, voice?: string) => {
+    const url = `${getBaseUrl()}/api/v1/media/audio-tools/tts-kokoro`;
+
+    const params = new URLSearchParams();
+    params.append('text', text);
+    if (voice) params.append('voice', voice);
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params,
+    });
+
+    if (!response.ok) {
+      throw new Error(`TTS generation failed: ${response.status} ${await response.text()}`);
+    }
+
+    const result = await response.json();
+    return {
+      audioFileId: result.file_id,
+      audioUrl: `${getBaseUrl()}/api/v1/media/storage/${result.file_id}`
+    };
+  },
+
+  /**
+   * Generate captioned video from image with TTS voiceover
+   */
+  generateCaptionedClip: async (options: {
+    imageFileId: string;
+    narration: string;
+    voice?: string;
+    captionOn?: boolean;
+  }) => {
+    const url = `${getBaseUrl()}/api/v1/media/video-tools/generate/tts-captioned-video`;
+
+    const params = new URLSearchParams();
+    params.append('background_id', options.imageFileId);
+    params.append('text', options.narration);
+    params.append('kokoro_voice', options.voice || 'af_sarah');
+    params.append('caption_on', (options.captionOn ?? true).toString());
+    params.append('image_effect', 'ken_burns');
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params,
+    });
+
+    if (!response.ok) {
+      throw new Error(`Captioned video generation failed: ${response.status} ${await response.text()}`);
+    }
+
+    const result = await response.json();
+    return {
+      videoFileId: result.file_id,
+      videoUrl: `${getBaseUrl()}/api/v1/media/storage/${result.file_id}`
+    };
+  },
+
+  /**
    * Generate storyline video from multiple AI-generated images
-   * Creates images in sequence, animates each, and merges into final video
+   * Creates images in sequence, animates each with voiceover & captions, and merges
    * IMPORTANT: Processes one at a time, waiting for each to complete
    */
   generateStorylineVideo: async (options: {
     prompts: string[];
+    narrations?: string[]; // voiceover text for each scene
     negativePrompt?: string;
     width?: number;
     height?: number;
-    imageDuration?: number; // seconds per image
-    audioId?: string; // optional background audio
+    imageDuration?: number; // seconds per image (used if no narration)
+    audioId?: string; // optional background music
+    voice?: string; // TTS voice
+    captionOn?: boolean; // show captions
   }) => {
-    const results: { imageId: string; videoId: string; prompt: string }[] = [];
+    const results: { imageId: string; videoId: string; prompt: string; narration?: string }[] = [];
     const totalScenes = options.prompts.length;
+    const hasNarrations = options.narrations && options.narrations.length === totalScenes;
 
     console.log(`\n🎬 Starting storyline generation with ${totalScenes} scenes`);
+    if (hasNarrations) {
+      console.log(`🎙️ Voiceover & captions enabled`);
+    }
     console.log('━'.repeat(50));
 
     // Generate images SEQUENTIALLY - one at a time
     for (let i = 0; i < totalScenes; i++) {
       const prompt = options.prompts[i];
+      const narration = hasNarrations ? options.narrations![i] : undefined;
       const sceneNum = i + 1;
 
       console.log(`\n📸 Scene ${sceneNum}/${totalScenes}`);
       console.log(`Prompt: "${prompt.substring(0, 80)}${prompt.length > 80 ? '...' : ''}"`);
+      if (narration) {
+        console.log(`Narration: "${narration.substring(0, 60)}${narration.length > 60 ? '...' : ''}"`);
+      }
 
       // Step 1: Generate AI image
       console.log(`  → Generating image...`);
@@ -456,20 +529,40 @@ export const mediaServer = {
       // Small delay between operations to avoid overwhelming the server
       await new Promise(resolve => setTimeout(resolve, 1000));
 
-      // Step 2: Convert to video using ken burns effect
-      console.log(`  → Converting to video...`);
-      const videoStartTime = Date.now();
-      const videoResult = await mediaServer.imageToVideo(
-        imageResult.imageFileId,
-        options.imageDuration || 5
-      );
-      const videoTime = ((Date.now() - videoStartTime) / 1000).toFixed(1);
-      console.log(`  ✓ Video created: ${videoResult.videoFileId} (${videoTime}s)`);
+      // Step 2: Convert to video - with or without voiceover/captions
+      let videoResult: { videoFileId: string; videoUrl: string };
+
+      if (narration) {
+        // Generate captioned video with TTS voiceover
+        console.log(`  → Generating video with voiceover & captions...`);
+        const videoStartTime = Date.now();
+        const captionedResult = await mediaServer.generateCaptionedClip({
+          imageFileId: imageResult.imageFileId,
+          narration,
+          voice: options.voice || 'af_sarah',
+          captionOn: options.captionOn ?? true,
+        });
+        const videoTime = ((Date.now() - videoStartTime) / 1000).toFixed(1);
+        console.log(`  ✓ Captioned video created: ${captionedResult.videoFileId} (${videoTime}s)`);
+        videoResult = captionedResult;
+      } else {
+        // Simple image-to-video conversion
+        console.log(`  → Converting to video...`);
+        const videoStartTime = Date.now();
+        const simpleResult = await mediaServer.imageToVideo(
+          imageResult.imageFileId,
+          options.imageDuration || 5
+        );
+        const videoTime = ((Date.now() - videoStartTime) / 1000).toFixed(1);
+        console.log(`  ✓ Video created: ${simpleResult.videoFileId} (${videoTime}s)`);
+        videoResult = simpleResult;
+      }
 
       results.push({
         imageId: imageResult.imageFileId,
         videoId: videoResult.videoFileId,
         prompt,
+        narration,
       });
 
       console.log(`  ✅ Scene ${sceneNum} complete!`);
@@ -556,28 +649,44 @@ export const mediaServer = {
   },
 
   /**
-   * Generate storyline prompts using AI chat
+   * Generate storyline prompts and narrations using AI chat
    */
   generateStorylinePrompts: async (options: {
     topic: string;
     numScenes?: number;
     style?: string;
-  }) => {
+    includeNarrations?: boolean;
+  }): Promise<{ prompts: string[]; narrations?: string[] }> => {
     const numScenes = options.numScenes || 5;
     const style = options.style || 'cinematic, highly detailed, dramatic lighting';
+    const includeNarrations = options.includeNarrations ?? true;
 
-    const systemPrompt = `You are an expert visual storyteller. Generate ${numScenes} detailed image prompts that tell a compelling visual story. Each prompt should be a single scene description suitable for AI image generation.
+    const systemPrompt = includeNarrations
+      ? `You are an expert visual storyteller and narrator. Generate ${numScenes} scenes for a compelling visual story.
+
+For each scene, provide:
+1. An image prompt - detailed visual description for AI image generation
+2. A narration - spoken voiceover text (2-3 sentences, engaging and dramatic)
+
+Return ONLY a JSON object with this format:
+{
+  "prompts": ["Image prompt 1...", "Image prompt 2..."],
+  "narrations": ["Voiceover for scene 1...", "Voiceover for scene 2..."]
+}
+
+No explanation, just the JSON object.`
+      : `You are an expert visual storyteller. Generate ${numScenes} detailed image prompts that tell a compelling visual story.
 
 Return ONLY a JSON array of strings, each being a detailed prompt. No explanation, just the JSON array.
 
 Example format:
 ["Scene 1 description with visual details...", "Scene 2 description...", ...]`;
 
-    const userPrompt = `Create ${numScenes} sequential image prompts for a story about: ${options.topic}
+    const userPrompt = `Create ${numScenes} sequential scenes for a story about: ${options.topic}
 
 Style requirements: ${style}
 
-Make each scene visually distinct and progressively build the narrative. Include specific visual details like lighting, colors, composition, and mood.`;
+Make each scene visually distinct and progressively build the narrative. Include specific visual details like lighting, colors, composition, and mood.${includeNarrations ? ' Write narrations that are engaging and suitable for voiceover.' : ''}`;
 
     const result = await mediaServer.chatCompletion({
       messages: [
@@ -588,18 +697,30 @@ Make each scene visually distinct and progressively build the narrative. Include
     });
 
     try {
-      // Parse the JSON array from the response
-      const prompts = JSON.parse(result.content);
-      return Array.isArray(prompts) ? prompts : [result.content];
+      const parsed = JSON.parse(result.content);
+
+      if (includeNarrations && parsed.prompts && parsed.narrations) {
+        return {
+          prompts: parsed.prompts,
+          narrations: parsed.narrations
+        };
+      } else if (Array.isArray(parsed)) {
+        return { prompts: parsed };
+      } else if (parsed.prompts) {
+        return { prompts: parsed.prompts, narrations: parsed.narrations };
+      }
+
+      return { prompts: [result.content] };
     } catch {
-      // If parsing fails, split by newlines or return as single prompt
-      return result.content.split('\n').filter((p: string) => p.trim().length > 0);
+      // If parsing fails, split by newlines
+      const lines = result.content.split('\n').filter((p: string) => p.trim().length > 0);
+      return { prompts: lines };
     }
   },
 
   /**
    * Full AI-powered storyline video generation
-   * Uses AI to generate prompts, then creates images and assembles video
+   * Uses AI to generate script, prompts, and narrations, then creates video with voiceover
    */
   generateAIStorylineVideo: async (options: {
     topic: string;
@@ -609,31 +730,41 @@ Make each scene visually distinct and progressively build the narrative. Include
     audioId?: string;
     width?: number;
     height?: number;
+    voice?: string;
+    captionOn?: boolean;
   }) => {
     console.log('🎬 Generating AI storyline video...');
     console.log(`Topic: ${options.topic}`);
 
-    // Step 1: Generate prompts using AI
-    console.log('📝 Generating scene prompts with AI...');
-    const prompts = await mediaServer.generateStorylinePrompts({
+    // Step 1: Generate prompts and narrations using AI
+    console.log('📝 Generating scene prompts & narrations with AI...');
+    const storyData = await mediaServer.generateStorylinePrompts({
       topic: options.topic,
       numScenes: options.numScenes || 5,
       style: options.style,
+      includeNarrations: true,
     });
-    console.log(`Generated ${prompts.length} scene prompts`);
+    console.log(`Generated ${storyData.prompts.length} scenes`);
+    if (storyData.narrations) {
+      console.log(`Generated ${storyData.narrations.length} narrations for voiceover`);
+    }
 
-    // Step 2: Generate storyline video from prompts
+    // Step 2: Generate storyline video from prompts with voiceover & captions
     const result = await mediaServer.generateStorylineVideo({
-      prompts,
+      prompts: storyData.prompts,
+      narrations: storyData.narrations,
       width: options.width || 1024,
       height: options.height || 1024,
       imageDuration: options.imageDuration || 5,
       audioId: options.audioId,
+      voice: options.voice || 'af_sarah',
+      captionOn: options.captionOn ?? true,
     });
 
     return {
       ...result,
-      prompts,
+      prompts: storyData.prompts,
+      narrations: storyData.narrations,
     };
   },
 };
