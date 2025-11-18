@@ -416,6 +416,7 @@ export const mediaServer = {
   /**
    * Generate storyline video from multiple AI-generated images
    * Creates images in sequence, animates each, and merges into final video
+   * IMPORTANT: Processes one at a time, waiting for each to complete
    */
   generateStorylineVideo: async (options: {
     prompts: string[];
@@ -425,16 +426,23 @@ export const mediaServer = {
     imageDuration?: number; // seconds per image
     audioId?: string; // optional background audio
   }) => {
-    const results: { imageId: string; videoId: string }[] = [];
+    const results: { imageId: string; videoId: string; prompt: string }[] = [];
+    const totalScenes = options.prompts.length;
 
-    console.log(`Generating ${options.prompts.length} images for storyline...`);
+    console.log(`\n🎬 Starting storyline generation with ${totalScenes} scenes`);
+    console.log('━'.repeat(50));
 
-    // Generate images in sequence
-    for (let i = 0; i < options.prompts.length; i++) {
+    // Generate images SEQUENTIALLY - one at a time
+    for (let i = 0; i < totalScenes; i++) {
       const prompt = options.prompts[i];
-      console.log(`[${i + 1}/${options.prompts.length}] Generating: ${prompt.substring(0, 50)}...`);
+      const sceneNum = i + 1;
 
-      // Generate AI image
+      console.log(`\n📸 Scene ${sceneNum}/${totalScenes}`);
+      console.log(`Prompt: "${prompt.substring(0, 80)}${prompt.length > 80 ? '...' : ''}"`);
+
+      // Step 1: Generate AI image
+      console.log(`  → Generating image...`);
+      const startTime = Date.now();
       const imageResult = await mediaServer.generateAIImage({
         prompt,
         negativePrompt: options.negativePrompt,
@@ -442,20 +450,40 @@ export const mediaServer = {
         height: options.height || 1024,
         seed: Date.now() + i, // Different seed for each
       });
+      const imageTime = ((Date.now() - startTime) / 1000).toFixed(1);
+      console.log(`  ✓ Image generated: ${imageResult.imageFileId} (${imageTime}s)`);
 
-      // Convert to video using ken burns effect
+      // Small delay between operations to avoid overwhelming the server
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Step 2: Convert to video using ken burns effect
+      console.log(`  → Converting to video...`);
+      const videoStartTime = Date.now();
       const videoResult = await mediaServer.imageToVideo(
         imageResult.imageFileId,
         options.imageDuration || 5
       );
+      const videoTime = ((Date.now() - videoStartTime) / 1000).toFixed(1);
+      console.log(`  ✓ Video created: ${videoResult.videoFileId} (${videoTime}s)`);
 
       results.push({
         imageId: imageResult.imageFileId,
         videoId: videoResult.videoFileId,
+        prompt,
       });
+
+      console.log(`  ✅ Scene ${sceneNum} complete!`);
+
+      // Delay before next scene to ensure server is ready
+      if (i < totalScenes - 1) {
+        console.log(`  ⏳ Waiting before next scene...`);
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      }
     }
 
     // Merge all videos
+    console.log(`\n🔗 Merging ${results.length} video clips...`);
+    const mergeStartTime = Date.now();
     const videoIds = results.map(r => r.videoId).join(',');
     const mergeUrl = `${getBaseUrl()}/api/v1/media/video-tools/merge`;
 
@@ -464,6 +492,7 @@ export const mediaServer = {
     if (options.audioId) {
       params.append('background_music_id', options.audioId);
       params.append('background_music_volume', '0.3');
+      console.log(`  → Adding background audio: ${options.audioId}`);
     }
 
     const mergeResponse = await fetch(mergeUrl, {
@@ -477,6 +506,13 @@ export const mediaServer = {
     }
 
     const mergeResult = await mergeResponse.json();
+    const mergeTime = ((Date.now() - mergeStartTime) / 1000).toFixed(1);
+
+    console.log(`\n${'━'.repeat(50)}`);
+    console.log(`✅ Storyline video complete!`);
+    console.log(`   Final video: ${mergeResult.file_id}`);
+    console.log(`   Merge time: ${mergeTime}s`);
+    console.log(`   Total scenes: ${results.length}`);
 
     return {
       finalVideoId: mergeResult.file_id,
