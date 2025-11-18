@@ -1,0 +1,488 @@
+"use client";
+
+import React, { useState, useCallback, useRef } from "react";
+import { useChat } from "@ai-sdk/react";
+import {
+  createChatConfig,
+  formatToolResult,
+  isToolCall,
+  getToolName,
+} from "../../agent/nextjs-ai-integration";
+
+// ========== ENHANCED CHAT INTERFACE ==========
+
+interface AdvancedChatProps {
+  executionMode?: "streaming" | "advanced-loop" | "manual-loop";
+  budgetLimit?: number;
+  qualityThreshold?: number;
+  enableTools?: boolean;
+}
+
+export default function AdvancedChat({
+  executionMode = "streaming",
+  budgetLimit = 1.0,
+  qualityThreshold = 0.8,
+  enableTools = true,
+}: AdvancedChatProps) {
+  const [config, setConfig] = useState(() =>
+    createChatConfig({
+      executionMode,
+      budgetLimit,
+      qualityThreshold,
+      enableToolCalls: enableTools,
+      maxSteps: 10,
+    })
+  );
+
+  const [currentBudget, setCurrentBudget] = useState(0);
+  const [qualityScore, setQualityScore] = useState(0);
+  const [executionStats, setExecutionStats] = useState({
+    stepCount: 0,
+    toolsUsed: 0,
+    totalDuration: 0,
+  });
+
+  const { messages, sendMessage, input, setInput, isLoading, stop } = useChat({
+    api: "/api/chat",
+    body: { config },
+    onFinish: (message) => {
+      // Update execution statistics
+      updateExecutionStats(message);
+    },
+    onToolCall: (toolCall) => {
+      console.log("Tool called:", toolCall.toolName, toolCall.input);
+      setExecutionStats((prev) => ({ ...prev, toolsUsed: prev.toolsUsed + 1 }));
+    },
+  });
+
+  const updateExecutionStats = useCallback((message: { parts: any[] }) => {
+    // Extract execution metadata from message parts
+    const toolParts = message.parts.filter((part: any) => isToolCall(part));
+    const textParts = message.parts.filter((part: any) => part.type === "text");
+
+    setExecutionStats((prev) => ({
+      ...prev,
+      stepCount: prev.stepCount + 1,
+      totalDuration: prev.totalDuration + Math.random() * 2000, // Simulate duration
+    }));
+
+    // Update budget tracking (simulated)
+    const estimatedCost = calculateStepCost(toolParts.length);
+    setCurrentBudget((prev) => prev + estimatedCost);
+
+    // Update quality score (simulated)
+    setQualityScore((prev) => Math.min(1, prev + Math.random() * 0.2));
+  }, []);
+
+  const calculateStepCost = useCallback((toolCount: number): number => {
+    const baseCost = 0.05;
+    const toolCost = toolCount * 0.02;
+    return baseCost + toolCost;
+  }, []);
+
+  const handleSendMessage = useCallback(
+    async (text: string) => {
+      if (!text.trim() || isLoading) return;
+
+      // Pre-execution budget check
+      if (currentBudget + 0.1 > config.budgetLimit) {
+        alert(
+          "Budget limit reached. Please clear conversation or increase budget."
+        );
+        return;
+      }
+
+      await sendMessage({ text });
+      setInput("");
+    },
+    [sendMessage, setInput, isLoading, currentBudget, config.budgetLimit]
+  );
+
+  const resetConversation = useCallback(() => {
+    setCurrentBudget(0);
+    setQualityScore(0);
+    setExecutionStats({ stepCount: 0, toolsUsed: 0, totalDuration: 0 });
+    // Note: In a real implementation, you'd also reset the chat API
+  }, []);
+
+  const updateConfig = useCallback((newConfig: Partial<typeof config>) => {
+    setConfig((prev) => ({ ...prev, ...newConfig }));
+  }, []);
+
+  return (
+    <div className="flex flex-col h-full max-w-4xl mx-auto p-4 space-y-4">
+      {/* Configuration Panel */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+        <h3 className="text-lg font-semibold mb-3">Execution Configuration</h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-1">Mode</label>
+            <select
+              value={config.executionMode}
+              onChange={(e) =>
+                updateConfig({ executionMode: e.target.value as any })
+              }
+              className="w-full p-2 border rounded-md dark:bg-gray-700"
+            >
+              <option value="streaming">Streaming</option>
+              <option value="advanced-loop">Advanced Loop</option>
+              <option value="manual-loop">Manual Loop</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              Budget Limit
+            </label>
+            <input
+              type="number"
+              step="0.01"
+              min="0.01"
+              max="10.00"
+              value={config.budgetLimit}
+              onChange={(e) =>
+                updateConfig({ budgetLimit: parseFloat(e.target.value) })
+              }
+              className="w-full p-2 border rounded-md dark:bg-gray-700"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              Quality Threshold
+            </label>
+            <input
+              type="number"
+              step="0.1"
+              min="0.1"
+              max="1.0"
+              value={config.qualityThreshold}
+              onChange={(e) =>
+                updateConfig({ qualityThreshold: parseFloat(e.target.value) })
+              }
+              className="w-full p-2 border rounded-md dark:bg-gray-700"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">Max Steps</label>
+            <input
+              type="number"
+              min="1"
+              max="20"
+              value={config.maxSteps}
+              onChange={(e) =>
+                updateConfig({ maxSteps: parseInt(e.target.value) })
+              }
+              className="w-full p-2 border rounded-md dark:bg-gray-700"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Execution Monitoring */}
+      <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
+        <h4 className="font-medium mb-3">Execution Monitoring</h4>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+          <div>
+            <span className="font-medium">Budget Used:</span>
+            <div className="flex items-center space-x-2">
+              <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                <div
+                  className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                  style={{
+                    width: `${Math.min(
+                      100,
+                      (currentBudget / config.budgetLimit) * 100
+                    )}%`,
+                  }}
+                />
+              </div>
+              <span>${currentBudget.toFixed(3)}</span>
+            </div>
+          </div>
+
+          <div>
+            <span className="font-medium">Quality Score:</span>
+            <div className="flex items-center space-x-2">
+              <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                <div
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    qualityScore >= config.qualityThreshold
+                      ? "bg-green-500"
+                      : "bg-yellow-500"
+                  }`}
+                  style={{ width: `${qualityScore * 100}%` }}
+                />
+              </div>
+              <span>{(qualityScore * 100).toFixed(1)}%</span>
+            </div>
+          </div>
+
+          <div>
+            <span className="font-medium">Steps:</span>
+            <span>
+              {executionStats.stepCount}/{config.maxSteps}
+            </span>
+          </div>
+
+          <div>
+            <span className="font-medium">Tools Used:</span>
+            <span>{executionStats.toolsUsed}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Chat Messages */}
+      <div className="flex-1 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div className="h-96 overflow-y-auto p-4 space-y-4">
+          {messages.map((message) => (
+            <div
+              key={message.id}
+              className={`flex ${
+                message.role === "user" ? "justify-end" : "justify-start"
+              }`}
+            >
+              <div
+                className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+                  message.role === "user"
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                }`}
+              >
+                {/* Message role indicator */}
+                <div className="text-xs opacity-75 mb-1">
+                  {message.role === "user" ? "👤 User" : "🤖 AI"}
+                </div>
+
+                {/* Message parts */}
+                {message.parts.map((part, index) => {
+                  switch (part.type) {
+                    case "text":
+                      return (
+                        <div key={index} className="whitespace-pre-wrap">
+                          {part.text}
+                        </div>
+                      );
+
+                    case "tool-weather":
+                    case "tool-transcribeAudio":
+                    case "tool-trackBudget":
+                    case "tool-assessQuality":
+                      return (
+                        <div
+                          key={index}
+                          className="mt-2 p-2 bg-gray-200 dark:bg-gray-600 rounded text-xs"
+                        >
+                          <div className="font-medium mb-1">
+                            🔧 Tool: {getToolName(part)}
+                          </div>
+                          <pre className="whitespace-pre-wrap">
+                            {formatToolResult(part.toolResult)}
+                          </pre>
+                        </div>
+                      );
+
+                    case "tool-result":
+                      return (
+                        <div
+                          key={index}
+                          className="mt-2 p-2 bg-green-100 dark:bg-green-900 rounded text-xs"
+                        >
+                          <div className="font-medium mb-1">
+                            ✅ Tool Result:
+                          </div>
+                          <pre className="whitespace-pre-wrap">
+                            {formatToolResult(part.toolResult)}
+                          </pre>
+                        </div>
+                      );
+
+                    default:
+                      return (
+                        <div
+                          key={index}
+                          className="mt-2 p-2 bg-yellow-100 dark:bg-yellow-900 rounded text-xs"
+                        >
+                          Unknown part type: {part.type}
+                        </div>
+                      );
+                  }
+                })}
+
+                {/* Execution metadata */}
+                {message.role === "assistant" && (
+                  <div className="mt-2 text-xs opacity-50 border-t border-current pt-1">
+                    Mode: {config.executionMode} | Quality:{" "}
+                    {(qualityScore * 100).toFixed(0)}%
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+
+          {isLoading && (
+            <div className="flex justify-start">
+              <div className="bg-gray-100 dark:bg-gray-700 rounded-lg px-4 py-2">
+                <div className="flex space-x-1">
+                  <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></div>
+                  <div
+                    className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"
+                    style={{ animationDelay: "0.1s" }}
+                  ></div>
+                  <div
+                    className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"
+                    style={{ animationDelay: "0.2s" }}
+                  ></div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Input Form */}
+        <div className="border-t border-gray-200 dark:border-gray-700 p-4">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSendMessage(input);
+            }}
+            className="flex space-x-2"
+          >
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder={getInputPlaceholder(config.executionMode)}
+              className="flex-1 p-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700"
+              disabled={isLoading || currentBudget >= config.budgetLimit}
+            />
+            <button
+              type="submit"
+              disabled={
+                isLoading ||
+                !input.trim() ||
+                currentBudget >= config.budgetLimit
+              }
+              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isLoading ? "⏳" : "📤"}
+            </button>
+            {isLoading && (
+              <button
+                type="button"
+                onClick={stop}
+                className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+              >
+                ⏹️
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={resetConversation}
+              className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600"
+            >
+              🔄
+            </button>
+          </form>
+
+          {/* Status indicators */}
+          <div className="mt-2 flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+            <span>
+              {currentBudget >= config.budgetLimit
+                ? "❌ Budget limit reached"
+                : `💰 ${(
+                    ((config.budgetLimit - currentBudget) /
+                      config.budgetLimit) *
+                    100
+                  ).toFixed(0)}% budget remaining`}
+            </span>
+            <span>
+              {qualityScore >= config.qualityThreshold
+                ? "✅ Quality OK"
+                : "⚠️ Quality below threshold"}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ========== UTILITY FUNCTIONS ==========
+
+function getInputPlaceholder(executionMode: string): string {
+  switch (executionMode) {
+    case "streaming":
+      return "Ask me anything... (streaming with tools)";
+    case "advanced-loop":
+      return "Describe a media processing task... (advanced loop control)";
+    case "manual-loop":
+      return "Enter a complex request... (manual loop control)";
+    default:
+      return "Type your message...";
+  }
+}
+
+// Enhanced hook with configuration
+function useChat(config: any) {
+  const [messages, setMessages] = useState<any[]>([]);
+  const [input, setInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Simulated implementation for demonstration
+  const sendMessage = async ({ text }: { text: string }) => {
+    setIsLoading(true);
+
+    // Add user message
+    const userMessage = {
+      id: Date.now().toString(),
+      role: "user",
+      parts: [{ type: "text", text }],
+    };
+    setMessages((prev) => [...prev, userMessage]);
+
+    // Simulate AI response with tools
+    setTimeout(() => {
+      const aiMessage = {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        parts: [
+          {
+            type: "text",
+            text: `I understand you want to process: "${text}". Let me analyze this request and determine the best approach.`,
+          },
+          {
+            type: "tool-trackBudget",
+            toolResult: {
+              operation: "track",
+              cost: 0.05,
+              remaining: config.budgetLimit - 0.05,
+            },
+          },
+          {
+            type: "text",
+            text: "I can help you with media processing tasks using advanced AI loop control patterns. Would you like me to demonstrate the capabilities?",
+          },
+        ],
+      };
+      setMessages((prev) => [...prev, aiMessage]);
+      setIsLoading(false);
+    }, 1000 + Math.random() * 2000);
+  };
+
+  const stop = () => {
+    setIsLoading(false);
+  };
+
+  return {
+    messages,
+    input,
+    setInput,
+    isLoading,
+    sendMessage,
+    stop,
+  };
+}
+
+export { AdvancedChat };

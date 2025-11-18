@@ -1,0 +1,32 @@
+{
+  "name": "media-pipeline-full",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "web",
+    "agent"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=web",
+    "build": "npm run build --workspaces",
+    "build:web": "npm run build --workspace=web",
+    "build:sdk": "npm run build --workspace=@trapgod/media-sdk",
+    "build:agent": "npm run build --workspace=@trapgod/agent",
+    "start": "npm run start --workspace=web",
+    "test": "npm run test --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "type-check": "node --max-old-space-size=8192 ./node_modules/typescript/bin/tsc --build --force",
+    "generate:sdk": "node scripts/generate-sdk.js",
+    "deploy:vercel": "bash scripts/deploy-vercel.sh",
+    "deploy:cloudrun": "bash scripts/deploy-cloudrun.sh"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  }
+}

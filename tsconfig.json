@@ -1,0 +1,8 @@
+{
+  "files": [],
+  "references": [
+    { "path": "packages/media-sdk" },
+    { "path": "agent" },
+    { "path": "web" }
+  ]
+}
