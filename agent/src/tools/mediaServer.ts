@@ -574,8 +574,12 @@ export const mediaServer = {
       }
     }
 
+    // Wait for videos to be fully processed before merging
+    console.log(`\n⏳ Waiting for videos to finalize...`);
+    await new Promise(resolve => setTimeout(resolve, 5000));
+
     // Merge all videos
-    console.log(`\n🔗 Merging ${results.length} video clips...`);
+    console.log(`🔗 Merging ${results.length} video clips...`);
     const mergeStartTime = Date.now();
     const videoIds = results.map(r => r.videoId).join(',');
     const mergeUrl = `${getBaseUrl()}/api/v1/media/video-tools/merge`;
@@ -600,16 +604,71 @@ export const mediaServer = {
 
     const mergeResult = await mergeResponse.json();
     const mergeTime = ((Date.now() - mergeStartTime) / 1000).toFixed(1);
+    const finalVideoUrl = `${getBaseUrl()}/api/v1/media/storage/${mergeResult.file_id}`;
+
+    console.log(`  ✓ Videos merged: ${mergeResult.file_id} (${mergeTime}s)`);
+
+    // Generate thumbnail from first scene's image
+    console.log(`\n🖼️ Generating thumbnail...`);
+    const thumbnailId = results[0].imageId;
+    const thumbnailUrl = `${getBaseUrl()}/api/v1/media/storage/${thumbnailId}`;
+    console.log(`  ✓ Thumbnail: ${thumbnailId}`);
+
+    // Generate GIF preview
+    console.log(`📹 Generating GIF preview...`);
+    const gifUrl = `${getBaseUrl()}/api/v1/media/video-tools/gif-preview`;
+    const gifParams = new URLSearchParams();
+    gifParams.append('video_id', mergeResult.file_id);
+    gifParams.append('start_time', '0');
+    gifParams.append('duration', '5');
+    gifParams.append('fps', '10');
+    gifParams.append('width', '480');
+
+    let gifPreviewId: string | null = null;
+    try {
+      const gifResponse = await fetch(gifUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: gifParams,
+      });
+      if (gifResponse.ok) {
+        const gifResult = await gifResponse.json();
+        gifPreviewId = gifResult.file_id;
+        console.log(`  ✓ GIF preview: ${gifPreviewId}`);
+      }
+    } catch {
+      console.log(`  ⚠ GIF preview generation skipped`);
+    }
+
+    // Download final video
+    console.log(`\n📥 Downloading final video...`);
+    const fs = require('fs/promises');
+    const path = require('path');
+    const os = require('os');
+
+    const downloadResponse = await fetch(finalVideoUrl);
+    if (downloadResponse.ok) {
+      const videoBuffer = Buffer.from(await downloadResponse.arrayBuffer());
+      const outputDir = process.env.OUTPUT_DIR || path.join(os.tmpdir(), 'storyline-videos');
+      await fs.mkdir(outputDir, { recursive: true });
+      const outputPath = path.join(outputDir, mergeResult.file_id);
+      await fs.writeFile(outputPath, videoBuffer);
+      console.log(`  ✓ Downloaded to: ${outputPath}`);
+      console.log(`  ✓ Size: ${(videoBuffer.length / 1024 / 1024).toFixed(2)} MB`);
+    }
 
     console.log(`\n${'━'.repeat(50)}`);
     console.log(`✅ Storyline video complete!`);
     console.log(`   Final video: ${mergeResult.file_id}`);
-    console.log(`   Merge time: ${mergeTime}s`);
     console.log(`   Total scenes: ${results.length}`);
 
     return {
       finalVideoId: mergeResult.file_id,
-      finalVideoUrl: `${getBaseUrl()}/api/v1/media/storage/${mergeResult.file_id}`,
+      finalVideoUrl,
+      thumbnailId,
+      thumbnailUrl,
+      gifPreviewId,
+      gifPreviewUrl: gifPreviewId ? `${getBaseUrl()}/api/v1/media/storage/${gifPreviewId}` : null,
       scenes: results,
     };
   },
