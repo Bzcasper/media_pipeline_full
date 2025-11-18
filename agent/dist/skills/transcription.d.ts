@@ -10,25 +10,25 @@ export declare const TranscriptionInput: z.ZodEffects<z.ZodObject<{
     audioUrl: z.ZodOptional<z.ZodString>;
     language: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
-    audioFileId?: string | undefined;
+    audioFileId?: string;
     audioBuffer?: any;
-    audioUrl?: string | undefined;
-    language?: string | undefined;
+    audioUrl?: string;
+    language?: string;
 }, {
-    audioFileId?: string | undefined;
+    audioFileId?: string;
     audioBuffer?: any;
-    audioUrl?: string | undefined;
-    language?: string | undefined;
+    audioUrl?: string;
+    language?: string;
 }>, {
-    audioFileId?: string | undefined;
+    audioFileId?: string;
     audioBuffer?: any;
-    audioUrl?: string | undefined;
-    language?: string | undefined;
+    audioUrl?: string;
+    language?: string;
 }, {
-    audioFileId?: string | undefined;
+    audioFileId?: string;
     audioBuffer?: any;
-    audioUrl?: string | undefined;
-    language?: string | undefined;
+    audioUrl?: string;
+    language?: string;
 }>;
 export declare const TranscriptionOutput: z.ZodObject<{
     text: z.ZodString;
@@ -38,41 +38,41 @@ export declare const TranscriptionOutput: z.ZodObject<{
         end: z.ZodNumber;
         confidence: z.ZodOptional<z.ZodNumber>;
     }, "strip", z.ZodTypeAny, {
-        text: string;
-        start: number;
-        end: number;
-        confidence?: number | undefined;
+        text?: string;
+        start?: number;
+        end?: number;
+        confidence?: number;
     }, {
-        text: string;
-        start: number;
-        end: number;
-        confidence?: number | undefined;
+        text?: string;
+        start?: number;
+        end?: number;
+        confidence?: number;
     }>, "many">>;
     language: z.ZodOptional<z.ZodString>;
     method: z.ZodEnum<["riva", "whisper"]>;
     duration: z.ZodOptional<z.ZodNumber>;
 }, "strip", z.ZodTypeAny, {
-    text: string;
-    method: "whisper" | "riva";
-    duration?: number | undefined;
-    language?: string | undefined;
+    duration?: number;
+    language?: string;
+    text?: string;
     segments?: {
-        text: string;
-        start: number;
-        end: number;
-        confidence?: number | undefined;
-    }[] | undefined;
+        text?: string;
+        start?: number;
+        end?: number;
+        confidence?: number;
+    }[];
+    method?: "riva" | "whisper";
 }, {
-    text: string;
-    method: "whisper" | "riva";
-    duration?: number | undefined;
-    language?: string | undefined;
+    duration?: number;
+    language?: string;
+    text?: string;
     segments?: {
-        text: string;
-        start: number;
-        end: number;
-        confidence?: number | undefined;
-    }[] | undefined;
+        text?: string;
+        start?: number;
+        end?: number;
+        confidence?: number;
+    }[];
+    method?: "riva" | "whisper";
 }>;
 export type TranscriptionInputType = z.infer<typeof TranscriptionInput>;
 export type TranscriptionOutputType = z.infer<typeof TranscriptionOutput>;
@@ -100,4 +100,3 @@ export declare class TranscriptionSkill {
     runWithRetry(input: TranscriptionInputType, maxAttempts?: number): Promise<TranscriptionOutputType>;
 }
 export default TranscriptionSkill;
-//# sourceMappingURL=transcription.d.ts.map

@@ -2,12 +2,12 @@
 
 import React, { useState, useCallback, useRef } from "react";
 import { useChat } from "@ai-sdk/react";
-import {
-  createChatConfig,
-  formatToolResult,
-  isToolCall,
-  getToolName,
-} from "@trapgod/agent/nextjs-ai-integration";
+// import {
+//   createChatConfig,
+//   formatToolResult,
+//   isToolCall,
+//   getToolName,
+// } from "@trapgod/agent/nextjs-ai-integration"; // Temporarily disabled
 
 // ========== ENHANCED CHAT INTERFACE ==========
 
@@ -18,7 +18,8 @@ interface AdvancedChatProps {
   enableTools?: boolean;
 }
 
-export default function AdvancedChat({
+// Temporarily disabled due to import conflicts
+// export default function AdvancedChat({
   executionMode = "streaming",
   budgetLimit = 1.0,
   qualityThreshold = 0.8,
@@ -485,4 +486,4 @@ function useChat(config: any) {
   };
 }
 
-export { AdvancedChat };
+// export { AdvancedChat };

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { Music, Clock, CheckCircle, XCircle, Loader2 } from 'lucide-react';
-import { cn, formatDate, getStatusBadgeColor } from '@/lib/utils';
+import { cn, formatDate, getStatusBadgeColor } from '../lib/utils';
 
 export interface Job {
   jobId: string;

@@ -1,4 +1,5 @@
 import { prisma } from './db';
+import type { Job } from '@prisma/client';
 
 export class DatabaseService {
   // Job operations
@@ -8,6 +9,7 @@ export class DatabaseService {
     artist?: string;
     album?: string;
     metadata?: any;
+    status?: string;
   }): Promise<any> {
     return prisma.job.create({
       data: {
@@ -15,19 +17,20 @@ export class DatabaseService {
         title: data.title,
         artist: data.artist,
         album: data.album,
+        status: data.status || 'pending',
         metadata: data.metadata,
       }
     });
   }
 
-  static async updateJob(jobId: string, data: Partial<Job>): Promise<Job> {
+  static async updateJob(jobId: string, data: any): Promise<any> {
     return prisma.job.update({
       where: { jobId },
       data
     });
   }
 
-  static async getJob(jobId: string): Promise<Job | null> {
+  static async getJob(jobId: string): Promise<any> {
     return prisma.job.findUnique({
       where: { jobId }
     });
@@ -38,7 +41,7 @@ export class DatabaseService {
     jobId: string;
     name: string;
     status?: string;
-  }): Promise<JobStep> {
+  }): Promise<any> {
     return prisma.jobStep.create({
       data: {
         jobId: data.jobId,
@@ -48,7 +51,7 @@ export class DatabaseService {
     });
   }
 
-  static async updateJobStep(jobId: string, stepName: string, data: Partial<JobStep>): Promise<JobStep> {
+  static async updateJobStep(jobId: string, stepName: string, data: any): Promise<any> {
     return prisma.jobStep.updateMany({
       where: {
         jobId,
@@ -72,7 +75,7 @@ export class DatabaseService {
     sizeBytes?: number;
     url?: string;
     metadata?: any;
-  }): Promise<File> {
+  }): Promise<any> {
     return prisma.file.create({
       data
     });
@@ -84,7 +87,7 @@ export class DatabaseService {
     level: string;
     message: string;
     data?: any;
-  }): Promise<Log> {
+  }): Promise<any> {
     return prisma.log.create({
       data
     });

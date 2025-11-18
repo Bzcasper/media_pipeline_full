@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "../../../lib/db";
+import * as fs from 'fs/promises';
+import * as path from 'path';
+
+const JOBS_DIR = process.env.JOBS_DIR || path.join(process.cwd(), '..', 'agent', 'jobs');
 
 export async function GET(request: NextRequest) {
   try {
@@ -7,51 +10,41 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get("limit") || "50");
     const status = searchParams.get("status");
 
-    const where = status ? { status } : {};
+    // Read all job files from the jobs directory
+    let files: string[] = [];
+    try {
+      files = await fs.readdir(JOBS_DIR);
+    } catch (err) {
+      // Directory doesn't exist yet
+      return NextResponse.json({ jobs: [], total: 0 });
+    }
 
-    const jobs = await prisma.job.findMany({
-      where,
-      include: {
-        steps: {
-          orderBy: { createdAt: 'asc' }
-        },
-        logs: {
-          orderBy: { timestamp: 'desc' },
-          take: 5 // Last 5 logs for preview
+    const jobFiles = files.filter(f => f.endsWith('.json'));
+
+    const jobs: any[] = [];
+    for (const file of jobFiles) {
+      try {
+        const filePath = path.join(JOBS_DIR, file);
+        const content = await fs.readFile(filePath, 'utf-8');
+        const jobState = JSON.parse(content);
+
+        // Filter by status if specified
+        if (!status || jobState.status === status) {
+          jobs.push(jobState);
         }
-      },
-      orderBy: { createdAt: 'desc' },
-      take: limit
-    });
+      } catch (error) {
+        // Skip invalid files
+      }
+    }
 
-    const total = await prisma.job.count({ where });
+    // Sort by creation date, newest first
+    jobs.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
-    // Transform to match expected format
-    const transformedJobs = jobs.map((job: any) => ({
-      jobId: job.jobId,
-      status: job.status,
-      progress: job.progress,
-      currentStep: job.currentStep,
-      steps: job.steps.map((step: any) => ({
-        name: step.name,
-        status: step.status,
-        startTime: step.startTime?.toISOString(),
-        endTime: step.endTime?.toISOString()
-      })),
-      logs: job.logs.map((log: any) => ({
-        timestamp: log.timestamp.toISOString(),
-        level: log.level,
-        message: log.message
-      })),
-      outputs: job.outputs,
-      errors: job.errors,
-      createdAt: job.createdAt.toISOString(),
-      updatedAt: job.updatedAt.toISOString(),
-      metadata: job.metadata
-    }));
+    const total = jobs.length;
+    const paginatedJobs = jobs.slice(0, limit);
 
     return NextResponse.json({
-      jobs: transformedJobs,
+      jobs: paginatedJobs,
       total,
     });
   } catch (error) {

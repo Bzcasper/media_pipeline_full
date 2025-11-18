@@ -1,45 +1,39 @@
-/**
- * Media Server Tool
- * Wraps the Media Server SDK for use in agent skills
- */
-import { MediaServerClient } from '@trapgod/media-sdk';
+type Uploadable = Buffer | Blob | File | ArrayBuffer | Uint8Array;
 export declare const mediaServer: {
     /**
      * Upload a file to the media server
      */
-    uploadFile: (file: Buffer | Blob, mediaType?: "audio" | "video" | "image" | "tmp") => Promise<import("@trapgod/media-sdk").MediaServerResponse<any>>;
+    uploadFile: (file: Uploadable, mediaType?: "audio" | "video" | "image" | "tmp") => Promise<any>;
     /**
      * Upload from URL
      */
-    uploadFromURL: (url: string, mediaType?: "audio" | "video" | "image" | "tmp") => Promise<import("@trapgod/media-sdk").MediaServerResponse<any>>;
+    uploadFromURL: (url: string, mediaType?: "audio" | "video" | "image" | "tmp") => Promise<{
+        file_id: string;
+        url: string;
+    }>;
     /**
      * Transcribe audio using Riva ASR
      */
-    transcribeAudio: (audioFile: Buffer, language?: string) => Promise<import("@trapgod/media-sdk").TranscriptionResult>;
+    transcribeAudio: (audioFile: Uploadable, language?: string) => Promise<{
+        text: string;
+        segments: any[];
+        language: string;
+        method: string;
+    }>;
     /**
-     * Generate audio using Kokoro TTS
+     * Generate image
      */
-    generateTTS: (text: string, voice?: string, speed?: number) => Promise<import("@trapgod/media-sdk").MediaServerResponse<any>>;
+    generateImage: (prompt: string, style?: string, options?: any) => Promise<{
+        imageFileId: string;
+        imageUrl: string;
+    }>;
     /**
-     * Align script to audio and get word timings
+     * Convert image to video
      */
-    alignScript: (audioId: string, script: string, mode?: "word" | "sentence") => Promise<import("@trapgod/media-sdk").AlignScriptResult>;
-    /**
-     * Generate captioned video
-     */
-    generateCaptionedVideo: (backgroundId: string, text: string, options?: any) => Promise<import("@trapgod/media-sdk").MediaServerResponse<any>>;
-    /**
-     * Create music video
-     */
-    createMusicVideo: (audioId: string, loopingVideoId: string, options?: any) => Promise<import("@trapgod/media-sdk").MediaServerResponse<any>>;
-    /**
-     * Merge videos
-     */
-    mergeVideos: (videoIds: string[], backgroundMusicId?: string) => Promise<import("@trapgod/media-sdk").MediaServerResponse<any>>;
-    /**
-     * Get file status
-     */
-    getFileStatus: (fileId: string) => Promise<import("@trapgod/media-sdk").FileStatus>;
+    imageToVideo: (imageFile: Uploadable, options?: any) => Promise<{
+        videoFileId: string;
+        videoUrl: string;
+    }>;
     /**
      * Download file
      */
@@ -47,8 +41,23 @@ export declare const mediaServer: {
     /**
      * Match video duration to audio
      */
-    matchDuration: (videoId: string, audioId: string) => Promise<import("@trapgod/media-sdk").MediaServerResponse<any>>;
-    client: MediaServerClient;
+    matchDuration: (videoId: string, audioId: string) => Promise<{
+        file_id: string;
+        url: string;
+    }>;
+    client: {
+        utils: {
+            renderHTML: (options: any) => Promise<{
+                file_id: string;
+                url: string;
+            }>;
+        };
+        video: {
+            generateCaptionedVideo: (options: any) => Promise<{
+                file_id: string;
+                url: string;
+            }>;
+        };
+    };
 };
 export default mediaServer;
-//# sourceMappingURL=mediaServer.d.ts.map

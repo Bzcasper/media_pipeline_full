@@ -11,7 +11,7 @@ import {
   MetadataSkill,
   AlbumCoverSkill,
   VideoGeneratorSkill,
-  GCSUploadSkill,
+  GCSWorker,
   WeaviateIndexerSkill,
 } from "./skills";
 import { Logger } from "./utils";
@@ -54,9 +54,12 @@ export const MediaPipelineResult = z.object({
     .object({
       coverImageUrl: z.string().optional(),
       videoUrl: z.string().optional(),
-      gcsUrls: z.record(z.string()).optional(),
-    })
-    .optional(),
+      gcsUrls: z.record(z.object({
+        url: z.string(),
+        signedUrl: z.string(),
+        path: z.string()
+      })).optional(),
+    }),
   processingSteps: z.array(
     z.object({
       name: z.string(),
@@ -117,9 +120,13 @@ export class MediaPipelineAgent {
       success: false,
       jobId,
       processingSteps,
-      transcription: null,
-      metadata: null,
-      assets: {},
+      transcription: undefined,
+      metadata: undefined,
+      assets: {
+        coverImageUrl: undefined,
+        videoUrl: undefined,
+        gcsUrls: undefined,
+      },
     };
 
     try {
@@ -199,25 +206,24 @@ export class MediaPipelineAgent {
         status: "in_progress",
       });
 
-      const gcsSkill = new GCSUploadSkill(this.logger);
+      const gcsSkill = new GCSWorker(this.logger);
       const gcsResult = await gcsSkill.run({
-        jobId,
-        files: {
-          cover: {
-            fileId: coverResult.imageFileId,
-            name: "cover.png",
+        files: [
+          {
+            url: coverResult.imageUrl,
+            filename: "cover.png",
+            contentType: "image/png",
           },
-          video: {
-            fileId: videoResult.videoFileId,
-            name: "video.mp4",
+          {
+            url: videoResult.videoUrl,
+            filename: "video.mp4",
+            contentType: "video/mp4",
           },
-          ...(input.audioFileId && {
-            audio: {
-              fileId: input.audioFileId,
-              name: "audio.mp3",
-            },
-          }),
-        },
+        ].concat(input.audioFileId ? [{
+          url: `${process.env.MEDIA_SERVER_URL}/api/v1/media/storage/${input.audioFileId}`,
+          filename: "audio.mp3",
+          contentType: "audio/mpeg",
+        }] : []),
       });
 
       processingSteps[4].status = "completed";
@@ -232,19 +238,13 @@ export class MediaPipelineAgent {
 
       const weaviateSkill = new WeaviateIndexerSkill(this.logger);
       const weaviateResult = await weaviateSkill.run({
-        id: jobId,
-        title: finalResult.metadata!.title || input.title || "Untitled",
-        artist: finalResult.metadata!.artist || input.artist,
-        album: finalResult.metadata!.album || input.album,
-        genre: finalResult.metadata!.genre,
-        lyrics: finalResult.transcription!.text,
-        audioUrl: finalResult.assets.gcsUrls?.audio?.signedUrl,
-        coverUrl: finalResult.assets.gcsUrls?.cover?.signedUrl,
-        videoUrl: finalResult.assets.gcsUrls?.video?.signedUrl,
+        jobId,
         metadata: {
           ...finalResult.metadata,
           transcriptionMethod: finalResult.transcription!.method,
         },
+        assets: finalResult.assets,
+        transcription: finalResult.transcription,
       });
 
       processingSteps[5].status = "completed";

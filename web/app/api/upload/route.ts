@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { mediaServer } from "@trapgod/agent/tools/mediaServer";
-import { PipelineOrchestrator } from "@trapgod/agent/orchestrator";
+import { mediaServer, PipelineOrchestrator } from "@trapgod/agent";
 
 // Enhanced validation schema
 const uploadSchema = z.object({

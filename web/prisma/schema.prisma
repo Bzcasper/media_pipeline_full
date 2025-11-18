@@ -22,7 +22,7 @@ model Job {
   metadata          Json?
   outputs           Json     @default("{}")
   errors            String[] @default([])
-  createdAt         DateTime @default(now()) @updatedAt
+  createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
   retryCount        Int      @default(0)
   estimatedDuration Int?

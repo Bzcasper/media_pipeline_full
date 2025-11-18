@@ -10,51 +10,51 @@ export declare const VideoAssemblerInput: z.ZodObject<{
         url: z.ZodString;
         duration: z.ZodNumber;
     }, "strip", z.ZodTypeAny, {
-        url: string;
-        duration: number;
-        index: number;
+        duration?: number;
+        url?: string;
+        index?: number;
     }, {
-        url: string;
-        duration: number;
-        index: number;
+        duration?: number;
+        url?: string;
+        index?: number;
     }>, "many">;
     script: z.ZodString;
     chunks: z.ZodArray<z.ZodObject<{
         text: z.ZodString;
     }, "strip", z.ZodTypeAny, {
-        text: string;
+        text?: string;
     }, {
-        text: string;
+        text?: string;
     }>, "many">;
     voiceOver: z.ZodDefault<z.ZodBoolean>;
     backgroundMusic: z.ZodDefault<z.ZodBoolean>;
     transitions: z.ZodDefault<z.ZodBoolean>;
 }, "strip", z.ZodTypeAny, {
-    script: string;
-    videos: {
-        url: string;
-        duration: number;
-        index: number;
+    script?: string;
+    videos?: {
+        duration?: number;
+        url?: string;
+        index?: number;
     }[];
-    chunks: {
-        text: string;
+    chunks?: {
+        text?: string;
     }[];
-    voiceOver: boolean;
-    backgroundMusic: boolean;
-    transitions: boolean;
+    voiceOver?: boolean;
+    backgroundMusic?: boolean;
+    transitions?: boolean;
 }, {
-    script: string;
-    videos: {
-        url: string;
-        duration: number;
-        index: number;
+    script?: string;
+    videos?: {
+        duration?: number;
+        url?: string;
+        index?: number;
     }[];
-    chunks: {
-        text: string;
+    chunks?: {
+        text?: string;
     }[];
-    voiceOver?: boolean | undefined;
-    backgroundMusic?: boolean | undefined;
-    transitions?: boolean | undefined;
+    voiceOver?: boolean;
+    backgroundMusic?: boolean;
+    transitions?: boolean;
 }>;
 export declare const VideoAssemblerOutput: z.ZodObject<{
     videoUrl: z.ZodString;
@@ -62,15 +62,15 @@ export declare const VideoAssemblerOutput: z.ZodObject<{
     duration: z.ZodNumber;
     gcsUrl: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
-    duration: number;
-    videoFileId: string;
-    videoUrl: string;
-    gcsUrl?: string | undefined;
+    duration?: number;
+    videoFileId?: string;
+    videoUrl?: string;
+    gcsUrl?: string;
 }, {
-    duration: number;
-    videoFileId: string;
-    videoUrl: string;
-    gcsUrl?: string | undefined;
+    duration?: number;
+    videoFileId?: string;
+    videoUrl?: string;
+    gcsUrl?: string;
 }>;
 export type VideoAssemblerInputType = z.infer<typeof VideoAssemblerInput>;
 export type VideoAssemblerOutputType = z.infer<typeof VideoAssemblerOutput>;
@@ -84,4 +84,3 @@ export declare class VideoAssemblerSkill {
     private uploadToGCS;
 }
 export default VideoAssemblerSkill;
-//# sourceMappingURL=videoAssembler.d.ts.map

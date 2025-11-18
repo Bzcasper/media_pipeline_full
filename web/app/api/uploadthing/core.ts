@@ -6,7 +6,7 @@ const f = createUploadthing();
 // Auth function - replace with your actual auth logic
 const auth = (req: Request) => ({ id: "user_" + Date.now() });
 
-export const ourFileRouter = {
+export const ourFileRouter: FileRouter = {
   // Audio uploader for music video pipeline
   audioUploader: f({
     audio: {

@@ -4,8 +4,8 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
+    "build": "NODE_OPTIONS='--max-old-space-size=8192' tsc --skipLibCheck",
+    "dev": "tsc --watch --skipLibCheck",
     "clean": "rm -rf dist"
   },
   "dependencies": {
@@ -14,6 +14,7 @@
     "@google-cloud/storage": "^7.17.3",
     "@trapgod/media-sdk": "workspace:*",
     "ai": "^5.0.94",
+    "form-data": "^4.0.0",
     "uuid": "^9.0.1",
     "weaviate-ts-client": "^2.0.0",
     "zod": "^3.22.4"

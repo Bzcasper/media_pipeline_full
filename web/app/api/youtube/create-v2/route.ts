@@ -4,7 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { youtubeVideoAgent } from "@trapgod/agent/ai-sdk-agent";
+import { youtubeVideoAgent } from "@trapgod/agent";
 import { v4 as uuidv4 } from "uuid";
 
 export async function POST(request: NextRequest) {
@@ -27,30 +27,17 @@ export async function POST(request: NextRequest) {
 
     const jobId = uuidv4();
 
-    // Run agent with ToolLoopAgent generate method
-    youtubeVideoAgent
-      .generate({
-        prompt: `Create a ${videoStyle} video about: "${query}"
+    // Run AI SDK agent for YouTube video generation
+    const agentResult = await youtubeVideoAgent({
+      jobId,
+      query,
+      videoStyle,
+      duration,
+    });
 
-Please execute the full pipeline:
-1. Generate an engaging script
-2. Break it into ${Math.ceil(duration / 8)} scenes
-3. Create detailed image prompts
-4. Generate high-quality images
-5. Validate all images
-6. Animate images into video clips
-7. Assemble the final video with ${
-          voiceOver ? "voiceover" : "no voiceover"
-        } and ${backgroundMusic ? "background music" : "no music"}
-
-Return the final video URL and all metadata.`,
-      })
-      .then((result) => {
-        console.log(`YouTube video job ${jobId} completed:`, result);
-      })
-      .catch((error) => {
-        console.error(`YouTube video job ${jobId} failed:`, error);
-      });
+    if (!agentResult.success) {
+      throw new Error(`YouTube agent failed: ${agentResult.error}`);
+    }
 
     return NextResponse.json({
       jobId,

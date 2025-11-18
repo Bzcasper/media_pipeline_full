@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PipelineOrchestrator } from "@trapgod/agent/orchestrator";
-import { mediaServer } from "@trapgod/agent/tools/mediaServer";
+import { PipelineOrchestrator, mediaServer } from "@trapgod/agent";
 
 export async function POST(request: NextRequest) {
   try {

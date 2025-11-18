@@ -11,28 +11,28 @@ export declare const GCSUploadInput: z.ZodObject<{
         url: z.ZodOptional<z.ZodString>;
         name: z.ZodString;
     }, "strip", z.ZodTypeAny, {
-        name: string;
-        url?: string | undefined;
-        fileId?: string | undefined;
+        name?: string;
+        url?: string;
+        fileId?: string;
     }, {
-        name: string;
-        url?: string | undefined;
-        fileId?: string | undefined;
+        name?: string;
+        url?: string;
+        fileId?: string;
     }>>;
 }, "strip", z.ZodTypeAny, {
-    files: Record<string, {
-        name: string;
-        url?: string | undefined;
-        fileId?: string | undefined;
+    files?: Record<string, {
+        name?: string;
+        url?: string;
+        fileId?: string;
     }>;
-    jobId: string;
+    jobId?: string;
 }, {
-    files: Record<string, {
-        name: string;
-        url?: string | undefined;
-        fileId?: string | undefined;
+    files?: Record<string, {
+        name?: string;
+        url?: string;
+        fileId?: string;
     }>;
-    jobId: string;
+    jobId?: string;
 }>;
 export declare const GCSUploadOutput: z.ZodObject<{
     uploads: z.ZodRecord<z.ZodString, z.ZodObject<{
@@ -40,25 +40,25 @@ export declare const GCSUploadOutput: z.ZodObject<{
         signedUrl: z.ZodString;
         path: z.ZodString;
     }, "strip", z.ZodTypeAny, {
-        signedUrl: string;
-        url: string;
-        path: string;
+        path?: string;
+        signedUrl?: string;
+        url?: string;
     }, {
-        signedUrl: string;
-        url: string;
-        path: string;
+        path?: string;
+        signedUrl?: string;
+        url?: string;
     }>>;
 }, "strip", z.ZodTypeAny, {
-    uploads: Record<string, {
-        signedUrl: string;
-        url: string;
-        path: string;
+    uploads?: Record<string, {
+        path?: string;
+        signedUrl?: string;
+        url?: string;
     }>;
 }, {
-    uploads: Record<string, {
-        signedUrl: string;
-        url: string;
-        path: string;
+    uploads?: Record<string, {
+        path?: string;
+        signedUrl?: string;
+        url?: string;
     }>;
 }>;
 export type GCSUploadInputType = z.infer<typeof GCSUploadInput>;
@@ -69,4 +69,3 @@ export declare class GCSUploadSkill {
     run(input: GCSUploadInputType): Promise<GCSUploadOutputType>;
 }
 export default GCSUploadSkill;
-//# sourceMappingURL=gcsUpload.d.ts.map

@@ -16,36 +16,36 @@ export declare const MediaPipelineResult: z.ZodObject<{
             end: z.ZodNumber;
             confidence: z.ZodOptional<z.ZodNumber>;
         }, "strip", z.ZodTypeAny, {
-            text: string;
-            start: number;
-            end: number;
-            confidence?: number | undefined;
+            text?: string;
+            start?: number;
+            end?: number;
+            confidence?: number;
         }, {
-            text: string;
-            start: number;
-            end: number;
-            confidence?: number | undefined;
+            text?: string;
+            start?: number;
+            end?: number;
+            confidence?: number;
         }>, "many">>;
     }, "strip", z.ZodTypeAny, {
-        text: string;
-        method: "whisper" | "riva";
-        language?: string | undefined;
+        language?: string;
+        text?: string;
         segments?: {
-            text: string;
-            start: number;
-            end: number;
-            confidence?: number | undefined;
-        }[] | undefined;
+            text?: string;
+            start?: number;
+            end?: number;
+            confidence?: number;
+        }[];
+        method?: "riva" | "whisper";
     }, {
-        text: string;
-        method: "whisper" | "riva";
-        language?: string | undefined;
+        language?: string;
+        text?: string;
         segments?: {
-            text: string;
-            start: number;
-            end: number;
-            confidence?: number | undefined;
-        }[] | undefined;
+            text?: string;
+            start?: number;
+            end?: number;
+            confidence?: number;
+        }[];
+        method?: "riva" | "whisper";
     }>>;
     metadata: z.ZodOptional<z.ZodObject<{
         title: z.ZodOptional<z.ZodString>;
@@ -57,126 +57,154 @@ export declare const MediaPipelineResult: z.ZodObject<{
         bpm: z.ZodOptional<z.ZodNumber>;
         key: z.ZodOptional<z.ZodString>;
     }, "strip", z.ZodTypeAny, {
-        key?: string | undefined;
-        title?: string | undefined;
-        artist?: string | undefined;
-        album?: string | undefined;
-        genre?: string | undefined;
-        mood?: string | undefined;
-        themes?: string[] | undefined;
-        bpm?: number | undefined;
+        key?: string;
+        title?: string;
+        artist?: string;
+        album?: string;
+        genre?: string;
+        mood?: string;
+        themes?: string[];
+        bpm?: number;
     }, {
-        key?: string | undefined;
-        title?: string | undefined;
-        artist?: string | undefined;
-        album?: string | undefined;
-        genre?: string | undefined;
-        mood?: string | undefined;
-        themes?: string[] | undefined;
-        bpm?: number | undefined;
+        key?: string;
+        title?: string;
+        artist?: string;
+        album?: string;
+        genre?: string;
+        mood?: string;
+        themes?: string[];
+        bpm?: number;
     }>>;
-    assets: z.ZodOptional<z.ZodObject<{
+    assets: z.ZodObject<{
         coverImageUrl: z.ZodOptional<z.ZodString>;
         videoUrl: z.ZodOptional<z.ZodString>;
-        gcsUrls: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodString>>;
+        gcsUrls: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodObject<{
+            url: z.ZodString;
+            signedUrl: z.ZodString;
+            path: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            path?: string;
+            signedUrl?: string;
+            url?: string;
+        }, {
+            path?: string;
+            signedUrl?: string;
+            url?: string;
+        }>>>;
     }, "strip", z.ZodTypeAny, {
-        videoUrl?: string | undefined;
-        coverImageUrl?: string | undefined;
-        gcsUrls?: Record<string, string> | undefined;
+        videoUrl?: string;
+        gcsUrls?: Record<string, {
+            path?: string;
+            signedUrl?: string;
+            url?: string;
+        }>;
+        coverImageUrl?: string;
     }, {
-        videoUrl?: string | undefined;
-        coverImageUrl?: string | undefined;
-        gcsUrls?: Record<string, string> | undefined;
-    }>>;
+        videoUrl?: string;
+        gcsUrls?: Record<string, {
+            path?: string;
+            signedUrl?: string;
+            url?: string;
+        }>;
+        coverImageUrl?: string;
+    }>;
     processingSteps: z.ZodArray<z.ZodObject<{
         name: z.ZodString;
         status: z.ZodEnum<["pending", "in_progress", "completed", "failed"]>;
         output: z.ZodOptional<z.ZodAny>;
         error: z.ZodOptional<z.ZodString>;
     }, "strip", z.ZodTypeAny, {
-        name: string;
-        status: "completed" | "failed" | "pending" | "in_progress";
-        error?: string | undefined;
+        error?: string;
+        name?: string;
+        status?: "pending" | "completed" | "failed" | "in_progress";
         output?: any;
     }, {
-        name: string;
-        status: "completed" | "failed" | "pending" | "in_progress";
-        error?: string | undefined;
+        error?: string;
+        name?: string;
+        status?: "pending" | "completed" | "failed" | "in_progress";
         output?: any;
     }>, "many">;
     totalDuration: z.ZodOptional<z.ZodNumber>;
 }, "strip", z.ZodTypeAny, {
-    jobId: string;
-    success: boolean;
-    processingSteps: {
-        name: string;
-        status: "completed" | "failed" | "pending" | "in_progress";
-        error?: string | undefined;
+    success?: boolean;
+    metadata?: {
+        key?: string;
+        title?: string;
+        artist?: string;
+        album?: string;
+        genre?: string;
+        mood?: string;
+        themes?: string[];
+        bpm?: number;
+    };
+    jobId?: string;
+    assets?: {
+        videoUrl?: string;
+        gcsUrls?: Record<string, {
+            path?: string;
+            signedUrl?: string;
+            url?: string;
+        }>;
+        coverImageUrl?: string;
+    };
+    transcription?: {
+        language?: string;
+        text?: string;
+        segments?: {
+            text?: string;
+            start?: number;
+            end?: number;
+            confidence?: number;
+        }[];
+        method?: "riva" | "whisper";
+    };
+    processingSteps?: {
+        error?: string;
+        name?: string;
+        status?: "pending" | "completed" | "failed" | "in_progress";
         output?: any;
     }[];
-    metadata?: {
-        key?: string | undefined;
-        title?: string | undefined;
-        artist?: string | undefined;
-        album?: string | undefined;
-        genre?: string | undefined;
-        mood?: string | undefined;
-        themes?: string[] | undefined;
-        bpm?: number | undefined;
-    } | undefined;
-    transcription?: {
-        text: string;
-        method: "whisper" | "riva";
-        language?: string | undefined;
-        segments?: {
-            text: string;
-            start: number;
-            end: number;
-            confidence?: number | undefined;
-        }[] | undefined;
-    } | undefined;
-    assets?: {
-        videoUrl?: string | undefined;
-        coverImageUrl?: string | undefined;
-        gcsUrls?: Record<string, string> | undefined;
-    } | undefined;
-    totalDuration?: number | undefined;
+    totalDuration?: number;
 }, {
-    jobId: string;
-    success: boolean;
-    processingSteps: {
-        name: string;
-        status: "completed" | "failed" | "pending" | "in_progress";
-        error?: string | undefined;
+    success?: boolean;
+    metadata?: {
+        key?: string;
+        title?: string;
+        artist?: string;
+        album?: string;
+        genre?: string;
+        mood?: string;
+        themes?: string[];
+        bpm?: number;
+    };
+    jobId?: string;
+    assets?: {
+        videoUrl?: string;
+        gcsUrls?: Record<string, {
+            path?: string;
+            signedUrl?: string;
+            url?: string;
+        }>;
+        coverImageUrl?: string;
+    };
+    transcription?: {
+        language?: string;
+        text?: string;
+        segments?: {
+            text?: string;
+            start?: number;
+            end?: number;
+            confidence?: number;
+        }[];
+        method?: "riva" | "whisper";
+    };
+    processingSteps?: {
+        error?: string;
+        name?: string;
+        status?: "pending" | "completed" | "failed" | "in_progress";
         output?: any;
     }[];
-    metadata?: {
-        key?: string | undefined;
-        title?: string | undefined;
-        artist?: string | undefined;
-        album?: string | undefined;
-        genre?: string | undefined;
-        mood?: string | undefined;
-        themes?: string[] | undefined;
-        bpm?: number | undefined;
-    } | undefined;
-    transcription?: {
-        text: string;
-        method: "whisper" | "riva";
-        language?: string | undefined;
-        segments?: {
-            text: string;
-            start: number;
-            end: number;
-            confidence?: number | undefined;
-        }[] | undefined;
-    } | undefined;
-    assets?: {
-        videoUrl?: string | undefined;
-        coverImageUrl?: string | undefined;
-        gcsUrls?: Record<string, string> | undefined;
-    } | undefined;
-    totalDuration?: number | undefined;
+    totalDuration?: number;
 }>;
 export declare const MediaPipelineInput: z.ZodObject<{
     audioFileId: z.ZodOptional<z.ZodString>;
@@ -187,21 +215,21 @@ export declare const MediaPipelineInput: z.ZodObject<{
     album: z.ZodOptional<z.ZodString>;
     language: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
-    audioFileId?: string | undefined;
+    audioFileId?: string;
     audioBuffer?: any;
-    audioUrl?: string | undefined;
-    language?: string | undefined;
-    title?: string | undefined;
-    artist?: string | undefined;
-    album?: string | undefined;
+    audioUrl?: string;
+    language?: string;
+    title?: string;
+    artist?: string;
+    album?: string;
 }, {
-    audioFileId?: string | undefined;
+    audioFileId?: string;
     audioBuffer?: any;
-    audioUrl?: string | undefined;
-    language?: string | undefined;
-    title?: string | undefined;
-    artist?: string | undefined;
-    album?: string | undefined;
+    audioUrl?: string;
+    language?: string;
+    title?: string;
+    artist?: string;
+    album?: string;
 }>;
 export declare class MediaPipelineAgent {
     private logger;
@@ -212,4 +240,3 @@ export declare class MediaPipelineAgent {
     processAudio(input: z.infer<typeof MediaPipelineInput>): Promise<z.infer<typeof MediaPipelineResult>>;
 }
 export default MediaPipelineAgent;
-//# sourceMappingURL=ai-agent.d.ts.map

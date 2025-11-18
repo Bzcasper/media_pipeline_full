@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Sidebar } from '@/components/Sidebar';
-import { Header } from '@/components/Header';
-import { JobCard, Job } from '@/components/JobCard';
-import { Button } from '@/components/ui/button';
+import { Sidebar } from '../components/Sidebar';
+import { Header } from '../components/Header';
+import { JobCard, Job } from '../components/JobCard';
+import { Button } from '../components/ui/button';
 import { Upload, Sparkles, Video, Music2 } from 'lucide-react';
 import Link from 'next/link';
 

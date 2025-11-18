@@ -15,4 +15,3 @@ export * from './imageGenerator';
 export * from './imageValidator';
 export * from './imageToVideo';
 export * from './videoAssembler';
-//# sourceMappingURL=index.d.ts.map

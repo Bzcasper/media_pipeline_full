@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Sidebar } from '@/components/Sidebar';
-import { Header } from '@/components/Header';
-import { JobCard, Job } from '@/components/JobCard';
-import { Button } from '@/components/ui/button';
+import { Sidebar } from '../../components/Sidebar';
+import { Header } from '../../components/Header';
+import { JobCard, Job } from '../../components/JobCard';
+import { Button } from '../../components/ui/button';
 import { Loader2 } from 'lucide-react';
 
 export default function HistoryPage() {

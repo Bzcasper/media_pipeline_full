@@ -9,28 +9,28 @@ export declare const ImageToVideoInput: z.ZodObject<{
         index: z.ZodNumber;
         url: z.ZodString;
     }, "strip", z.ZodTypeAny, {
-        url: string;
-        index: number;
+        url?: string;
+        index?: number;
     }, {
-        url: string;
-        index: number;
+        url?: string;
+        index?: number;
     }>, "many">;
     prompts: z.ZodArray<z.ZodString, "many">;
     duration: z.ZodDefault<z.ZodNumber>;
 }, "strip", z.ZodTypeAny, {
-    duration: number;
-    prompts: string[];
-    images: {
-        url: string;
-        index: number;
+    duration?: number;
+    prompts?: string[];
+    images?: {
+        url?: string;
+        index?: number;
     }[];
 }, {
-    prompts: string[];
-    images: {
-        url: string;
-        index: number;
+    duration?: number;
+    prompts?: string[];
+    images?: {
+        url?: string;
+        index?: number;
     }[];
-    duration?: number | undefined;
 }>;
 export declare const ImageToVideoOutput: z.ZodObject<{
     videos: z.ZodArray<z.ZodObject<{
@@ -40,33 +40,33 @@ export declare const ImageToVideoOutput: z.ZodObject<{
         status: z.ZodEnum<["success", "failed"]>;
         metadata: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodAny>>;
     }, "strip", z.ZodTypeAny, {
-        url: string;
-        duration: number;
-        status: "failed" | "success";
-        index: number;
-        metadata?: Record<string, any> | undefined;
+        status?: "success" | "failed";
+        duration?: number;
+        metadata?: Record<string, any>;
+        url?: string;
+        index?: number;
     }, {
-        url: string;
-        duration: number;
-        status: "failed" | "success";
-        index: number;
-        metadata?: Record<string, any> | undefined;
+        status?: "success" | "failed";
+        duration?: number;
+        metadata?: Record<string, any>;
+        url?: string;
+        index?: number;
     }>, "many">;
 }, "strip", z.ZodTypeAny, {
-    videos: {
-        url: string;
-        duration: number;
-        status: "failed" | "success";
-        index: number;
-        metadata?: Record<string, any> | undefined;
+    videos?: {
+        status?: "success" | "failed";
+        duration?: number;
+        metadata?: Record<string, any>;
+        url?: string;
+        index?: number;
     }[];
 }, {
-    videos: {
-        url: string;
-        duration: number;
-        status: "failed" | "success";
-        index: number;
-        metadata?: Record<string, any> | undefined;
+    videos?: {
+        status?: "success" | "failed";
+        duration?: number;
+        metadata?: Record<string, any>;
+        url?: string;
+        index?: number;
     }[];
 }>;
 export type ImageToVideoInputType = z.infer<typeof ImageToVideoInput>;
@@ -79,4 +79,3 @@ export declare class ImageToVideoSkill {
     private callLTXVideo;
 }
 export default ImageToVideoSkill;
-//# sourceMappingURL=imageToVideo.d.ts.map

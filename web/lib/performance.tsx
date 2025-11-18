@@ -198,7 +198,7 @@ export class PerformanceOptimizer {
           value: 0,
           unit: "count",
           category: "memory",
-          metadata: { success: false, error: error.message },
+          metadata: { success: false, error: error instanceof Error ? error.message : String(error) },
         });
       }
     }
@@ -259,7 +259,7 @@ export class PerformanceOptimizer {
           metadata: {
             batchIndex: i,
             batchSize: batch.length,
-            error: error.message,
+            error: error instanceof Error ? error.message : String(error),
           },
         });
       }
@@ -458,11 +458,11 @@ export const createOptimizedComponent = <T extends React.ComponentType<any>>(
 ) => {
   const LazyComponent = React.lazy(importFn);
 
-  return React.forwardRef<any, React.ComponentProps<T>>((props, ref) => (
-    <React.Suspense fallback={fallback ? <fallback /> : <div>Loading...</div>}>
-      <LazyComponent {...props} ref={ref} />
+  return (props: any) => (
+    <React.Suspense fallback={fallback ? React.createElement(fallback) : <div>Loading...</div>}>
+      <LazyComponent {...props} />
     </React.Suspense>
-  ));
+  );
 };
 
 // Resource preloading

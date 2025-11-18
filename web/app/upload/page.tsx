@@ -2,12 +2,12 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Sidebar } from '@/components/Sidebar';
-import { Header } from '@/components/Header';
-import { Button } from '@/components/ui/button';
+import { Sidebar } from '../../components/Sidebar';
+import { Header } from '../../components/Header';
+import { Button } from '../../components/ui/button';
 import { Upload, Loader2, FileAudio, Sparkles, CheckCircle } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { UploadDropzone } from '@/lib/uploadthing';
+import { cn } from '../../lib/utils';
+import { UploadDropzone } from '../../lib/uploadthing';
 
 interface UploadedFile {
   url: string;
@@ -108,7 +108,7 @@ export default function UploadPage() {
               ) : (
                 <UploadDropzone
                   endpoint="audioUploader"
-                  onClientUploadComplete={(res) => {
+                  onClientUploadComplete={(res: any) => {
                     if (res && res[0]) {
                       const file = res[0];
                       setUploadedFile({

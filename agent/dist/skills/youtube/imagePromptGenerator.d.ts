@@ -10,32 +10,32 @@ export declare const ImagePromptGeneratorInput: z.ZodObject<{
         text: z.ZodString;
         visualDescription: z.ZodString;
     }, "strip", z.ZodTypeAny, {
-        text: string;
-        index: number;
-        visualDescription: string;
+        text?: string;
+        index?: number;
+        visualDescription?: string;
     }, {
-        text: string;
-        index: number;
-        visualDescription: string;
+        text?: string;
+        index?: number;
+        visualDescription?: string;
     }>, "many">;
     style: z.ZodEnum<["documentary", "narrative", "educational", "entertainment"]>;
     aspectRatio: z.ZodDefault<z.ZodEnum<["16:9", "9:16", "1:1"]>>;
 }, "strip", z.ZodTypeAny, {
-    style: "documentary" | "narrative" | "educational" | "entertainment";
-    scenes: {
-        text: string;
-        index: number;
-        visualDescription: string;
+    style?: "documentary" | "narrative" | "educational" | "entertainment";
+    scenes?: {
+        text?: string;
+        index?: number;
+        visualDescription?: string;
     }[];
-    aspectRatio: "16:9" | "9:16" | "1:1";
+    aspectRatio?: "16:9" | "9:16" | "1:1";
 }, {
-    style: "documentary" | "narrative" | "educational" | "entertainment";
-    scenes: {
-        text: string;
-        index: number;
-        visualDescription: string;
+    style?: "documentary" | "narrative" | "educational" | "entertainment";
+    scenes?: {
+        text?: string;
+        index?: number;
+        visualDescription?: string;
     }[];
-    aspectRatio?: "16:9" | "9:16" | "1:1" | undefined;
+    aspectRatio?: "16:9" | "9:16" | "1:1";
 }>;
 export declare const ImagePromptGeneratorOutput: z.ZodObject<{
     prompts: z.ZodArray<z.ZodObject<{
@@ -45,33 +45,33 @@ export declare const ImagePromptGeneratorOutput: z.ZodObject<{
         videoMotion: z.ZodString;
         style: z.ZodString;
     }, "strip", z.ZodTypeAny, {
-        style: string;
-        prompt: string;
-        index: number;
-        negativePrompt: string;
-        videoMotion: string;
+        style?: string;
+        prompt?: string;
+        index?: number;
+        negativePrompt?: string;
+        videoMotion?: string;
     }, {
-        style: string;
-        prompt: string;
-        index: number;
-        negativePrompt: string;
-        videoMotion: string;
+        style?: string;
+        prompt?: string;
+        index?: number;
+        negativePrompt?: string;
+        videoMotion?: string;
     }>, "many">;
 }, "strip", z.ZodTypeAny, {
-    prompts: {
-        style: string;
-        prompt: string;
-        index: number;
-        negativePrompt: string;
-        videoMotion: string;
+    prompts?: {
+        style?: string;
+        prompt?: string;
+        index?: number;
+        negativePrompt?: string;
+        videoMotion?: string;
     }[];
 }, {
-    prompts: {
-        style: string;
-        prompt: string;
-        index: number;
-        negativePrompt: string;
-        videoMotion: string;
+    prompts?: {
+        style?: string;
+        prompt?: string;
+        index?: number;
+        negativePrompt?: string;
+        videoMotion?: string;
     }[];
 }>;
 export type ImagePromptGeneratorInputType = z.infer<typeof ImagePromptGeneratorInput>;
@@ -91,4 +91,3 @@ export declare class ImagePromptGeneratorSkill {
     private generateVideoMotion;
 }
 export default ImagePromptGeneratorSkill;
-//# sourceMappingURL=imagePromptGenerator.d.ts.map

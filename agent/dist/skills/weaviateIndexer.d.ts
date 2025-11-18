@@ -20,45 +20,45 @@ export declare const WeaviateIndexerInput: z.ZodObject<{
     videoUrl: z.ZodOptional<z.ZodString>;
     metadata: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodAny>>;
 }, "strip", z.ZodTypeAny, {
-    title: string;
-    id: string;
-    metadata?: Record<string, any> | undefined;
-    key?: string | undefined;
-    audioUrl?: string | undefined;
-    lyrics?: string | undefined;
-    artist?: string | undefined;
-    album?: string | undefined;
-    genre?: string | undefined;
-    mood?: string | undefined;
-    bpm?: number | undefined;
-    videoUrl?: string | undefined;
-    transcription?: string | undefined;
-    coverUrl?: string | undefined;
+    metadata?: Record<string, any>;
+    key?: string;
+    audioUrl?: string;
+    lyrics?: string;
+    title?: string;
+    artist?: string;
+    album?: string;
+    genre?: string;
+    mood?: string;
+    bpm?: number;
+    videoUrl?: string;
+    id?: string;
+    transcription?: string;
+    coverUrl?: string;
 }, {
-    title: string;
-    id: string;
-    metadata?: Record<string, any> | undefined;
-    key?: string | undefined;
-    audioUrl?: string | undefined;
-    lyrics?: string | undefined;
-    artist?: string | undefined;
-    album?: string | undefined;
-    genre?: string | undefined;
-    mood?: string | undefined;
-    bpm?: number | undefined;
-    videoUrl?: string | undefined;
-    transcription?: string | undefined;
-    coverUrl?: string | undefined;
+    metadata?: Record<string, any>;
+    key?: string;
+    audioUrl?: string;
+    lyrics?: string;
+    title?: string;
+    artist?: string;
+    album?: string;
+    genre?: string;
+    mood?: string;
+    bpm?: number;
+    videoUrl?: string;
+    id?: string;
+    transcription?: string;
+    coverUrl?: string;
 }>;
 export declare const WeaviateIndexerOutput: z.ZodObject<{
     indexed: z.ZodBoolean;
     documentId: z.ZodString;
 }, "strip", z.ZodTypeAny, {
-    indexed: boolean;
-    documentId: string;
+    indexed?: boolean;
+    documentId?: string;
 }, {
-    indexed: boolean;
-    documentId: string;
+    indexed?: boolean;
+    documentId?: string;
 }>;
 export type WeaviateIndexerInputType = z.infer<typeof WeaviateIndexerInput>;
 export type WeaviateIndexerOutputType = z.infer<typeof WeaviateIndexerOutput>;
@@ -68,4 +68,3 @@ export declare class WeaviateIndexerSkill {
     run(input: WeaviateIndexerInputType): Promise<WeaviateIndexerOutputType>;
 }
 export default WeaviateIndexerSkill;
-//# sourceMappingURL=weaviateIndexer.d.ts.map

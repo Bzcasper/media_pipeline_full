@@ -4,8 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { musicVideoAgent } from "@trapgod/agent/ai-sdk-agent";
-import { mediaServer } from "@trapgod/agent/tools/mediaServer";
+import { musicVideoAgent, mediaServer } from "@trapgod/agent";
 import { v4 as uuidv4 } from "uuid";
 
 export async function POST(request: NextRequest) {
@@ -30,32 +29,30 @@ export async function POST(request: NextRequest) {
 
     const jobId = uuidv4();
 
-    // Run agent with ToolLoopAgent generate method
-    musicVideoAgent
-      .generate({
-        prompt: `Process this music file and create a complete music video for:
+    // Run AI SDK agent for music video generation
+    const agentResult = await musicVideoAgent({
+      jobId,
+      prompt: `Process this music file and create a complete music video for:
 
-Audio File: ${uploadResult.file_id}
+Audio File ID: ${uploadResult.file_id}
 Title: ${title}
 Artist: ${artist}
 Album: ${album}
 
-Please execute:
-1. Transcribe the audio (use Riva, fallback to Whisper if needed)
-2. Extract metadata (genre, mood, themes)
-3. Generate an album cover
+Please execute the full pipeline:
+1. Transcribe the audio using Riva ASR (fallback to Whisper if needed)
+2. Extract metadata including genre, mood, themes, BPM, and key
+3. Generate an album cover image
 4. Create an animated music video
-5. Upload everything to GCS
-6. Index in Weaviate for search
+5. Upload all results to Google Cloud Storage
+6. Index the content in Weaviate for search
 
-Return all URLs and metadata.`,
-      })
-      .then((result) => {
-        console.log(`Music video job ${jobId} completed:`, result);
-      })
-      .catch((error) => {
-        console.error(`Music video job ${jobId} failed:`, error);
-      });
+Return the complete processing results.`,
+    });
+
+    if (!agentResult.success) {
+      throw new Error(`Agent processing failed: ${agentResult.error}`);
+    }
 
     return NextResponse.json({
       jobId,

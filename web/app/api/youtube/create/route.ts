@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { YouTubeVideoOrchestrator } from "@trapgod/agent/youtube-orchestrator";
+import { youtubeVideoAgent } from "@trapgod/agent";
 
 export async function POST(request: NextRequest) {
   try {
@@ -17,23 +17,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Query is required" }, { status: 400 });
     }
 
-    // Create orchestrator and start pipeline
-    const orchestrator = new YouTubeVideoOrchestrator();
-    const jobId = orchestrator.getState().jobId;
+    // Run AI SDK agent for YouTube video generation
+    const jobId = `youtube_${Date.now()}`;
+    const agentResult = await youtubeVideoAgent({
+      jobId,
+      query,
+      videoStyle,
+      duration,
+    });
 
-    // Run pipeline asynchronously
-    orchestrator
-      .run({
-        query,
-        videoStyle,
-        duration,
-        aspectRatio,
-        voiceOver,
-        backgroundMusic,
-      })
-      .catch((error) => {
-        console.error(`YouTube pipeline failed for job ${jobId}:`, error);
-      });
+    if (!agentResult.success) {
+      throw new Error(`YouTube agent failed: ${agentResult.error}`);
+    }
 
     return NextResponse.json({
       jobId,

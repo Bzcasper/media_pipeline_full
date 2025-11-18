@@ -7,12 +7,12 @@ export { TranscriptionSkill } from './transcription';
 export { MetadataSkill } from './metadata';
 export { AlbumCoverSkill } from './albumCover';
 export { VideoGeneratorSkill } from './videoGenerator';
-export { GCSUploadSkill } from './gcsUpload';
-export { WeaviateIndexerSkill } from './weaviateIndexer';
+export { GCSWorker } from './gcs';
+export { WeaviateIndexerSkill } from './weaviate';
 
 export * from './transcription';
 export * from './metadata';
 export * from './albumCover';
 export * from './videoGenerator';
-export * from './gcsUpload';
-export * from './weaviateIndexer';
+export * from './gcs';
+export * from './weaviate';

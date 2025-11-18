@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { Sidebar } from '@/components/Sidebar';
-import { Header } from '@/components/Header';
-import { Button } from '@/components/ui/button';
+import { Sidebar } from '../../../components/Sidebar';
+import { Header } from '../../../components/Header';
+import { Button } from '../../../components/ui/button';
 import { CheckCircle, XCircle, Loader2, Download, ExternalLink } from 'lucide-react';
-import { formatDate, getStatusColor } from '@/lib/utils';
+import { formatDate, getStatusColor } from '../../../lib/utils';
 import dynamic from 'next/dynamic';
 
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), { ssr: false });

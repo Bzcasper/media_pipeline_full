@@ -8,11 +8,11 @@ export declare const MetadataInput: z.ZodObject<{
     lyrics: z.ZodString;
     audioMetadata: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodAny>>;
 }, "strip", z.ZodTypeAny, {
-    lyrics: string;
-    audioMetadata?: Record<string, any> | undefined;
+    lyrics?: string;
+    audioMetadata?: Record<string, any>;
 }, {
-    lyrics: string;
-    audioMetadata?: Record<string, any> | undefined;
+    lyrics?: string;
+    audioMetadata?: Record<string, any>;
 }>;
 export declare const MetadataOutput: z.ZodObject<{
     title: z.ZodOptional<z.ZodString>;
@@ -26,27 +26,27 @@ export declare const MetadataOutput: z.ZodObject<{
     key: z.ZodOptional<z.ZodString>;
     summary: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
-    key?: string | undefined;
-    language?: string | undefined;
-    title?: string | undefined;
-    artist?: string | undefined;
-    album?: string | undefined;
-    genre?: string | undefined;
-    mood?: string | undefined;
-    themes?: string[] | undefined;
-    bpm?: number | undefined;
-    summary?: string | undefined;
+    key?: string;
+    language?: string;
+    title?: string;
+    artist?: string;
+    album?: string;
+    genre?: string;
+    mood?: string;
+    themes?: string[];
+    bpm?: number;
+    summary?: string;
 }, {
-    key?: string | undefined;
-    language?: string | undefined;
-    title?: string | undefined;
-    artist?: string | undefined;
-    album?: string | undefined;
-    genre?: string | undefined;
-    mood?: string | undefined;
-    themes?: string[] | undefined;
-    bpm?: number | undefined;
-    summary?: string | undefined;
+    key?: string;
+    language?: string;
+    title?: string;
+    artist?: string;
+    album?: string;
+    genre?: string;
+    mood?: string;
+    themes?: string[];
+    bpm?: number;
+    summary?: string;
 }>;
 export type MetadataInputType = z.infer<typeof MetadataInput>;
 export type MetadataOutputType = z.infer<typeof MetadataOutput>;
@@ -54,7 +54,8 @@ export declare class MetadataSkill {
     private logger;
     constructor(logger: Logger);
     run(input: MetadataInputType): Promise<MetadataOutputType>;
+    runWithRetry(input: MetadataInputType, maxAttempts?: number): Promise<MetadataOutputType>;
+    private extractWithLLM;
     private extractBasicMetadata;
 }
 export default MetadataSkill;
-//# sourceMappingURL=metadata.d.ts.map

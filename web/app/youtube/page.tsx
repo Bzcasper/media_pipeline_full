@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Sidebar } from '@/components/Sidebar';
-import { Header } from '@/components/Header';
-import { Button } from '@/components/ui/button';
+import { Sidebar } from '../../components/Sidebar';
+import { Header } from '../../components/Header';
+import { Button } from '../../components/ui/button';
 import { Loader2, Video, Sparkles } from 'lucide-react';
 
 export default function YouTubeVideoCreator() {

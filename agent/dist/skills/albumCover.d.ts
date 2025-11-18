@@ -12,32 +12,32 @@ export declare const AlbumCoverInput: z.ZodObject<{
     lyrics: z.ZodOptional<z.ZodString>;
     style: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
-    title: string;
-    lyrics?: string | undefined;
-    artist?: string | undefined;
-    genre?: string | undefined;
-    mood?: string | undefined;
-    style?: string | undefined;
+    lyrics?: string;
+    title?: string;
+    artist?: string;
+    genre?: string;
+    mood?: string;
+    style?: string;
 }, {
-    title: string;
-    lyrics?: string | undefined;
-    artist?: string | undefined;
-    genre?: string | undefined;
-    mood?: string | undefined;
-    style?: string | undefined;
+    lyrics?: string;
+    title?: string;
+    artist?: string;
+    genre?: string;
+    mood?: string;
+    style?: string;
 }>;
 export declare const AlbumCoverOutput: z.ZodObject<{
     imageFileId: z.ZodString;
     imageUrl: z.ZodOptional<z.ZodString>;
     prompt: z.ZodString;
 }, "strip", z.ZodTypeAny, {
-    imageFileId: string;
-    prompt: string;
-    imageUrl?: string | undefined;
+    prompt?: string;
+    imageFileId?: string;
+    imageUrl?: string;
 }, {
-    imageFileId: string;
-    prompt: string;
-    imageUrl?: string | undefined;
+    prompt?: string;
+    imageFileId?: string;
+    imageUrl?: string;
 }>;
 export type AlbumCoverInputType = z.infer<typeof AlbumCoverInput>;
 export type AlbumCoverOutputType = z.infer<typeof AlbumCoverOutput>;
@@ -50,4 +50,3 @@ export declare class AlbumCoverSkill {
     private escapeHtml;
 }
 export default AlbumCoverSkill;
-//# sourceMappingURL=albumCover.d.ts.map

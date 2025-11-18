@@ -10,15 +10,15 @@ export declare const ScriptGeneratorInput: z.ZodObject<{
     targetDuration: z.ZodDefault<z.ZodNumber>;
     tone: z.ZodOptional<z.ZodEnum<["formal", "casual", "enthusiastic", "serious"]>>;
 }, "strip", z.ZodTypeAny, {
-    style: "documentary" | "narrative" | "educational" | "entertainment";
-    query: string;
-    targetDuration: number;
-    tone?: "formal" | "casual" | "enthusiastic" | "serious" | undefined;
+    style?: "documentary" | "narrative" | "educational" | "entertainment";
+    query?: string;
+    targetDuration?: number;
+    tone?: "formal" | "casual" | "enthusiastic" | "serious";
 }, {
-    style: "documentary" | "narrative" | "educational" | "entertainment";
-    query: string;
-    targetDuration?: number | undefined;
-    tone?: "formal" | "casual" | "enthusiastic" | "serious" | undefined;
+    style?: "documentary" | "narrative" | "educational" | "entertainment";
+    query?: string;
+    targetDuration?: number;
+    tone?: "formal" | "casual" | "enthusiastic" | "serious";
 }>;
 export declare const ScriptGeneratorOutput: z.ZodObject<{
     script: z.ZodString;
@@ -28,19 +28,19 @@ export declare const ScriptGeneratorOutput: z.ZodObject<{
     estimatedDuration: z.ZodNumber;
     keywords: z.ZodArray<z.ZodString, "many">;
 }, "strip", z.ZodTypeAny, {
-    title: string;
-    keywords: string[];
-    script: string;
-    hook: string;
-    suggestedSceneCount: number;
-    estimatedDuration: number;
+    title?: string;
+    keywords?: string[];
+    script?: string;
+    hook?: string;
+    suggestedSceneCount?: number;
+    estimatedDuration?: number;
 }, {
-    title: string;
-    keywords: string[];
-    script: string;
-    hook: string;
-    suggestedSceneCount: number;
-    estimatedDuration: number;
+    title?: string;
+    keywords?: string[];
+    script?: string;
+    hook?: string;
+    suggestedSceneCount?: number;
+    estimatedDuration?: number;
 }>;
 export type ScriptGeneratorInputType = z.infer<typeof ScriptGeneratorInput>;
 export type ScriptGeneratorOutputType = z.infer<typeof ScriptGeneratorOutput>;
@@ -57,4 +57,3 @@ export declare class ScriptGeneratorSkill {
     private extractKeywords;
 }
 export default ScriptGeneratorSkill;
-//# sourceMappingURL=scriptGenerator.d.ts.map

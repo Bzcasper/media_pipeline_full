@@ -1,194 +1,102 @@
 /**
  * AI SDK Agent Implementation
- * Using current AI SDK v5 patterns with proper tool definitions
+ * Simplified version for music video generation
  */
 
-import { generateText, streamText, tool } from "ai";
-import { z } from "zod";
+import { generateText } from "ai";
 import { anthropic } from "@ai-sdk/anthropic";
-import { openai } from "@ai-sdk/openai";
+import { Logger } from "./utils";
 
-// Import our existing tools and skills
-import { mediaServer } from "./tools/mediaServer";
-import { modal } from "./tools/modal";
-import { gcs } from "./tools/gcs";
-import { weaviate } from "./tools/weaviate";
-import { Logger, JobStateManager } from "./utils";
+/**
+ * Music Video Generation Agent
+ * Simplified AI agent for processing music files
+ */
+export async function musicVideoAgent(input: {
+  jobId: string;
+  prompt: string;
+}) {
+  const logger = new Logger(input.jobId);
+
+  try {
+    logger.info("Starting music video agent", { jobId: input.jobId });
+
+    const response = await generateText({
+      model: anthropic("claude-3-5-haiku-20241022"),
+      prompt: input.prompt,
+      system: `You are a music video generation assistant. Help process music files through a complete pipeline:
+      1. Transcribe audio (use Riva ASR, fallback to Whisper)
+      2. Extract metadata (genre, mood, themes, BPM, key)
+      3. Generate album cover art
+      4. Create animated music video
+      5. Upload to Google Cloud Storage
+      6. Index in Weaviate vector database
+
+      Respond with a structured plan for processing the music file.`,
+    });
+
+    logger.info("Music video agent completed", { jobId: input.jobId });
+
+    return {
+      success: true,
+      jobId: input.jobId,
+      plan: response.text,
+    };
+  } catch (error) {
+    logger.error("Music video agent failed", {
+      jobId: input.jobId,
+      error: error instanceof Error ? error.message : String(error)
+    });
+
+    return {
+      success: false,
+      jobId: input.jobId,
+      error: error instanceof Error ? error.message : String(error),
+    };
+  }
+}
 
 /**
  * YouTube Video Generation Agent
- * Uses AI SDK with proper tool definitions
+ * Simplified agent for YouTube content creation
  */
 export async function youtubeVideoAgent(input: {
   jobId: string;
   query: string;
-  videoStyle: "documentary" | "narrative" | "educational" | "entertainment";
-  duration: number;
-  aspectRatio: "16:9" | "9:16" | "1:1";
-  voiceOver: boolean;
-  backgroundMusic: boolean;
-  complexity: "simple" | "complex";
-  userPreferences?: {
-    imageStyle?: string;
-    voiceType?: string;
-    musicGenre?: string;
-  };
+  videoStyle?: string;
+  duration?: number;
 }) {
-  const { text, toolCalls, toolResults } = await generateText({
-    model:
-      input.complexity === "complex"
-        ? anthropic("claude-3-5-sonnet-20241022")
-        : anthropic("claude-3-5-haiku-20241022"),
+  const logger = new Logger(input.jobId);
 
-    tools: {
-      generateScript: tool({
-        description: "Generate a video script from a query",
-        inputSchema: z.object({
-          query: z.string(),
-          style: z.string(),
-          targetDuration: z.number(),
-          tone: z.string().optional(),
-        }),
-        execute: async ({ query, style, targetDuration, tone }) => {
-          // Simple fallback implementation
-          return {
-            success: true,
-            script: `Generated script for: ${query}`,
-            scenes: [],
-          };
-        },
-      }),
-      updateJobState: tool({
-        description: "Update job state and progress",
-        inputSchema: z.object({
-          jobId: z.string(),
-          status: z.string(),
-          progress: z.number(),
-          step: z.string().optional(),
-          output: z.any().optional(),
-        }),
-        execute: async ({ jobId, status, progress, step, output }) => {
-          return { success: true, jobId, status, progress };
-        },
-      }),
-    },
+  try {
+    logger.info("Starting YouTube video agent", { jobId: input.jobId });
 
-    system: `You are a professional YouTube video creator agent. Your job is to:
-1. Generate engaging scripts from user queries
-2. Create detailed image prompts for each scene
-3. Coordinate image generation and validation
-4. Orchestrate video creation with proper timing
-5. Assemble final videos with voiceover and music
+    const response = await generateText({
+      model: anthropic("claude-3-5-haiku-20241022"),
+      prompt: `Create a YouTube video about: ${input.query}
+      Style: ${input.videoStyle || 'educational'}
+      Duration: ${input.duration || 60} seconds
 
-Always maintain high quality standards and provide detailed progress updates.`,
+      Generate a complete video script and plan.`,
+      system: "You are a YouTube content creation assistant.",
+    });
 
-    prompt: `Create a video for: "${input.query}"
+    logger.info("YouTube video agent completed", { jobId: input.jobId });
 
-**Video Style:** ${input.videoStyle}
-**Duration:** ${input.duration} seconds
-**Aspect Ratio:** ${input.aspectRatio}
-**Voiceover:** ${input.voiceOver ? "Yes" : "No"}
-**Background Music:** ${input.backgroundMusic ? "Yes" : "No"}
+    return {
+      success: true,
+      jobId: input.jobId,
+      script: response.text,
+    };
+  } catch (error) {
+    logger.error("YouTube video agent failed", {
+      jobId: input.jobId,
+      error: error instanceof Error ? error.message : String(error)
+    });
 
-${
-  input.userPreferences
-    ? `**User Preferences:**
-${
-  input.userPreferences.imageStyle
-    ? `- Image Style: ${input.userPreferences.imageStyle}`
-    : ""
+    return {
+      success: false,
+      jobId: input.jobId,
+      error: error instanceof Error ? error.message : String(error),
+    };
+  }
 }
-${
-  input.userPreferences.voiceType
-    ? `- Voice Type: ${input.userPreferences.voiceType}`
-    : ""
-}
-${
-  input.userPreferences.musicGenre
-    ? `- Music Genre: ${input.userPreferences.musicGenre}`
-    : ""
-}`
-    : ""
-}
-
-Execute the video creation pipeline step by step, calling tools in this order:
-1. generateScript - Create the script
-2. updateJobState - Update progress
-
-Update job state after each major step.`,
-  });
-
-  return { text, toolCalls, toolResults };
-}
-
-/**
- * Music Video Generation Agent
- * Uses AI SDK with tool definitions for music pipeline
- */
-export async function musicVideoAgent(input: {
-  jobId: string;
-  audioFileId: string;
-  title?: string;
-  artist?: string;
-  album?: string;
-  transcriptionMethod?: "riva" | "whisper" | "auto";
-}) {
-  const { text, toolCalls, toolResults } = await generateText({
-    model: anthropic("claude-3-5-sonnet-20241022"),
-
-    tools: {
-      transcribeAudio: tool({
-        description: "Transcribe audio with automatic fallback",
-        inputSchema: z.object({
-          audioFileId: z.string(),
-          language: z.string().optional(),
-        }),
-        execute: async ({ audioFileId, language }) => {
-          // Simple fallback implementation
-          return {
-            success: true,
-            text: "Transcribed audio text",
-            segments: [],
-            language: language || "en",
-          };
-        },
-      }),
-      updateJobState: tool({
-        description: "Update job state and progress",
-        inputSchema: z.object({
-          jobId: z.string(),
-          status: z.string(),
-          progress: z.number(),
-        }),
-        execute: async ({ jobId, status, progress }) => {
-          return { success: true, jobId, status, progress };
-        },
-      }),
-    },
-
-    system: `You are a music video creation agent. Your job is to:
-1. Transcribe audio (Riva with Whisper fallback)
-2. Extract metadata from lyrics
-3. Generate album cover art
-4. Create animated music video
-5. Upload results to cloud storage
-6. Index in vector database
-
-Always use fallbacks and maintain high quality.`,
-
-    prompt: `Create a music video pipeline for:
-Audio File: ${input.audioFileId}
-Title: ${input.title || "Unknown"}
-Artist: ${input.artist || "Unknown"}
-Transcription Method: ${input.transcriptionMethod || "auto"}
-
-Execute the music video pipeline step by step.`,
-  });
-
-  return { text, toolCalls, toolResults };
-}
-
-export default {
-  youtubeVideoAgent,
-  musicVideoAgent,
-};

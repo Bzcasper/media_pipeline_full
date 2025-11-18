@@ -9,13 +9,13 @@ export declare const ScriptChunkerInput: z.ZodObject<{
     targetScenes: z.ZodDefault<z.ZodNumber>;
     maxWordsPerScene: z.ZodDefault<z.ZodNumber>;
 }, "strip", z.ZodTypeAny, {
-    script: string;
-    targetScenes: number;
-    maxWordsPerScene: number;
+    script?: string;
+    targetScenes?: number;
+    maxWordsPerScene?: number;
 }, {
-    script: string;
-    targetScenes?: number | undefined;
-    maxWordsPerScene?: number | undefined;
+    script?: string;
+    targetScenes?: number;
+    maxWordsPerScene?: number;
 }>;
 export declare const ScriptChunkerOutput: z.ZodObject<{
     scenes: z.ZodArray<z.ZodObject<{
@@ -25,40 +25,40 @@ export declare const ScriptChunkerOutput: z.ZodObject<{
         estimatedDuration: z.ZodNumber;
         visualDescription: z.ZodString;
     }, "strip", z.ZodTypeAny, {
-        text: string;
-        estimatedDuration: number;
-        index: number;
-        wordCount: number;
-        visualDescription: string;
+        text?: string;
+        estimatedDuration?: number;
+        index?: number;
+        wordCount?: number;
+        visualDescription?: string;
     }, {
-        text: string;
-        estimatedDuration: number;
-        index: number;
-        wordCount: number;
-        visualDescription: string;
+        text?: string;
+        estimatedDuration?: number;
+        index?: number;
+        wordCount?: number;
+        visualDescription?: string;
     }>, "many">;
     totalScenes: z.ZodNumber;
     totalDuration: z.ZodNumber;
 }, "strip", z.ZodTypeAny, {
-    totalDuration: number;
-    scenes: {
-        text: string;
-        estimatedDuration: number;
-        index: number;
-        wordCount: number;
-        visualDescription: string;
+    scenes?: {
+        text?: string;
+        estimatedDuration?: number;
+        index?: number;
+        wordCount?: number;
+        visualDescription?: string;
     }[];
-    totalScenes: number;
+    totalScenes?: number;
+    totalDuration?: number;
 }, {
-    totalDuration: number;
-    scenes: {
-        text: string;
-        estimatedDuration: number;
-        index: number;
-        wordCount: number;
-        visualDescription: string;
+    scenes?: {
+        text?: string;
+        estimatedDuration?: number;
+        index?: number;
+        wordCount?: number;
+        visualDescription?: string;
     }[];
-    totalScenes: number;
+    totalScenes?: number;
+    totalDuration?: number;
 }>;
 export type ScriptChunkerInputType = z.infer<typeof ScriptChunkerInput>;
 export type ScriptChunkerOutputType = z.infer<typeof ScriptChunkerOutput>;
@@ -71,4 +71,3 @@ export declare class ScriptChunkerSkill {
     private generateVisualDescription;
 }
 export default ScriptChunkerSkill;
-//# sourceMappingURL=scriptChunker.d.ts.map

@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Home, Upload, History, Settings, Video } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn } from '../lib/utils';
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: Home },
@@ -29,7 +29,7 @@ export function Sidebar() {
           return (
             <Link
               key={item.name}
-              href={item.href}
+              href={item.href as any}
               className={cn(
                 isActive
                   ? 'bg-spotify-gray text-white'

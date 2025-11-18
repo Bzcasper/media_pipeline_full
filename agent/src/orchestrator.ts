@@ -10,7 +10,7 @@ import {
   MetadataSkill,
   AlbumCoverSkill,
   VideoGeneratorSkill,
-  GCSUploadSkill,
+  GCSWorker,
   WeaviateIndexerSkill
 } from './skills';
 
@@ -149,25 +149,25 @@ export class PipelineOrchestrator {
       this.jobState.updateStatus('uploading_results');
       await this.jobState.save();
 
-      const gcsUploadSkill = new GCSUploadSkill(this.logger);
+      const gcsUploadSkill = new GCSWorker(this.logger);
       const gcsResult = await gcsUploadSkill.run({
-        jobId,
-        files: {
-          cover: {
-            fileId: albumCoverResult.imageFileId,
-            name: 'cover.png'
+        files: [
+          {
+            url: albumCoverResult.imageUrl,
+            filename: 'cover.png',
+            contentType: 'image/png'
           },
-          video: {
-            fileId: videoResult.videoFileId,
-            name: 'video.mp4'
+          {
+            url: videoResult.videoUrl,
+            filename: 'video.mp4',
+            contentType: 'video/mp4'
           },
-          ...(input.audioFileId && {
-            audio: {
-              fileId: input.audioFileId,
-              name: 'audio.mp3'
-            }
-          })
-        }
+          ...(input.audioFileId ? [{
+            url: `${process.env.MEDIA_SERVER_URL}/api/v1/media/storage/${input.audioFileId}`,
+            filename: 'audio.mp3',
+            contentType: 'audio/mpeg'
+          }] : [])
+        ]
       });
 
       this.jobState.completeStep('gcs_upload', gcsResult);
@@ -184,23 +184,18 @@ export class PipelineOrchestrator {
 
       const weaviateIndexerSkill = new WeaviateIndexerSkill(this.logger);
       const weaviateResult = await weaviateIndexerSkill.run({
-        id: jobId,
-        title: metadataResult.title || input.title || 'Untitled',
-        artist: metadataResult.artist || input.artist,
-        album: metadataResult.album || input.album,
-        genre: metadataResult.genre,
-        mood: metadataResult.mood,
-        lyrics: transcriptionResult.text,
-        transcription: transcriptionResult.text,
-        bpm: metadataResult.bpm,
-        key: metadataResult.key,
-        audioUrl: gcsResult.uploads.audio?.signedUrl,
-        coverUrl: gcsResult.uploads.cover?.signedUrl,
-        videoUrl: gcsResult.uploads.video?.signedUrl,
+        jobId,
         metadata: {
-          ...metadataResult,
-          transcriptionMethod: transcriptionResult.method
-        }
+          title: metadataResult.title || input.title || 'Untitled',
+          artist: metadataResult.artist || input.artist,
+          album: metadataResult.album || input.album,
+          genre: metadataResult.genre,
+          mood: metadataResult.mood,
+          bpm: metadataResult.bpm,
+          key: metadataResult.key,
+        },
+        assets: gcsResult.uploads,
+        transcription: transcriptionResult,
       });
 
       this.jobState.completeStep('weaviate_indexing', weaviateResult);
