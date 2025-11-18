@@ -10,11 +10,13 @@ var __require = /* @__PURE__ */ ((x) => typeof require !== "undefined" ? require
 });
 var FormDataImpl;
 var FileImpl;
+var isNodeJs = false;
 try {
   FormDataImpl = FormData;
   FileImpl = File;
 } catch (e) {
   FormDataImpl = __require("form-data");
+  isNodeJs = true;
 }
 function isUploadable(value) {
   return Buffer.isBuffer(value) || value instanceof buffer.Blob || value instanceof File || value instanceof Uint8Array || value instanceof ArrayBuffer;
@@ -29,7 +31,11 @@ function toFormData(obj) {
       }
       if (isUploadable(value) || // Uploadable type guard
       typeof value.pipe === "function" && value.readable) {
-        form.append(key, value);
+        if (isNodeJs && Buffer.isBuffer(value)) {
+          form.append(key, value, { filename: "upload", contentType: "application/octet-stream" });
+        } else {
+          form.append(key, value);
+        }
         continue;
       }
       if (typeof value === "object" || Array.isArray(value)) {
@@ -123,11 +129,25 @@ var MediaClient = class {
   }
   // STORAGE
   async uploadFile(body) {
-    const form = toFormData(body);
-    return this.request("/api/v1/media/storage", {
+    const FormData2 = __require("form-data");
+    const form = new FormData2();
+    if (body.file) {
+      form.append("file", body.file, { filename: "upload", contentType: "application/octet-stream" });
+    }
+    if (body.media_type) {
+      form.append("media_type", body.media_type);
+    }
+    const url = `${this.baseURL}/api/v1/media/storage`;
+    const response = await this.fetch(url, {
       method: "POST",
-      body: form
+      body: form,
+      headers: form.getHeaders ? form.getHeaders() : void 0
     });
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: response.statusText }));
+      throw new Error(`HTTP error! status: ${response.status}, details: ${JSON.stringify(errorData)}`);
+    }
+    return response.json();
   }
   async downloadFile(file_id) {
     return this.request(`/api/v1/media/storage/${file_id}`);
