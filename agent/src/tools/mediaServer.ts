@@ -4,6 +4,7 @@ type Uploadable = Buffer | Blob | File | ArrayBuffer | Uint8Array;
 const getBaseUrl = () => process.env.MEDIA_SERVER_URL || "https://2281a5a294754c19f8c9e2df0be013fb-bobby-casper-4235.aiagentsaz.com";
 const getQwenImageUrl = () => process.env.QWEN_IMAGE_URL || "https://ai-tool-pool--nunchaku-qwen-image-fastapi-fastapi-app.modal.run";
 const getChatUrl = () => process.env.CHAT_API_URL || "https://chatmock-79551411518.us-central1.run.app";
+const getSvdUrl = () => process.env.SVD_URL || "https://ai-tool-pool--svd-video-web.modal.run";
 
 // Helper to poll for job completion
 const pollForCompletion = async (
@@ -414,6 +415,66 @@ export const mediaServer = {
   },
 
   /**
+   * Animate image using SVD (Stable Video Diffusion)
+   * Creates smooth video animation from a single image
+   */
+  animateWithSVD: async (options: {
+    imageFileId: string;
+    frames?: number; // 14-25, default 25
+    steps?: number; // 5-50, default 25
+    fps?: number; // 1-30, default 6
+    motion?: number; // 1-255, default 127
+    seed?: number;
+    loopCount?: number; // 1-20, default 1 (15 = ~60s video)
+  }) => {
+    const url = `${getSvdUrl()}/generate`;
+
+    // First download the image from media server
+    const imageUrl = `${getBaseUrl()}/api/v1/media/storage/${options.imageFileId}`;
+    const imageResponse = await fetch(imageUrl);
+    if (!imageResponse.ok) {
+      throw new Error(`Failed to download image: ${imageResponse.status}`);
+    }
+    const imageBuffer = Buffer.from(await imageResponse.arrayBuffer());
+
+    // Create form data for SVD
+    const FormData = (await import('form-data')).default;
+    const formData = new FormData();
+    formData.append('image', imageBuffer, { filename: 'image.png', contentType: 'image/png' });
+    formData.append('frames', (options.frames || 25).toString());
+    formData.append('steps', (options.steps || 25).toString());
+    formData.append('fps', (options.fps || 6).toString());
+    formData.append('motion', (options.motion || 127).toString());
+    if (options.seed) formData.append('seed', options.seed.toString());
+    formData.append('loop_count', (options.loopCount || 1).toString());
+
+    const response = await fetch(url, {
+      method: 'POST',
+      body: formData as any,
+      headers: formData.getHeaders(),
+    });
+
+    if (!response.ok) {
+      throw new Error(`SVD animation failed: ${response.status} ${await response.text()}`);
+    }
+
+    const result = await response.json();
+
+    // Decode base64 video and upload to media server
+    const videoBuffer = Buffer.from(result.video, 'base64');
+    const uploadResult = await mediaServer.uploadFile(videoBuffer, 'video');
+
+    return {
+      videoFileId: uploadResult.file_id,
+      videoUrl: `${getBaseUrl()}/api/v1/media/storage/${uploadResult.file_id}`,
+      duration: result.duration,
+      fps: result.fps,
+      frames: result.frames,
+      generationTime: result.time,
+    };
+  },
+
+  /**
    * Generate TTS audio using Kokoro
    */
   generateTTS: async (text: string, voice?: string) => {
@@ -490,12 +551,19 @@ export const mediaServer = {
     audioId?: string; // optional background music
     voice?: string; // TTS voice
     captionOn?: boolean; // show captions
+    useSVD?: boolean; // use SVD for animation (default true)
+    svdLoopCount?: number; // SVD loop count for longer videos (default 3 = ~12s)
+    svdMotion?: number; // SVD motion intensity (1-255, default 127)
   }) => {
-    const results: { imageId: string; videoId: string; prompt: string; narration?: string }[] = [];
+    const results: { imageId: string; animatedVideoId?: string; videoId: string; prompt: string; narration?: string }[] = [];
     const totalScenes = options.prompts.length;
     const hasNarrations = options.narrations && options.narrations.length === totalScenes;
+    const useSVD = options.useSVD ?? true;
 
     console.log(`\n🎬 Starting storyline generation with ${totalScenes} scenes`);
+    if (useSVD) {
+      console.log(`🎥 SVD animation enabled (loop: ${options.svdLoopCount || 3}x)`);
+    }
     if (hasNarrations) {
       console.log(`🎙️ Voiceover & captions enabled`);
     }
@@ -513,38 +581,102 @@ export const mediaServer = {
         console.log(`Narration: "${narration.substring(0, 60)}${narration.length > 60 ? '...' : ''}"`);
       }
 
-      // Step 1: Generate AI image
+      // Step 1: Generate AI image (1024x576 for SVD compatibility)
       console.log(`  → Generating image...`);
       const startTime = Date.now();
       const imageResult = await mediaServer.generateAIImage({
         prompt,
         negativePrompt: options.negativePrompt,
         width: options.width || 1024,
-        height: options.height || 1024,
+        height: options.height || 576, // SVD format 16:9
         seed: Date.now() + i, // Different seed for each
       });
       const imageTime = ((Date.now() - startTime) / 1000).toFixed(1);
       console.log(`  ✓ Image generated: ${imageResult.imageFileId} (${imageTime}s)`);
 
-      // Small delay between operations to avoid overwhelming the server
+      // Small delay between operations
       await new Promise(resolve => setTimeout(resolve, 1000));
 
-      // Step 2: Convert to video - with or without voiceover/captions
+      // Step 2: Animate with SVD if enabled
+      let animatedVideoId: string | undefined;
+      if (useSVD) {
+        console.log(`  → Animating with SVD...`);
+        const svdStartTime = Date.now();
+        const svdResult = await mediaServer.animateWithSVD({
+          imageFileId: imageResult.imageFileId,
+          frames: 25,
+          steps: 25,
+          fps: 8,
+          motion: options.svdMotion || 127,
+          loopCount: options.svdLoopCount || 3, // ~12s video
+        });
+        const svdTime = ((Date.now() - svdStartTime) / 1000).toFixed(1);
+        console.log(`  ✓ SVD animation: ${svdResult.videoFileId} (${svdTime}s, ${svdResult.duration}s duration)`);
+        animatedVideoId = svdResult.videoFileId;
+
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+
+      // Step 3: Add voiceover and captions
       let videoResult: { videoFileId: string; videoUrl: string };
 
       if (narration) {
-        // Generate captioned video with TTS voiceover
-        console.log(`  → Generating video with voiceover & captions...`);
+        // Generate TTS audio
+        console.log(`  → Generating voiceover...`);
+        const ttsResult = await mediaServer.generateTTS(narration, options.voice || 'af_sarah');
+
+        // Combine animated video with audio and captions
+        const baseVideoId = animatedVideoId || imageResult.imageFileId;
+        console.log(`  → Adding audio & captions...`);
         const videoStartTime = Date.now();
-        const captionedResult = await mediaServer.generateCaptionedClip({
-          imageFileId: imageResult.imageFileId,
-          narration,
-          voice: options.voice || 'af_sarah',
-          captionOn: options.captionOn ?? true,
-        });
+
+        // Use match-duration to sync video with audio, then add captions
+        const matchedVideo = await mediaServer.matchDuration(baseVideoId, ttsResult.audioFileId);
+
+        // Add captions to the matched video
+        const captionUrl = `${getBaseUrl()}/api/v1/media/video-tools/add-captions`;
+        const captionParams = new URLSearchParams();
+        captionParams.append('video_id', matchedVideo.file_id);
+        captionParams.append('text', narration);
+        captionParams.append('position', 'bottom'); // Captions at bottom
+        captionParams.append('font_size', '48');
+        captionParams.append('margin_bottom', '80');
+
+        try {
+          const captionResponse = await fetch(captionUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: captionParams,
+          });
+
+          if (captionResponse.ok) {
+            const captionResult = await captionResponse.json();
+            videoResult = {
+              videoFileId: captionResult.file_id,
+              videoUrl: `${getBaseUrl()}/api/v1/media/storage/${captionResult.file_id}`
+            };
+          } else {
+            // Fallback to matched video without captions
+            videoResult = {
+              videoFileId: matchedVideo.file_id,
+              videoUrl: matchedVideo.url
+            };
+          }
+        } catch {
+          videoResult = {
+            videoFileId: matchedVideo.file_id,
+            videoUrl: matchedVideo.url
+          };
+        }
+
         const videoTime = ((Date.now() - videoStartTime) / 1000).toFixed(1);
-        console.log(`  ✓ Captioned video created: ${captionedResult.videoFileId} (${videoTime}s)`);
-        videoResult = captionedResult;
+        console.log(`  ✓ Final video: ${videoResult.videoFileId} (${videoTime}s)`);
+      } else if (animatedVideoId) {
+        // Just use the SVD animated video
+        videoResult = {
+          videoFileId: animatedVideoId,
+          videoUrl: `${getBaseUrl()}/api/v1/media/storage/${animatedVideoId}`
+        };
       } else {
         // Simple image-to-video conversion
         console.log(`  → Converting to video...`);
@@ -560,6 +692,7 @@ export const mediaServer = {
 
       results.push({
         imageId: imageResult.imageFileId,
+        animatedVideoId,
         videoId: videoResult.videoFileId,
         prompt,
         narration,
@@ -570,7 +703,7 @@ export const mediaServer = {
       // Delay before next scene to ensure server is ready
       if (i < totalScenes - 1) {
         console.log(`  ⏳ Waiting before next scene...`);
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise(resolve => setTimeout(resolve, 3000));
       }
     }
 
