@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "dev": "npm run dev --workspace=web",
-    "build": "npm run build --workspaces",
+    "build": "npm run build:sdk && npm run build:agent && npm run build:web",
     "build:web": "npm run build --workspace=web",
     "build:sdk": "npm run build --workspace=@trapgod/media-sdk",
     "build:agent": "npm run build --workspace=@trapgod/agent",
