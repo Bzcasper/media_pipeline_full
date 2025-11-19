@@ -1,0 +1,16 @@
+# Built packages (generated during deployment)
+agent-dist/
+sdk-dist/
+
+# Next.js
+.next/
+out/
+
+# Dependencies
+node_modules/
+
+# Environment variables
+.env*
+
+# Vercel
+.vercel
