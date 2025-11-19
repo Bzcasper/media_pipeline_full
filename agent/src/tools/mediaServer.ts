@@ -484,6 +484,291 @@ export const mediaServer = {
   /**
    * Generate TTS audio using Kokoro
    */
+  /**
+   * Create background music mix from multiple tracks
+   */
+  createMusicMix: async (audioIds: string[], durationMinutes: number = 5) => {
+    const url = `${getBaseUrl()}/api/v1/media/music-tools/create-mix`;
+
+    const params = new URLSearchParams();
+    params.append('audio_ids', audioIds.join(','));
+    params.append('duration_minutes', durationMinutes.toString());
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params,
+    });
+
+    if (!response.ok) {
+      throw new Error(`Music mix creation failed: ${response.status} ${await response.text()}`);
+    }
+
+    const result = await response.json();
+    return {
+      mixFileId: result.file_id,
+      mixUrl: `${getBaseUrl()}/api/v1/media/storage/${result.file_id}`,
+      duration: result.duration,
+      tracks: result.tracks,
+    };
+  },
+
+  /**
+   * Analyze audio track for BPM, key, and other properties
+   */
+  analyzeAudioTrack: async (audioFileId: string) => {
+    const url = `${getBaseUrl()}/api/v1/media/music-tools/analyze-track`;
+
+    const params = new URLSearchParams();
+    params.append('audio_id', audioFileId);
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params,
+    });
+
+    if (!response.ok) {
+      throw new Error(`Audio analysis failed: ${response.status} ${await response.text()}`);
+    }
+
+    const result = await response.json();
+    return {
+      bpm: result.bpm,
+      key: result.key,
+      scale: result.scale,
+      energy: result.energy,
+      danceability: result.danceability,
+      analysis: result,
+    };
+  },
+
+  /**
+   * Add overlay to video (logos, watermarks, etc.)
+   */
+  addVideoOverlay: async (videoId: string, overlayId: string, options?: {
+    position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'center';
+    x?: number;
+    y?: number;
+    width?: number;
+    height?: number;
+    opacity?: number;
+  }) => {
+    const url = `${getBaseUrl()}/api/v1/media/video-tools/add-overlay`;
+
+    const params = new URLSearchParams();
+    params.append('video_id', videoId);
+    params.append('overlay_id', overlayId);
+
+    if (options?.position) params.append('position', options.position);
+    if (options?.x !== undefined) params.append('x', options.x.toString());
+    if (options?.y !== undefined) params.append('y', options.y.toString());
+    if (options?.width) params.append('width', options.width.toString());
+    if (options?.height) params.append('height', options.height.toString());
+    if (options?.opacity !== undefined) params.append('opacity', options.opacity.toString());
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params,
+    });
+
+    if (!response.ok) {
+      throw new Error(`Video overlay failed: ${response.status} ${await response.text()}`);
+    }
+
+    const result = await response.json();
+    return {
+      videoFileId: result.file_id,
+      videoUrl: `${getBaseUrl()}/api/v1/media/storage/${result.file_id}`,
+    };
+  },
+
+  /**
+   * Generate GIF preview from video
+   */
+  generateVideoGif: async (videoId: string, options?: {
+    startTime?: number;
+    duration?: number;
+    width?: number;
+    height?: number;
+  }) => {
+    const url = `${getBaseUrl()}/api/v1/media/video-tools/gif-preview`;
+
+    const params = new URLSearchParams();
+    params.append('video_id', videoId);
+
+    if (options?.startTime !== undefined) params.append('start_time', options.startTime.toString());
+    if (options?.duration) params.append('duration', options.duration.toString());
+    if (options?.width) params.append('width', options.width.toString());
+    if (options?.height) params.append('height', options.height.toString());
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params,
+    });
+
+    if (!response.ok) {
+      throw new Error(`GIF generation failed: ${response.status} ${await response.text()}`);
+    }
+
+    const result = await response.json();
+    return {
+      gifFileId: result.file_id,
+      gifUrl: `${getBaseUrl()}/api/v1/media/storage/${result.file_id}`,
+    };
+  },
+
+  /**
+   * Render HTML content to image (for titles, graphics, etc.)
+   */
+  renderHTMLToImage: async (htmlContent: string, options?: {
+    width?: number;
+    height?: number;
+    backgroundColor?: string;
+  }) => {
+    const url = `${getBaseUrl()}/api/v1/utils/render-html`;
+
+    const params = new URLSearchParams();
+    params.append('html_content', htmlContent);
+
+    if (options?.width) params.append('width', options.width.toString());
+    if (options?.height) params.append('height', options.height.toString());
+    if (options?.backgroundColor) params.append('background_color', options.backgroundColor);
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params,
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`HTML rendering failed: ${response.status} ${errorText}`);
+    }
+
+    // Check if response is JSON or binary
+    const contentType = response.headers.get('content-type');
+    if (contentType?.includes('application/json')) {
+      const result = await response.json();
+      return {
+        imageFileId: result.file_id,
+        imageUrl: `${getBaseUrl()}/api/v1/media/storage/${result.file_id}`,
+      };
+    } else {
+      // Handle binary response - upload the image data
+      const imageBuffer = Buffer.from(await response.arrayBuffer());
+      const uploadResult = await mediaServer.uploadFile(imageBuffer, 'image');
+      return {
+        imageFileId: uploadResult.file_id,
+        imageUrl: `${getBaseUrl()}/api/v1/media/storage/${uploadResult.file_id}`,
+      };
+    }
+  },
+
+  /**
+   * Stitch multiple images together (for comparisons, montages, etc.)
+   */
+  stitchImages: async (imageIds: string[], options?: {
+    direction?: 'horizontal' | 'vertical';
+    spacing?: number;
+    backgroundColor?: string;
+  }) => {
+    const url = `${getBaseUrl()}/api/v1/utils/stitch-images`;
+
+    const params = new URLSearchParams();
+    params.append('image_ids', imageIds.join(','));
+
+    if (options?.direction) params.append('direction', options.direction);
+    if (options?.spacing !== undefined) params.append('spacing', options.spacing.toString());
+    if (options?.backgroundColor) params.append('background_color', options.backgroundColor);
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params,
+    });
+
+    if (!response.ok) {
+      throw new Error(`Image stitching failed: ${response.status} ${await response.text()}`);
+    }
+
+    const result = await response.json();
+    return {
+      stitchedImageId: result.file_id,
+      stitchedImageUrl: `${getBaseUrl()}/api/v1/media/storage/${result.file_id}`,
+    };
+  },
+
+  /**
+   * Extract transcript from YouTube video
+   */
+  getYouTubeTranscript: async (videoId: string) => {
+    const url = `${getBaseUrl()}/api/v1/utils/youtube-transcript`;
+
+    const params = new URLSearchParams();
+    params.append('video_id', videoId);
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params,
+    });
+
+    if (!response.ok) {
+      throw new Error(`YouTube transcript extraction failed: ${response.status} ${await response.text()}`);
+    }
+
+    const result = await response.json();
+    return {
+      transcript: result.transcript,
+      language: result.language,
+      duration: result.duration,
+      segments: result.segments,
+    };
+  },
+
+  /**
+   * Transcode video to different format/resolution
+   */
+  transcodeVideo: async (videoId: string, options?: {
+    format?: string;
+    width?: number;
+    height?: number;
+    bitrate?: number;
+    fps?: number;
+  }) => {
+    const url = `${getBaseUrl()}/api/v1/media/video-tools/transcode`;
+
+    const params = new URLSearchParams();
+    params.append('video_id', videoId);
+
+    if (options?.format) params.append('format', options.format);
+    if (options?.width) params.append('width', options.width.toString());
+    if (options?.height) params.append('height', options.height.toString());
+    if (options?.bitrate) params.append('bitrate', options.bitrate.toString());
+    if (options?.fps) params.append('fps', options.fps.toString());
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params,
+    });
+
+    if (!response.ok) {
+      throw new Error(`Video transcoding failed: ${response.status} ${await response.text()}`);
+    }
+
+    const result = await response.json();
+    return {
+      transcodedVideoId: result.file_id,
+      transcodedVideoUrl: `${getBaseUrl()}/api/v1/media/storage/${result.file_id}`,
+      format: result.format,
+      resolution: result.resolution,
+    };
+  },
+
   generateTTS: async (text: string, voice?: string) => {
     const url = `${getBaseUrl()}/api/v1/media/audio-tools/tts/kokoro`;
 
@@ -810,16 +1095,19 @@ export const mediaServer = {
     temperature?: number;
     maxTokens?: number;
   }) => {
-    const url = `${getChatUrl()}/v1/chat/completions`;
+    const url = 'https://api.x.ai/v1/chat/completions';
 
     const response = await fetch(url, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.XAI_API_KEY}`
+      },
       body: JSON.stringify({
-        model: options.model || 'gpt-4',
+        model: options.model || 'grok-4-fast-reasoning',
         messages: options.messages,
-        temperature: options.temperature ?? 0.7,
-        max_tokens: options.maxTokens || 2048,
+        temperature: options.temperature ?? 0,
+        stream: false,
       }),
     });
 
@@ -909,17 +1197,21 @@ Make each scene visually distinct and progressively build the narrative. Include
    * Full AI-powered storyline video generation
    * Uses AI to generate script, prompts, and narrations, then creates video with voiceover
    */
-  generateAIStorylineVideo: async (options: {
-    topic: string;
-    numScenes?: number;
-    style?: string;
-    imageDuration?: number;
-    audioId?: string;
-    width?: number;
-    height?: number;
-    voice?: string;
-    captionOn?: boolean;
-  }) => {
+   generateAIStorylineVideo: async (options: {
+     topic: string;
+     numScenes?: number;
+     style?: string;
+     imageDuration?: number;
+     audioId?: string;
+     width?: number;
+     height?: number;
+     voice?: string;
+     captionOn?: boolean;
+     captionFont?: string;
+     useSVD?: boolean;
+     svdLoopCount?: number;
+     svdMotion?: number;
+   }) => {
     console.log('🎬 Generating AI storyline video...');
     console.log(`Topic: ${options.topic}`);
 
@@ -946,6 +1238,9 @@ Make each scene visually distinct and progressively build the narrative. Include
       audioId: options.audioId,
       voice: options.voice || 'af_sarah',
       captionOn: options.captionOn ?? true,
+      useSVD: options.useSVD ?? true,
+      svdLoopCount: options.svdLoopCount ?? 2,
+      svdMotion: options.svdMotion ?? 100,
     });
 
     return {

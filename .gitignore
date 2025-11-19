@@ -7,3 +7,4 @@ package-lock.json
 web/.next/
 
 agent/dist/
+.vercel

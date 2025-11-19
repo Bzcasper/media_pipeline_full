@@ -1,38 +1,43 @@
 import { NextRequest, NextResponse } from "next/server";
-import { youtubeVideoAgent } from "@trapgod/agent";
+import { mediaServer } from "@trapgod/agent";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const {
       query,
-      videoStyle = "educational",
-      duration = 60,
-      aspectRatio = "16:9",
-      voiceOver = false,
-      backgroundMusic = false,
+      numScenes = 3,
+      style = "cinematic, dramatic lighting, high quality",
+      voice = "af_bella",
+      useSVD = true,
+      svdLoopCount = 2,
+      svdMotion = 100,
     } = body;
 
     if (!query) {
       return NextResponse.json({ error: "Query is required" }, { status: 400 });
     }
 
-    // Run AI SDK agent for YouTube video generation
-    const jobId = `youtube_${Date.now()}`;
-    const agentResult = await youtubeVideoAgent({
-      jobId,
-      query,
-      videoStyle,
-      duration,
+    // Generate storyline video with SVD animation, voiceover, and captions
+    const result = await mediaServer.generateAIStorylineVideo({
+      topic: query,
+      numScenes,
+      style,
+      voice,
+      captionOn: true,
+      width: 1024,
+      height: 576,
     });
 
-    if (!agentResult.success) {
-      throw new Error(`YouTube agent failed: ${agentResult.error}`);
-    }
-
     return NextResponse.json({
-      jobId,
-      message: "YouTube video generation started",
+      success: true,
+      videoId: result.finalVideoId,
+      videoUrl: result.finalVideoUrl,
+      thumbnailId: result.thumbnailId,
+      thumbnailUrl: result.thumbnailUrl,
+      scenes: result.scenes.length,
+      prompts: result.prompts,
+      narrations: result.narrations,
     });
   } catch (error) {
     console.error("YouTube video creation failed:", error);

@@ -10,12 +10,15 @@ import { Loader2, Video, Sparkles } from 'lucide-react';
 export default function YouTubeVideoCreator() {
   const router = useRouter();
   const [query, setQuery] = useState('');
-  const [videoStyle, setVideoStyle] = useState<'documentary' | 'narrative' | 'educational' | 'entertainment'>('educational');
-  const [duration, setDuration] = useState(60);
+  const [numScenes, setNumScenes] = useState(5);
   const [aspectRatio, setAspectRatio] = useState<'16:9' | '9:16' | '1:1'>('16:9');
-  const [voiceOver, setVoiceOver] = useState(false);
-  const [backgroundMusic, setBackgroundMusic] = useState(false);
-  const [complexity, setComplexity] = useState<'simple' | 'complex'>('simple');
+  const [style, setStyle] = useState('cinematic, dramatic lighting, high quality');
+  const [voice, setVoice] = useState('af_bella');
+  const [useSVD, setUseSVD] = useState(true);
+  const [svdLoopCount, setSvdLoopCount] = useState(2);
+  const [svdMotion, setSvdMotion] = useState(100);
+  const [captionOn, setCaptionOn] = useState(true);
+  const [captionFont, setCaptionFont] = useState('Arial');
   const [generating, setGenerating] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -26,6 +29,26 @@ export default function YouTubeVideoCreator() {
     setGenerating(true);
 
     try {
+      // Calculate dimensions based on aspect ratio
+      let width, height;
+      switch (aspectRatio) {
+        case '16:9': // Landscape (YouTube, TV)
+          width = 1024;
+          height = 576;
+          break;
+        case '9:16': // Portrait (YouTube Shorts, TikTok)
+          width = 576;
+          height = 1024;
+          break;
+        case '1:1': // Square (Instagram)
+          width = 512;
+          height = 512;
+          break;
+        default:
+          width = 1024;
+          height = 576;
+      }
+
       const response = await fetch('/api/youtube/create-v2', {
         method: 'POST',
         headers: {
@@ -33,13 +56,16 @@ export default function YouTubeVideoCreator() {
         },
         body: JSON.stringify({
           query,
-          videoStyle,
-          duration,
-          aspectRatio,
-          voiceOver,
-          backgroundMusic,
-          complexity,
-          userPreferences: {}
+          numScenes,
+          style,
+          voice,
+          useSVD,
+          svdLoopCount,
+          svdMotion,
+          captionOn,
+          captionFont,
+          width,
+          height,
         }),
       });
 
@@ -48,7 +74,9 @@ export default function YouTubeVideoCreator() {
       }
 
       const data = await response.json();
-      router.push(`/status/${data.jobId}`);
+      // Since we now return video URLs directly, redirect to a success page or show the video
+      alert(`Video created successfully!\n\nVideo: ${data.videoUrl}\nThumbnail: ${data.thumbnailUrl}`);
+      // router.push(`/status/${data.videoId}`); // Could create a video display page
 
     } catch (error) {
       console.error('Video generation error:', error);
@@ -82,172 +110,201 @@ export default function YouTubeVideoCreator() {
               </div>
             </div>
 
-            {/* Creation Form */}
-            <form onSubmit={handleSubmit} className="space-y-8">
-              {/* Query Input */}
-              <div className="bg-spotify-gray rounded-lg p-8">
-                <label className="block text-white mb-3 text-lg font-semibold">
-                  What's your video about? *
-                </label>
-                <textarea
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  className="w-full input-spotify h-32 resize-none"
-                  placeholder="e.g., 'The history of artificial intelligence' or 'How to start a successful YouTube channel'"
-                  required
-                  disabled={generating}
-                />
-                <p className="text-spotify-lightgray text-sm mt-2">
-                  Be specific and detailed for best results
-                </p>
-              </div>
+             {/* Creation Form */}
+             <form onSubmit={handleSubmit} className="space-y-8">
+               {/* Query Input */}
+               <div className="bg-spotify-gray rounded-lg p-8">
+                 <label className="block text-white mb-3 text-lg font-semibold">
+                   What's your video about? *
+                 </label>
+                 <textarea
+                   value={query}
+                   onChange={(e) => setQuery(e.target.value)}
+                   className="w-full input-spotify h-32 resize-none"
+                   placeholder="e.g., 'The history of artificial intelligence' or 'How to start a successful YouTube channel'"
+                   required
+                   disabled={generating}
+                 />
+                 <p className="text-spotify-lightgray text-sm mt-2">
+                   Be specific and detailed for best results
+                 </p>
+               </div>
 
-              {/* Video Style */}
-              <div className="bg-spotify-gray rounded-lg p-8">
-                <label className="block text-white mb-4 text-lg font-semibold">
-                  Video Style
-                </label>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {['documentary', 'narrative', 'educational', 'entertainment'].map((style) => (
-                    <button
-                      key={style}
-                      type="button"
-                      onClick={() => setVideoStyle(style as any)}
-                      disabled={generating}
-                      className={`
-                        p-4 rounded-lg border-2 transition-all capitalize
-                        ${videoStyle === style
-                          ? 'border-spotify-green bg-spotify-green/10 text-white'
-                          : 'border-spotify-gray hover:border-spotify-lightgray text-spotify-lightgray'
-                        }
-                      `}
-                    >
-                      {style}
-                    </button>
-                  ))}
-                </div>
-              </div>
+               {/* Video Settings */}
+               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                 <div className="bg-spotify-gray rounded-lg p-6">
+                   <label className="block text-white mb-3 font-medium">
+                     Number of Scenes
+                   </label>
+                   <input
+                     type="number"
+                     value={numScenes}
+                     onChange={(e) => setNumScenes(parseInt(e.target.value))}
+                     className="w-full input-spotify"
+                     min="1"
+                     max="20"
+                     disabled={generating}
+                   />
+                   <p className="text-spotify-lightgray text-sm mt-2">
+                     1-20 scenes (more scenes = longer videos)
+                   </p>
+                 </div>
 
-              {/* Video Settings */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-spotify-gray rounded-lg p-6">
-                  <label className="block text-white mb-3 font-medium">
-                    Duration (seconds)
-                  </label>
-                  <input
-                    type="number"
-                    value={duration}
-                    onChange={(e) => setDuration(parseInt(e.target.value))}
-                    className="w-full input-spotify"
-                    min="30"
-                    max="300"
-                    step="15"
-                    disabled={generating}
-                  />
-                  <p className="text-spotify-lightgray text-sm mt-2">
-                    30-300 seconds (Shorts: 60s recommended)
-                  </p>
-                </div>
+                 <div className="bg-spotify-gray rounded-lg p-6">
+                   <label className="block text-white mb-3 font-medium">
+                     Aspect Ratio
+                   </label>
+                   <div className="grid grid-cols-3 gap-2">
+                     {[
+                       { ratio: '16:9', label: '16:9', desc: 'Landscape' },
+                       { ratio: '9:16', label: '9:16', desc: 'Portrait' },
+                       { ratio: '1:1', label: '1:1', desc: 'Square' },
+                     ].map(({ ratio, label, desc }) => (
+                       <button
+                         key={ratio}
+                         type="button"
+                         onClick={() => setAspectRatio(ratio as any)}
+                         disabled={generating}
+                         className={`
+                           p-3 rounded-lg border-2 transition-all text-center
+                           ${aspectRatio === ratio
+                             ? 'border-spotify-green bg-spotify-green/10 text-white'
+                             : 'border-spotify-gray hover:border-spotify-lightgray text-spotify-lightgray'
+                           }
+                         `}
+                       >
+                         <div className="font-semibold text-sm">{label}</div>
+                         <div className="text-xs opacity-70">{desc}</div>
+                       </button>
+                     ))}
+                   </div>
+                   <p className="text-spotify-lightgray text-sm mt-2">
+                     16:9 (YouTube), 9:16 (Shorts/TikTok), 1:1 (Instagram)
+                   </p>
+                 </div>
 
-                <div className="bg-spotify-gray rounded-lg p-6">
-                  <label className="block text-white mb-3 font-medium">
-                    Aspect Ratio
-                  </label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {['16:9', '9:16', '1:1'].map((ratio) => (
-                      <button
-                        key={ratio}
-                        type="button"
-                        onClick={() => setAspectRatio(ratio as any)}
-                        disabled={generating}
-                        className={`
-                          p-3 rounded-lg border-2 transition-all
-                          ${aspectRatio === ratio
-                            ? 'border-spotify-green bg-spotify-green/10 text-white'
-                            : 'border-spotify-gray hover:border-spotify-lightgray text-spotify-lightgray'
-                          }
-                        `}
-                      >
-                        {ratio}
-                      </button>
-                    ))}
-                  </div>
-                  <p className="text-spotify-lightgray text-sm mt-2">
-                    16:9 (YouTube), 9:16 (Shorts/TikTok), 1:1 (Instagram)
-                  </p>
-                </div>
-              </div>
+                 <div className="bg-spotify-gray rounded-lg p-6">
+                   <label className="block text-white mb-3 font-medium">
+                     Visual Style
+                   </label>
+                   <input
+                     type="text"
+                     value={style}
+                     onChange={(e) => setStyle(e.target.value)}
+                     className="w-full input-spotify"
+                     placeholder="cinematic, dramatic lighting, high quality"
+                     disabled={generating}
+                   />
+                   <p className="text-spotify-lightgray text-sm mt-2">
+                     Describe the visual style for AI image generation
+                   </p>
+                 </div>
+               </div>
 
-              {/* AI Model Selection */}
-              <div className="bg-spotify-gray rounded-lg p-6">
-                <label className="block text-white mb-3 font-medium">
-                  AI Intelligence Level
-                </label>
-                <div className="grid grid-cols-2 gap-4">
-                  <button
-                    type="button"
-                    onClick={() => setComplexity('simple')}
-                    disabled={generating}
-                    className={`
-                      p-4 rounded-lg border-2 transition-all
-                      ${complexity === 'simple'
-                        ? 'border-spotify-green bg-spotify-green/10 text-white'
-                        : 'border-spotify-gray hover:border-spotify-lightgray text-spotify-lightgray'
-                      }
-                    `}
-                  >
-                    <div className="font-semibold mb-1">Simple (Fast)</div>
-                    <div className="text-xs opacity-70">Claude Haiku - Quick results</div>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setComplexity('complex')}
-                    disabled={generating}
-                    className={`
-                      p-4 rounded-lg border-2 transition-all
-                      ${complexity === 'complex'
-                        ? 'border-spotify-green bg-spotify-green/10 text-white'
-                        : 'border-spotify-gray hover:border-spotify-lightgray text-spotify-lightgray'
-                      }
-                    `}
-                  >
-                    <div className="font-semibold mb-1">Complex (Best)</div>
-                    <div className="text-xs opacity-70">Claude Sonnet - Highest quality</div>
-                  </button>
-                </div>
-                <p className="text-spotify-lightgray text-sm mt-3">
-                  Complex mode uses more powerful AI for better creativity and reasoning
-                </p>
-              </div>
+               {/* Voice & Animation Settings */}
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                 <div className="bg-spotify-gray rounded-lg p-6">
+                   <label className="block text-white mb-3 font-medium">
+                     Voice
+                   </label>
+                   <select
+                     value={voice}
+                     onChange={(e) => setVoice(e.target.value)}
+                     className="w-full input-spotify"
+                     disabled={generating}
+                   >
+                     <option value="af_bella">Bella (Female)</option>
+                     <option value="af_sarah">Sarah (Female)</option>
+                     <option value="am_michael">Michael (Male)</option>
+                     <option value="am_adam">Adam (Male)</option>
+                   </select>
+                   <p className="text-spotify-lightgray text-sm mt-2">
+                     Choose the voice for narration
+                   </p>
+                 </div>
 
-              {/* Additional Features */}
-              <div className="bg-spotify-gray rounded-lg p-6">
-                <label className="block text-white mb-4 font-medium">
-                  Additional Features
-                </label>
-                <div className="space-y-3">
-                  <label className="flex items-center gap-3 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={voiceOver}
-                      onChange={(e) => setVoiceOver(e.target.checked)}
-                      disabled={generating}
-                      className="w-5 h-5 rounded border-spotify-gray bg-spotify-black checked:bg-spotify-green"
-                    />
-                    <span className="text-white">Add AI Voiceover</span>
-                  </label>
-                  <label className="flex items-center gap-3 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={backgroundMusic}
-                      onChange={(e) => setBackgroundMusic(e.target.checked)}
-                      disabled={generating}
-                      className="w-5 h-5 rounded border-spotify-gray bg-spotify-black checked:bg-spotify-green"
-                    />
-                    <span className="text-white">Add Background Music</span>
-                  </label>
-                </div>
-              </div>
+                 <div className="bg-spotify-gray rounded-lg p-6">
+                   <label className="block text-white mb-3 font-medium">
+                     Caption Font
+                   </label>
+                   <select
+                     value={captionFont}
+                     onChange={(e) => setCaptionFont(e.target.value)}
+                     className="w-full input-spotify"
+                     disabled={generating}
+                   >
+                     <option value="Arial">Arial</option>
+                     <option value="Helvetica">Helvetica</option>
+                     <option value="Times New Roman">Times New Roman</option>
+                     <option value="Courier New">Courier New</option>
+                     <option value="Impact">Impact</option>
+                   </select>
+                   <p className="text-spotify-lightgray text-sm mt-2">
+                     Font for video captions
+                   </p>
+                 </div>
+               </div>
+
+               {/* Animation & Effects */}
+               <div className="bg-spotify-gray rounded-lg p-6">
+                 <label className="block text-white mb-4 font-medium">
+                   Animation & Effects
+                 </label>
+                 <div className="space-y-4">
+                   <label className="flex items-center gap-3 cursor-pointer">
+                     <input
+                       type="checkbox"
+                       checked={useSVD}
+                       onChange={(e) => setUseSVD(e.target.checked)}
+                       disabled={generating}
+                       className="w-5 h-5 rounded border-spotify-gray bg-spotify-black checked:bg-spotify-green"
+                     />
+                     <span className="text-white">Enable SVD Animation</span>
+                     <span className="text-spotify-lightgray text-sm">(animated backgrounds)</span>
+                   </label>
+
+                   {useSVD && (
+                     <div className="grid grid-cols-2 gap-4 ml-8">
+                       <div>
+                         <label className="block text-white text-sm mb-1">Loop Count</label>
+                         <input
+                           type="number"
+                           value={svdLoopCount}
+                           onChange={(e) => setSvdLoopCount(parseInt(e.target.value))}
+                           className="w-full input-spotify text-sm"
+                           min="1"
+                           max="5"
+                           disabled={generating}
+                         />
+                       </div>
+                       <div>
+                         <label className="block text-white text-sm mb-1">Motion Intensity</label>
+                         <input
+                           type="number"
+                           value={svdMotion}
+                           onChange={(e) => setSvdMotion(parseInt(e.target.value))}
+                           className="w-full input-spotify text-sm"
+                           min="50"
+                           max="200"
+                           disabled={generating}
+                         />
+                       </div>
+                     </div>
+                   )}
+
+                   <label className="flex items-center gap-3 cursor-pointer">
+                     <input
+                       type="checkbox"
+                       checked={captionOn}
+                       onChange={(e) => setCaptionOn(e.target.checked)}
+                       disabled={generating}
+                       className="w-5 h-5 rounded border-spotify-gray bg-spotify-black checked:bg-spotify-green"
+                     />
+                     <span className="text-white">Add Captions</span>
+                     <span className="text-spotify-lightgray text-sm">(subtitles on video)</span>
+                   </label>
+                 </div>
+               </div>
 
               {/* Submit Button */}
               <Button
