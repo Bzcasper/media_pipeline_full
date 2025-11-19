@@ -1,8 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Sidebar } from '../../components/Sidebar';
-import { Header } from '../../components/Header';
 import { JobCard, Job } from '../../components/JobCard';
 import { Button } from '../../components/ui/button';
 import { Loader2 } from 'lucide-react';
@@ -43,62 +41,52 @@ export default function HistoryPage() {
   });
 
   return (
-    <div className="flex h-screen">
-      <Sidebar />
-
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <Header />
-
-        <main className="flex-1 overflow-y-auto spotify-scrollbar">
-          <div className="p-8">
-            <div className="flex items-center justify-between mb-8">
-              <div>
-                <h1 className="text-4xl font-bold text-white mb-2">Job History</h1>
-                <p className="text-spotify-lightgray">
-                  View all your processed media jobs
-                </p>
-              </div>
-            </div>
-
-            {/* Filters */}
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex gap-2">
-                {['all', 'processing', 'completed', 'failed'].map((f) => (
-                  <Button
-                    key={f}
-                    variant={filter === f ? 'default' : 'outline'}
-                    onClick={() => setFilter(f)}
-                    className="capitalize"
-                  >
-                    {f}
-                  </Button>
-                ))}
-              </div>
-              <Button variant="outline" onClick={fetchJobs} disabled={loading}>
-                {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                Refresh
-              </Button>
-            </div>
-
-            {/* Jobs Grid */}
-            {loading ? (
-              <div className="flex justify-center items-center h-64">
-                <Loader2 className="h-12 w-12 animate-spin text-spotify-green" />
-              </div>
-            ) : filteredJobs.length === 0 ? (
-              <div className="text-center py-16 bg-spotify-gray rounded-lg">
-                <p className="text-spotify-lightgray text-lg">No jobs found</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredJobs.map((job) => (
-                  <JobCard key={job.jobId} job={job} />
-                ))}
-              </div>
-            )}
-          </div>
-        </main>
+    <>
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-4xl font-bold text-white mb-2">Job History</h1>
+          <p className="text-spotify-lightgray">
+            View all your processed media jobs
+          </p>
+        </div>
       </div>
-    </div>
+
+      {/* Filters */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex gap-2">
+          {['all', 'processing', 'completed', 'failed'].map((f) => (
+            <Button
+              key={f}
+              variant={filter === f ? 'default' : 'outline'}
+              onClick={() => setFilter(f)}
+              className="capitalize"
+            >
+              {f}
+            </Button>
+          ))}
+        </div>
+        <Button variant="outline" onClick={fetchJobs} disabled={loading}>
+          {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+          Refresh
+        </Button>
+      </div>
+
+      {/* Jobs Grid */}
+      {loading ? (
+        <div className="flex justify-center items-center h-64">
+          <Loader2 className="h-12 w-12 animate-spin text-spotify-green" />
+        </div>
+      ) : filteredJobs.length === 0 ? (
+        <div className="text-center py-16 bg-spotify-gray rounded-lg">
+          <p className="text-spotify-lightgray text-lg">No jobs found</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredJobs.map((job) => (
+            <JobCard key={job.jobId} job={job} />
+          ))}
+        </div>
+      )}
+    </>
   );
 }

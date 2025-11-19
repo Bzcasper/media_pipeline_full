@@ -1,5 +1,4 @@
-'use client';
-
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Home, Upload, History, Settings, Video } from 'lucide-react';
@@ -19,8 +18,16 @@ export function Sidebar() {
   return (
     <div className="flex h-screen w-64 flex-col bg-spotify-black border-r border-spotify-gray">
       <div className="p-6">
-        <h1 className="text-2xl font-bold text-white">Media Pipeline</h1>
-        <p className="text-sm text-spotify-lightgray mt-1">AI Video Generation</p>
+        <Link href="/">
+          <a>
+            <Image
+              src="/logo.svg"
+              alt="Media Pipeline Logo"
+              width={140}
+              height={40}
+            />
+          </a>
+        </Link>
       </div>
 
       <nav className="flex-1 space-y-1 px-3">
