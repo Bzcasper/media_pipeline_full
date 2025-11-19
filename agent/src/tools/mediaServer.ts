@@ -268,7 +268,7 @@ export const mediaServer = {
       buffer = Buffer.from(new Uint8Array(arrayBuffer));
     }
 
-    const FormData = (await import('form-data')).default;
+    const { default: FormData } = await import('form-data');
     const formData = new FormData();
     formData.append('audio_file', buffer, { filename: 'audio.wav' });
     if (language) {
