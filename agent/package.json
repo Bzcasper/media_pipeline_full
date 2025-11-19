@@ -12,7 +12,7 @@
     "@ai-sdk/anthropic": "^2.0.45",
     "@ai-sdk/openai": "^2.0.68",
     "@google-cloud/storage": "^7.17.3",
-    "@trapgod/media-sdk": "workspace:*",
+    "@trapgod/media-sdk": "file:../packages/media-sdk",
     "ai": "^5.0.94",
     "form-data": "^4.0.0",
     "uuid": "^9.0.1",
