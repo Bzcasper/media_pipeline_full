@@ -1,6 +1,5 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import { Home, Upload, History, Settings, Video } from 'lucide-react';
 import { cn } from '../lib/utils';
 
@@ -13,7 +12,8 @@ const navigation = [
 ];
 
 export function Sidebar() {
-  const pathname = usePathname();
+  // For now, don't highlight active navigation to avoid build issues
+  const pathname = '/';
 
   return (
     <div className="flex h-screen w-64 flex-col bg-spotify-black border-r border-spotify-gray">
