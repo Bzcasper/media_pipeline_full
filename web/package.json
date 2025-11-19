@@ -2,6 +2,7 @@
   "name": "media-pipeline-web",
   "version": "1.0.0",
   "private": true,
+  "packageManager": "pnpm@10.21.0",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
