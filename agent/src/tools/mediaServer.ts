@@ -33,6 +33,154 @@ const pollForCompletion = async (
   throw new Error(`Polling timeout after ${maxAttempts} attempts`);
 };
 
+// Comprehensive endpoint mapping for dynamic agent selection
+export const ENDPOINT_CAPABILITIES = {
+  // Audio Processing
+  audio: {
+    transcribe: { endpoint: 'transcribeAudio', description: 'Convert speech to text using Riva ASR' },
+    info: { endpoint: 'getAudioInfo', description: 'Get audio file metadata and properties' },
+    merge: { endpoint: 'mergeAudios', description: 'Combine multiple audio files' },
+    extend: { endpoint: 'extendAudio', description: 'Lengthen audio to match duration' },
+    alignScript: { endpoint: 'alignScript', description: 'Sync script with audio timing' },
+    tts: {
+      kokoro: { endpoint: 'generateTTS', description: 'Text-to-speech using Kokoro' },
+      chatterbox: { endpoint: 'generateTTSChatterbox', description: 'Voice cloning TTS' }
+    },
+    analyze: { endpoint: 'analyzeAudioTrack', description: 'Extract BPM, key, energy from audio' },
+    normalize: { endpoint: 'normalizeTrack', description: 'Balance audio levels' }
+  },
+
+  // Video Processing
+  video: {
+    merge: { endpoint: 'mergeVideos', description: 'Combine multiple video clips' },
+    transcode: { endpoint: 'transcodeVideo', description: 'Convert video format/resolution' },
+    info: { endpoint: 'getVideoInfo', description: 'Get video file metadata' },
+    extractFrame: { endpoint: 'extractFrame', description: 'Capture single frame from video' },
+    extractFrames: { endpoint: 'extractFrames', description: 'Capture multiple frames from video' },
+    matchDuration: { endpoint: 'matchDuration', description: 'Sync video length with audio' },
+    addOverlay: { endpoint: 'addVideoOverlay', description: 'Add logos/watermarks to video' },
+    generateGif: { endpoint: 'generateVideoGif', description: 'Create animated GIF from video' },
+    generateCaptioned: { endpoint: 'generateCaptionedVideo', description: 'Add TTS narration with captions' },
+    createLooping: { endpoint: 'createLoopingVideo', description: 'Make video loop seamlessly' },
+    generateAmbient: { endpoint: 'generateLongFormAmbient', description: 'Create long ambient videos' }
+  },
+
+  // Music Production
+  music: {
+    normalize: { endpoint: 'normalizeTrack', description: 'Balance music track levels' },
+    analyze: { endpoint: 'analyzeAudioTrack', description: 'Extract musical properties' },
+    createVideo: { endpoint: 'createMusicVideo', description: 'Generate music video' },
+    createThumbnail: { endpoint: 'createThumbnail', description: 'Create album art' },
+    createPlaylist: { endpoint: 'createPlaylist', description: 'Build playlist from tracks' },
+    createMix: { endpoint: 'createMusicMix', description: 'Mix multiple tracks together' }
+  },
+
+  // Image Processing
+  image: {
+    generate: { endpoint: 'generateAIImage', description: 'Create images with AI' },
+    toVideo: { endpoint: 'imageToVideo', description: 'Convert static image to video' },
+    animate: { endpoint: 'animateWithSVD', description: 'Add motion to images' },
+    renderHTML: { endpoint: 'renderHTMLToImage', description: 'Convert HTML to image' },
+
+    makeImperfect: { endpoint: 'makeImageImperfect', description: 'Remove AI artifacts' }
+  },
+
+  // Utility Functions
+  utils: {
+    renderHTML: { endpoint: 'renderHTMLToImage', description: 'HTML to image conversion' },
+    stitchImages: { endpoint: 'stitchImages', description: 'Image composition' },
+    youtubeTranscript: { endpoint: 'getYouTubeTranscript', description: 'Extract video transcripts' },
+    makeImperfect: { endpoint: 'makeImageImperfect', description: 'Humanize AI images' }
+  },
+
+  // File Operations
+  storage: {
+    upload: { endpoint: 'uploadFile', description: 'Upload files to media server' },
+    download: { endpoint: 'downloadFile', description: 'Download files from media server' },
+    delete: { endpoint: 'deleteFile', description: 'Remove files from media server' },
+    status: { endpoint: 'getFileStatus', description: 'Check file processing status' }
+  },
+
+  // AI Services
+  ai: {
+    chat: { endpoint: 'chatCompletion', description: 'AI text generation and reasoning' },
+    image: { endpoint: 'generateAIImage', description: 'AI-powered image creation' },
+    storyline: { endpoint: 'generateStorylinePrompts', description: 'Generate video story concepts' }
+  }
+};
+
+// Dynamic endpoint selector for agents
+export const selectEndpoint = (task: string, context?: any) => {
+  const task_lower = task.toLowerCase();
+
+  // Audio processing tasks
+  if (task_lower.includes('transcribe') || task_lower.includes('speech to text')) {
+    return ENDPOINT_CAPABILITIES.audio.transcribe;
+  }
+  if (task_lower.includes('analyze audio') || task_lower.includes('bpm') || task_lower.includes('key detection')) {
+    return ENDPOINT_CAPABILITIES.audio.analyze;
+  }
+  if (task_lower.includes('text to speech') || task_lower.includes('tts')) {
+    return ENDPOINT_CAPABILITIES.audio.tts.kokoro;
+  }
+  if (task_lower.includes('merge audio') || task_lower.includes('combine audio')) {
+    return ENDPOINT_CAPABILITIES.audio.merge;
+  }
+
+  // Video processing tasks
+  if (task_lower.includes('generate image') || task_lower.includes('create image') || task_lower.includes('ai image')) {
+    return ENDPOINT_CAPABILITIES.image.generate;
+  }
+  if (task_lower.includes('animate image') || task_lower.includes('image to video') || task_lower.includes('svd animation')) {
+    return ENDPOINT_CAPABILITIES.image.animate;
+  }
+  if (task_lower.includes('add captions') || task_lower.includes('captioned video')) {
+    return ENDPOINT_CAPABILITIES.video.generateCaptioned;
+  }
+  if (task_lower.includes('create gif') || task_lower.includes('gif preview') || task_lower.includes('animated gif')) {
+    return ENDPOINT_CAPABILITIES.video.generateGif;
+  }
+  if (task_lower.includes('add overlay') || task_lower.includes('watermark')) {
+    return ENDPOINT_CAPABILITIES.video.addOverlay;
+  }
+  if (task_lower.includes('transcode') || task_lower.includes('convert video')) {
+    return ENDPOINT_CAPABILITIES.video.transcode;
+  }
+  if (task_lower.includes('merge video') || task_lower.includes('combine video')) {
+    return ENDPOINT_CAPABILITIES.video.merge;
+  }
+
+  // Music production tasks
+  if (task_lower.includes('create mix') || task_lower.includes('mix tracks')) {
+    return ENDPOINT_CAPABILITIES.music.createMix;
+  }
+  if (task_lower.includes('normalize') || task_lower.includes('balance audio')) {
+    return ENDPOINT_CAPABILITIES.music.normalize;
+  }
+
+  // Utility tasks
+  if (task_lower.includes('render html') || task_lower.includes('html to image')) {
+    return ENDPOINT_CAPABILITIES.utils.renderHTML;
+  }
+  if (task_lower.includes('stitch images') || task_lower.includes('combine images')) {
+    return ENDPOINT_CAPABILITIES.utils.stitchImages;
+  }
+  if (task_lower.includes('youtube transcript') || task_lower.includes('get transcript')) {
+    return ENDPOINT_CAPABILITIES.utils.youtubeTranscript;
+  }
+
+  // AI tasks
+  if (task_lower.includes('chat') || task_lower.includes('reasoning') || task_lower.includes('generate text')) {
+    return ENDPOINT_CAPABILITIES.ai.chat;
+  }
+  if (task_lower.includes('storyline') || task_lower.includes('generate prompts')) {
+    return ENDPOINT_CAPABILITIES.ai.storyline;
+  }
+
+  // Default fallback
+  return null;
+};
+
 export const mediaServer = {
   /**
    * Upload a file to the media server
