@@ -926,7 +926,18 @@ export const mediaServer = {
         captionParams.append('kokoro_voice', options.voice || 'af_sarah');
         captionParams.append('caption_on', 'true');
         captionParams.append('caption_position', 'bottom');
-        captionParams.append('font_size', '48');
+
+        // Adjust font size based on video dimensions to prevent distortion
+        const videoWidth = options.width || 1024;
+        const videoHeight = options.height || 576;
+        const isPortrait = videoHeight > videoWidth;
+        const fontSize = isPortrait ?
+          Math.min(32, Math.floor(videoWidth / 18)) :  // Portrait: smaller font
+          Math.min(48, Math.floor(videoWidth / 21));   // Landscape: larger font
+        captionParams.append('font_size', fontSize.toString());
+
+        // Add margin to prevent text from being cut off
+        captionParams.append('margin_bottom', '20');
 
         const captionResponse = await fetch(captionUrl, {
           method: 'POST',
